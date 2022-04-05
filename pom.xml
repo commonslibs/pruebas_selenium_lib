@@ -5,7 +5,7 @@
 
 	<groupId>es.juntadeandalucia.agapa.pruebasSelenium</groupId>
 	<artifactId>pruebas_selenium_lib</artifactId>
-	<version>0.1.0.0-SNAPSHOT</version>
+	<version>0.1.0.0</version>
 
 	<name>Librería para pruebas con Selenium</name>
 	<description>Proyecto con las funcionalidades comunes de todos los proyectos que vayan a usar Selenium como framework de pruebas funcionales</description>
