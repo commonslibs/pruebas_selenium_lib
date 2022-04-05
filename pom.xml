@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>es.juntadeandalucia.agapa.pruebasSelenium</groupId>
+	<artifactId>pruebas_selenium_lib</artifactId>
+	<version>0.1.0.0-SNAPSHOT</version>
+
+	<name>Librería para pruebas con Selenium</name>
+	<description>Proyecto con las funcionalidades comunes de todos los proyectos que vayan a usar Selenium como framework de pruebas funcionales</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<java.version>1.8</java.version>
+		<lombok.version>1.18.22</lombok.version>
+		<selenium.version>3.141.59</selenium.version>
+		<ojdbc7.version>12.1.0.2</ojdbc7.version>
+		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+
+		<jacoco.version>0.8.6</jacoco.version>
+	</properties>
+
+	<dependencies>
+
+		<!-- Util para logs y evitar escribir código getter/setter -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+		</dependency>
+
+		<!-- WebDrivers de selenium -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+        	<version>${selenium.version}</version>
+		</dependency>
+
+		<!-- Conexión con la BD para establecer condiciones iniciales en las pruebas -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>${ojdbc7.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.automation-remarks</groupId>
+			<artifactId>video-recorder-testng</artifactId>
+			<version>LATEST</version>
+		</dependency>
+
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+		    <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-compiler-plugin</artifactId>
+		        <configuration>
+		            <source>${java.version}</source>
+		            <target>${java.version}</target>
+		        </configuration>
+		    </plugin>
+
+			<!-- JaCoCo -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
