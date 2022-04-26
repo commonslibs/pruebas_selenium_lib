@@ -23,8 +23,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<java.version>1.8</java.version>
-		<lombok.version>1.18.22</lombok.version>
-		<selenium.version>3.141.59</selenium.version>
 		<ojdbc7.version>12.1.0.2</ojdbc7.version>
 		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
 		<testng.version>7.5</testng.version>
@@ -37,14 +35,12 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version>
 		</dependency>
 
 		<!-- WebDrivers de selenium -->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>${selenium.version}</version>
 		</dependency>
 
 		<!-- Conexión con la BD para establecer condiciones iniciales en las pruebas -->
@@ -75,14 +71,14 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-			<!-- Framework de TestNG -->
+
+		<!-- Framework de TestNG -->
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>${testng.version}</version>
 		</dependency>
-		
+
 
 	</dependencies>
 
