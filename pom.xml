@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>es.juntadeandalucia.agapa.comun</groupId>
@@ -10,6 +11,14 @@
 	<name>Librería para pruebas con Selenium</name>
 	<description>Proyecto con las funcionalidades comunes de todos los proyectos que vayan a usar Selenium como framework de pruebas funcionales</description>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.6.4</version>
+		<!-- <relativePath /> -->
+		<!-- lookup parent from repository -->
+	</parent>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -18,7 +27,7 @@
 		<selenium.version>3.141.59</selenium.version>
 		<ojdbc7.version>12.1.0.2</ojdbc7.version>
 		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
-
+		<testng.version>7.5</testng.version>
 		<jacoco.version>0.8.6</jacoco.version>
 	</properties>
 
@@ -35,7 +44,7 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-        	<version>${selenium.version}</version>
+			<version>${selenium.version}</version>
 		</dependency>
 
 		<!-- Conexión con la BD para establecer condiciones iniciales en las pruebas -->
@@ -51,20 +60,43 @@
 			<version>LATEST</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.vaadin.external.google</groupId>
+					<artifactId>android-json</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+			<!-- Framework de TestNG -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+		</dependency>
+		
 
 	</dependencies>
 
 	<build>
 		<plugins>
 
-		    <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-compiler-plugin</artifactId>
-		        <configuration>
-		            <source>${java.version}</source>
-		            <target>${java.version}</target>
-		        </configuration>
-		    </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
 
 			<!-- JaCoCo -->
 			<plugin>

@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Listeners;
@@ -24,20 +25,30 @@ import org.testng.annotations.Listeners;
  */
 @Slf4j
 @Listeners({ ResumenListener.class, InformeListener.class, UniversalVideoListener.class })
-public abstract class TestSeleniumAbstracto { // extends AbstractTestNGSpringContextTests {
+public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests { // extends AbstractTestNGSpringContextTests {
 
    /** Instacia de webdriver usado en el caso de prueba */
    @Getter
    protected WebDriver driver;
 
+   /**
+    * Metodo que se ejecuta antes de los test.
+    *
+    * @throws PruebaAceptacionExcepcion
+    */
    @BeforeTest
    public void beforeTest() throws PruebaAceptacionExcepcion {
-      log.info("Pretest");
-      // Indicara la carpeta donde se guardaran los videos.
-      System.setProperty("video.folder",
-            System.getProperty("user.dir") + "//target//surefire-reports//video//" + this.getClass().getSimpleName());
+      try {
+         log.info("Pretest");
+         // Indicara la carpeta donde se guardaran los videos.
+         System.setProperty("video.folder",
+               System.getProperty("user.dir") + "//target//surefire-reports//video//" + this.getClass().getSimpleName());
 
-      this.iniciar();
+         this.iniciar();
+      }
+      catch (Exception e) {
+         throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
+      }
    }
 
    @AfterTest
