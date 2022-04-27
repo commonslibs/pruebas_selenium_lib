@@ -747,13 +747,20 @@ public class WebElementWrapper {
       log.debug("esperarHastaQueElementoNoPresente->" + testObject.toString());
       WebDriverWait wait = new WebDriverWait(this.driver,
             Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name())));
-      try {
-         wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
-      }
-      catch (TimeoutException e) {
-         String mensaje = "Error al esperar que el objeto " + testObject + " NO esté presente";
-         log.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
+            conseguido = true;
+         }
+         catch (TimeoutException e) {
+            log.debug("Intento " + i + " fallido");
+         }
+         if (!conseguido) {
+            String mensaje = "Error al esperar que el objeto " + testObject + " NO esté presente";
+            log.error(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
       }
    }
 
