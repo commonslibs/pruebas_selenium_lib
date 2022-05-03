@@ -1,33 +1,24 @@
-# IMPORTANTE: Para evitar error de EOL ejecutar `git config --local core.autocrlf false` al descargar el proyecto, descartar cambios si los hubiera y hacer un checkout para tener los archivos .sh en el formato correcto.
+# Librería común para pruebas basadas en SELENIUM
 
-# SELENIUM
+Esta librería define una serie de métodos comunes para utilizar en las pruebas funcionales basadas en Selenium.
 
-Pruebas de aceptación basadas en Selenium.
+## CONFIGURACIÓN DE LAS PRUEBAS
 
-## ARCHIVOS IMPORTANTES
-* `\src\test\java\webdriver\WebDriverFactory.java` 
-	Contiene la configuracion del navegador para las pruebas. Contiene las siguientes opciones:
-	-	`options.addArguments("--no-sandbox");` arrancar navegador con Bypass OS
-	-	`options.addArguments("--disable-dev-shm-usage");` solo para linux, la particion de /dev/shm es muy pequeña en ciertos entorno de VM causando que Chrome falle
-	-	`options.addArguments("--verbose");` muestra información de la ejecución
+En el fichero de properties de la aplicación que se vaya a usar deberán existir las siguientes propiedades:
+- URL_APLICACION. URL en la que se encuentra la aplicación a probar.
+- NAVEGADOR. Obligatorio. Posibles valores:
+	- CHROME
+	- FIREFOX
+	- MSEDGE
+- MAXIMIZAR. Opcional. Posibles valores:
+	- TRUE. Es el valor por defecto. El navegador se maximizará hasta ocupar la pantalla completa al inicio de cada prueba.
+	- FALSE
+- TIEMPO_RETRASO_CORTO. Obligatorio. Tiempo en segundos de retraso mas corto posible. Valor típico: 1.
+- TIEMPO_RETRASO_MEDIO Obligatorio. Tiempo en segundos de retraso medio. Valor típico: 5.
+- TIEMPO_RETRASO_LARGO Obligatorio. Tiempo en segundos de retraso mas largo posible. Valor típico: 10.
+- ID_ELEMENTO_PROCESANDO. Opcional. Identificador del elemento que se intentará localizar antes de cada acción. Si está visible, se esperará a que desaparezca antes de realizar la siguiente acción.
+- POSICION_CERTIFICADO. Posición del certificado digital a usar dentro de la lista de certificados que ofrece el navegador.
 
-* `src\test\resources\application-ic.properties | application-local.properties ` 
-	Contiene las variables de entorno para la configuración del proyecto, una de ellas es:
-	-	`URL_APLICACION` URL de la aplicación. Dependiendo del entorno contra el que se quiera ejecutar, se usará:
-		- `host.docker.internal`:4200/agenciaagrariaypesquera/agro360/acceso, como dirección específica de "Docker for Windows" para poder tener acceso a la red local de la maquina host y poder lanzar las pruebas en localhost.
-		- `https://ic.agapa.junta-andalucia.es`/agenciaagrariaypesquera/agro360/acceso, cuando se prueba contra integración continua.
+En el fichero properties que se vaya a usar podrán existir otras propiedades adicionales que se estimen necesarias.
 
-* WebDriver. Se adjunta link de versiones del driver por si en local tiene conflictos (en docker se actualiza en la ejecución): https://chromedriver.storage.googleapis.com/index.html
-
-## COMO EJECUTAR EL PROYECTO:
-### DOCKER:
-* REQUISITOS: Docker, Docker-Compose
-
-* Una vez se tenga la imagen `agro360-pruebas:0.6.0.0`, se puede desplegar en dos entornos:
-* IC:
-* 	Usando docker run:
-	- `./run-docker.bat`
-
-* LOCAL:
-* 	Usando docker run: 
-	- `./run-docker-local.bat`
+El proyecto usa la librería http://automation-remarks.com/video-recorder-java/ para guardar vídeos de las pruebas. Opcionalmente, es posible añadir propiedades adicionales al fichero properties usado, con las propiedades que permite el propio componente para refinar la configuración de los vídeos generados.
