@@ -33,7 +33,7 @@ public class WebElementWrapper {
 
    private final static String COLOR_AZUL             = "cyan";
 
-   private final static int    NUMERO_MAXIMO_INTENTOS = 3;
+   private final static int    NUMERO_MAXIMO_INTENTOS = 5;
 
    public WebElementWrapper(WebDriver driver) {
       this.driver = driver;
