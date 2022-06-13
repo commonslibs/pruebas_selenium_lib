@@ -2,8 +2,8 @@ package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -746,7 +746,8 @@ public class WebElementWrapper {
    public void esperarHastaQueElementoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoNoPresente->" + testObject.toString());
       WebDriverWait wait = new WebDriverWait(this.driver,
-            Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO.name())));
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO.name()))),
+            Duration.ofMillis(100));
       try {
          wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
       }
@@ -827,7 +828,7 @@ public class WebElementWrapper {
       }
       if (idElementoProcesando != null) {
          By by = By.id(idElementoProcesando);
-         driver.manage().timeouts().implicitlyWait(1, TimeUnit.MILLISECONDS);
+         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
          List<WebElement> elementos = driver.findElements(by);
          try {
             if (elementos.size() > 0) {
@@ -869,7 +870,8 @@ public class WebElementWrapper {
       log.debug("esperarHastaQueElementoVisible->" + testObject.toString());
       WebElement exito;
       WebDriverWait wait = new WebDriverWait(this.driver,
-            Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name())));
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name()))),
+            Duration.ofMillis(100));
       try {
          exito = wait.until(ExpectedConditions.visibilityOfElementLocated(testObject));
       }
@@ -885,7 +887,8 @@ public class WebElementWrapper {
       log.debug("esperarHastaQueElementoPresente->" + testObject.toString());
       WebElement exito;
       WebDriverWait wait = new WebDriverWait(this.driver,
-            Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name())));
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name()))),
+            Duration.ofMillis(100));
       try {
          exito = wait.until(ExpectedConditions.presenceOfElementLocated(testObject));
       }
@@ -901,7 +904,8 @@ public class WebElementWrapper {
       log.debug("esperarHastaQueElementoClickable->" + testObject.getAttribute("id"));
       WebElement exito;
       WebDriverWait wait = new WebDriverWait(this.driver,
-            Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name())));
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name()))),
+            Duration.ofMillis(100));
       try {
          exito = wait.until(ExpectedConditions.elementToBeClickable(testObject));
       }
