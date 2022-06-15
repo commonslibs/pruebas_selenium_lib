@@ -51,9 +51,7 @@ public class WebElementWrapper {
     */
    public void seleccionarElementoCombo(By testObject, String labelValue) throws PruebaAceptacionExcepcion {
       this.click(testObject);
-      // this.esperaIncondicional(1);
       this.click(By.xpath("//span[text() = '" + labelValue + "']"));
-      // this.esperaIncondicional(1);
    }
 
    public WebElement click(By testObject) throws PruebaAceptacionExcepcion {
@@ -870,7 +868,7 @@ public class WebElementWrapper {
       log.debug("esperarHastaQueElementoVisible->" + testObject.toString());
       WebElement exito;
       WebDriverWait wait = new WebDriverWait(this.driver,
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name()))),
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
             Duration.ofMillis(100));
       try {
          exito = wait.until(ExpectedConditions.visibilityOfElementLocated(testObject));
@@ -887,7 +885,7 @@ public class WebElementWrapper {
       log.debug("esperarHastaQueElementoPresente->" + testObject.toString());
       WebElement exito;
       WebDriverWait wait = new WebDriverWait(this.driver,
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name()))),
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
             Duration.ofMillis(100));
       try {
          exito = wait.until(ExpectedConditions.presenceOfElementLocated(testObject));
@@ -904,7 +902,7 @@ public class WebElementWrapper {
       log.debug("esperarHastaQueElementoClickable->" + testObject.getAttribute("id"));
       WebElement exito;
       WebDriverWait wait = new WebDriverWait(this.driver,
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name()))),
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
             Duration.ofMillis(100));
       try {
          exito = wait.until(ExpectedConditions.elementToBeClickable(testObject));
