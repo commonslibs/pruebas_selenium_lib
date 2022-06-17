@@ -25,7 +25,7 @@ import org.testng.annotations.Listeners;
  */
 @Slf4j
 @Listeners({ ResumenListener.class, InformeListener.class, UniversalVideoListener.class })
-public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests { // extends AbstractTestNGSpringContextTests {
+public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests {
 
    /** Instacia de webdriver usado en el caso de prueba */
    @Getter
@@ -39,7 +39,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    @BeforeTest
    public void beforeTest() throws PruebaAceptacionExcepcion {
       try {
-         log.info("Pretest");
+         log.debug("Pretest");
          // Indicara la carpeta donde se guardaran los videos.
          System.setProperty("video.folder",
                System.getProperty("user.dir") + "//target//surefire-reports//video//" + this.getClass().getSimpleName());
@@ -53,7 +53,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
 
    @AfterTest
    public void afterTest() throws PruebaAceptacionExcepcion {
-      log.info("Posttest");
+      log.debug("Posttest");
       this.terminar();
    }
 
