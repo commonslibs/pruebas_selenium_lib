@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.springframework.util.Assert;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -87,6 +88,7 @@ public class ResumenListener implements ITestListener {
     * Toma una foto del navegador y la guarda en test-output como snapshot.png
     */
    private void takeSnapShot(WebDriver driver) {
+      Assert.notNull(driver, "Driver no puede ser nulo");
       String fileWithPath = "test-output//snapshot.png";
       TakesScreenshot scrShot = ((TakesScreenshot) driver);
       File SrcFile = scrShot.getScreenshotAs(OutputType.FILE);
