@@ -1,5 +1,7 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
+import static org.mockito.Mockito.timeout;
+
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
 import java.time.Duration;
@@ -55,6 +57,7 @@ public class WebElementWrapper {
    }
 
    public WebElement click(By testObject) throws PruebaAceptacionExcepcion {
+      timeout(500);
       log.debug("click->" + testObject.toString());
       boolean conseguido = false;
       WebElement elemento = null;
