@@ -54,6 +54,8 @@ public class WebElementWrapper {
    public void seleccionarElementoCombo(By testObject, String labelValue) throws PruebaAceptacionExcepcion {
       this.click(testObject);
       this.click(By.xpath("//span[text() = '" + labelValue + "']"));
+      // Enviamos el label con el texto, para saber si ese elemento ya se ha eliminado.
+      this.esperarHastaQueElementoNoSeaVisible(By.xpath("//span[text() = '" + labelValue + "']"));
    }
 
    public WebElement click(By testObject) throws PruebaAceptacionExcepcion {
@@ -882,6 +884,28 @@ public class WebElementWrapper {
          throw new PruebaAceptacionExcepcion(mensaje);
       }
       return exito;
+   }
+
+   /**
+    * Método que permite saber si el @param ha dejado de ser visible. En caso de que siga visible lanza un error.
+    *
+    * @param testObject
+    * @throws PruebaAceptacionExcepcion
+    */
+   private void esperarHastaQueElementoNoSeaVisible(By testObject) throws PruebaAceptacionExcepcion {
+      log.debug("esperarHastaQueElementoNoSeaVisible->" + testObject.toString());
+      WebDriverWait wait = new WebDriverWait(this.driver,
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
+            Duration.ofMillis(100));
+      try {
+         wait.until(ExpectedConditions.invisibilityOf(this.driver.findElement(testObject)));
+
+      }
+      catch (TimeoutException e) {
+         String mensaje = "Error al esperar que el objeto " + testObject.toString() + " dejara de ser visible";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
    }
 
    private WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
