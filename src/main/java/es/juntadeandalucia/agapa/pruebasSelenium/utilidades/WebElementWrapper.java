@@ -43,7 +43,7 @@ public class WebElementWrapper {
 
    /**
     * Acción de seleccionar un elemento con etiqueta @param labelValue de un combo (select desplegable) identificado por el @param
-    * testObject, incluye esperas activas para asegurarse de que los efectos cuando se selecciona un elemento del combo has desaparecido.
+    * testObject, incluye una comprobación para verificar de que el elemento a desaparecido.
     *
     * @param testObject,
     *           objeto combo
@@ -56,6 +56,21 @@ public class WebElementWrapper {
       this.click(By.xpath("//span[text() = '" + labelValue + "']"));
       // Enviamos el label con el texto, para saber si ese elemento ya se ha eliminado.
       this.esperarHastaQueElementoNoSeaVisible(By.xpath("//span[text() = '" + labelValue + "']"));
+   }
+
+   /**
+    * Acción de seleccionar un elemento con etiqueta @param labelValue de un combo (select desplegable) identificado por el @param
+    * testObject.
+    *
+    * @param testObject,
+    *           objeto combo
+    * @param labelValue,
+    *           etiqueta que se quiere seleccionar del combo
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void seleccionarElementoComboSinEspera(By testObject, String labelValue) throws PruebaAceptacionExcepcion {
+      this.click(testObject);
+      this.click(By.xpath("//span[text() = '" + labelValue + "']"));
    }
 
    public WebElement click(By testObject) throws PruebaAceptacionExcepcion {
