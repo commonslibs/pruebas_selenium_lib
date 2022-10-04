@@ -1,7 +1,5 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
-import static org.mockito.Mockito.timeout;
-
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
 import java.time.Duration;
@@ -51,7 +49,7 @@ public class WebElementWrapper {
     *           etiqueta que se quiere seleccionar del combo
     * @throws PruebaAceptacionExcepcion
     */
-   public void seleccionarElementoCombo(By testObject, String labelValue) throws PruebaAceptacionExcepcion {
+   public void seleccionarElementoComboConEspera(By testObject, String labelValue) throws PruebaAceptacionExcepcion {
       this.click(testObject);
       this.click(By.xpath("//span[text() = '" + labelValue + "']"));
       // Enviamos el label con el texto, para saber si ese elemento ya se ha eliminado.
@@ -68,13 +66,12 @@ public class WebElementWrapper {
     *           etiqueta que se quiere seleccionar del combo
     * @throws PruebaAceptacionExcepcion
     */
-   public void seleccionarElementoComboSinEspera(By testObject, String labelValue) throws PruebaAceptacionExcepcion {
+   public void seleccionarElementoCombo(By testObject, String labelValue) throws PruebaAceptacionExcepcion {
       this.click(testObject);
       this.click(By.xpath("//span[text() = '" + labelValue + "']"));
    }
 
    public WebElement click(By testObject) throws PruebaAceptacionExcepcion {
-      timeout(500);
       log.debug("click->" + testObject.toString());
       boolean conseguido = false;
       WebElement elemento = null;
