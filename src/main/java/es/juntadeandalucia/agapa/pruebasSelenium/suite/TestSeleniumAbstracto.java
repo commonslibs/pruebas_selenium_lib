@@ -6,6 +6,7 @@ import com.automation.remarks.testng.UniversalVideoListener;
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.reports.InformeListener;
 import es.juntadeandalucia.agapa.pruebasSelenium.reports.ResumenListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
@@ -66,7 +67,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR.name());
       }
       catch (IllegalArgumentException e) {
-         log.info("Propiedad MAXIMIZAR no definida. Se asume como TRUE");
+         Traza.info("Propiedad MAXIMIZAR no definida. Se asume como TRUE");
       }
       boolean maximizar;
       if (StringUtils.isEmpty(propiedadMaximizar)) {
