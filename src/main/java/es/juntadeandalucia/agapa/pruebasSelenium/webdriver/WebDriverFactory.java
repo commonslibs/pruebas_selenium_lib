@@ -45,6 +45,7 @@ public class WebDriverFactory {
                                                                                      options.addArguments("--no-sandbox");
                                                                                      options.addArguments("--disable-dev-shm-usage");
                                                                                      options.addArguments("--verbose");
+                                                                                     options.addArguments("--remote-allow-origins=*");
                                                                                      return new ChromeDriver(options);
                                                                                   };
 

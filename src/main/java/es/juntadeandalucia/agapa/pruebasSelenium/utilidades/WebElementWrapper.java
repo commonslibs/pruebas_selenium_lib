@@ -310,6 +310,9 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             elemento = this.esperaBasica(testObject);
+            if (elemento == null) {
+               throw new PruebaAceptacionExcepcion(testObject.toString() + " no existe");
+            }
             this.resaltaObjeto(elemento, COLOR_AZUL);
 
             log.debug("Comprobando que " + text + " es igual que " + elemento.getText());
