@@ -12,19 +12,15 @@ import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTes
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Listeners;
 
 
 /**
  * Añade por defecto listeners
  */
-@Slf4j
 @Listeners({ ResumenListener.class, InformeListener.class, UniversalVideoListener.class })
 public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests {
 
@@ -37,10 +33,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
     *
     * @throws PruebaAceptacionExcepcion
     */
-   @BeforeTest
-   public void beforeTest() throws PruebaAceptacionExcepcion {
+   public void beforeMethod() throws PruebaAceptacionExcepcion {
       try {
-         log.debug("Pretest");
          // Indicara la carpeta donde se guardaran los videos.
          System.setProperty("video.folder",
                System.getProperty("user.dir") + "//target//surefire-reports//video//" + this.getClass().getSimpleName());
@@ -52,9 +46,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
    }
 
-   @AfterTest
-   public void afterTest() throws PruebaAceptacionExcepcion {
-      log.debug("Posttest");
+   public void afterMethod() throws PruebaAceptacionExcepcion {
       this.terminar();
    }
 
