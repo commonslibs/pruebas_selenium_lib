@@ -326,7 +326,7 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error al verificar el texto del elemento.";
+         String mensaje = "Error al verificar el texto del elemento " + testObject.toString() + ". Texto: " + text;
          if (excepcion != null) {
             mensaje += "Motivo del error: " + excepcion.getLocalizedMessage();
          }
