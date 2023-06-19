@@ -884,7 +884,7 @@ public class WebElementWrapper {
       return this.esperarHastaQueElementoVisible(testObject);
    }
 
-   private WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
+   public WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoVisible->" + testObject.toString());
       WebElement exito;
       WebDriverWait wait = new WebDriverWait(this.driver,
@@ -907,7 +907,7 @@ public class WebElementWrapper {
     * @param testObject
     * @throws PruebaAceptacionExcepcion
     */
-   private void esperarHastaQueElementoNoSeaVisible(By testObject) throws PruebaAceptacionExcepcion {
+   public void esperarHastaQueElementoNoSeaVisible(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoNoSeaVisible->" + testObject.toString());
       WebDriverWait wait = new WebDriverWait(this.driver,
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
@@ -923,7 +923,7 @@ public class WebElementWrapper {
       }
    }
 
-   private WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
+   public WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoPresente->" + testObject.toString());
       WebElement exito;
       WebDriverWait wait = new WebDriverWait(this.driver,
@@ -940,7 +940,7 @@ public class WebElementWrapper {
       return exito;
    }
 
-   private WebElement esperarHastaQueElementoClickable(WebElement testObject) throws PruebaAceptacionExcepcion {
+   public WebElement esperarHastaQueElementoClickable(WebElement testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoClickable->" + testObject.getAttribute("id"));
       WebElement exito;
       WebDriverWait wait = new WebDriverWait(this.driver,
