@@ -886,17 +886,21 @@ public class WebElementWrapper {
 
    public WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoVisible->" + testObject.toString());
-      WebElement exito;
-      WebDriverWait wait = new WebDriverWait(this.driver,
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
-            Duration.ofMillis(100));
-      try {
-         exito = wait.until(ExpectedConditions.visibilityOfElementLocated(testObject));
-      }
-      catch (TimeoutException e) {
-         String mensaje = "Error al esperar que el objeto " + testObject.toString() + " sea visible";
-         log.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
+      WebElement exito = null;
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         WebDriverWait wait = new WebDriverWait(this.driver,
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
+               Duration.ofMillis(100));
+         try {
+            exito = wait.until(ExpectedConditions.visibilityOfElementLocated(testObject));
+            conseguido = true;
+         }
+         catch (TimeoutException e) {
+            String mensaje = "Error al esperar que el objeto " + testObject.toString() + " sea visible";
+            log.error(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
       }
       return exito;
    }
@@ -909,50 +913,61 @@ public class WebElementWrapper {
     */
    public void esperarHastaQueElementoNoSeaVisible(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoNoSeaVisible->" + testObject.toString());
-      WebDriverWait wait = new WebDriverWait(this.driver,
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
-            Duration.ofMillis(100));
-      try {
-         wait.until(ExpectedConditions.invisibilityOf(this.driver.findElement(testObject)));
-
-      }
-      catch (TimeoutException e) {
-         String mensaje = "Error al esperar que el objeto " + testObject.toString() + " dejara de ser visible";
-         log.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         WebDriverWait wait = new WebDriverWait(this.driver,
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
+               Duration.ofMillis(100));
+         try {
+            wait.until(ExpectedConditions.invisibilityOf(this.driver.findElement(testObject)));
+            conseguido = true;
+         }
+         catch (TimeoutException e) {
+            String mensaje = "Error al esperar que el objeto " + testObject.toString() + " dejara de ser visible";
+            log.error(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
       }
    }
 
    public WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoPresente->" + testObject.toString());
-      WebElement exito;
-      WebDriverWait wait = new WebDriverWait(this.driver,
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
-            Duration.ofMillis(100));
-      try {
-         exito = wait.until(ExpectedConditions.presenceOfElementLocated(testObject));
-      }
-      catch (TimeoutException e) {
-         String mensaje = "Error al esperar que el objeto " + testObject + " esté presente";
-         log.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
+      WebElement exito = null;
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         WebDriverWait wait = new WebDriverWait(this.driver,
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
+               Duration.ofMillis(100));
+         try {
+            exito = wait.until(ExpectedConditions.presenceOfElementLocated(testObject));
+            conseguido = true;
+         }
+         catch (TimeoutException e) {
+            String mensaje = "Error al esperar que el objeto " + testObject + " esté presente";
+            log.error(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
       }
       return exito;
    }
 
    public WebElement esperarHastaQueElementoClickable(WebElement testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoClickable->" + testObject.getAttribute("id"));
-      WebElement exito;
-      WebDriverWait wait = new WebDriverWait(this.driver,
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
-            Duration.ofMillis(100));
-      try {
-         exito = wait.until(ExpectedConditions.elementToBeClickable(testObject));
-      }
-      catch (TimeoutException e) {
-         String mensaje = "Error al esperar que el objeto " + testObject + " sea clickable";
-         log.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
+      WebElement exito = null;
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         WebDriverWait wait = new WebDriverWait(this.driver,
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
+               Duration.ofMillis(100));
+         try {
+            exito = wait.until(ExpectedConditions.elementToBeClickable(testObject));
+            conseguido = true;
+         }
+         catch (TimeoutException e) {
+            String mensaje = "Error al esperar que el objeto " + testObject + " sea clickable";
+            log.error(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
       }
       return exito;
    }
