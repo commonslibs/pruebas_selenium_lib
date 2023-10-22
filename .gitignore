@@ -22,3 +22,5 @@ test-output/
 /build-con-proxy.bat
 /xvfb.log
 /drivers
+/.settings
+/target

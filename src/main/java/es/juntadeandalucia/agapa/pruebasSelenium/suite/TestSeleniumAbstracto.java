@@ -14,6 +14,7 @@ import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Nave
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Listeners;
 
@@ -47,16 +48,18 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    public void afterMethod() throws PruebaAceptacionExcepcion {
-      this.terminar();
+      this.driver.quit();
    }
 
    private void iniciar() throws PruebaAceptacionExcepcion {
-      Navegador navegador = Navegador.valueOf(VariablesGlobalesTest.getPropiedad(PropiedadesTest.NAVEGADOR.name()));
+      Navegador navegador = Navegador.valueOf(VariablesGlobalesTest.getPropiedad(PropiedadesTest.NAVEGADOR));
       this.driver = WebDriverFactory.obtenerInstancia(navegador);
+      ChromeDriver chrome = (ChromeDriver) this.driver;
+      Traza.info(chrome.toString());
       assertNotNull(this.driver, "Error al instanciar el driver de " + navegador);
       String propiedadMaximizar = null;
       try {
-         propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR.name());
+         propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
       }
       catch (IllegalArgumentException e) {
          Traza.info("Propiedad MAXIMIZAR no definida. Se asume como TRUE");
@@ -73,7 +76,4 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
    }
 
-   private void terminar() throws PruebaAceptacionExcepcion {
-      this.driver.quit();
-   }
 }

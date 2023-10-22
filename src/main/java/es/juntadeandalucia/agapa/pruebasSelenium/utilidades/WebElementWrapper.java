@@ -636,7 +636,7 @@ public class WebElementWrapper {
             // FIXME : No hay forma de esperar después del evento filtrado, debido al evento
             // onKeyUp que mete un retraso aleatorio en la carga
             // del listado.
-            Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name())) * 1000);
+            Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
             table = this.esperaBasica(testObject);
             rows = table.findElements(By.tagName("tr"));
             numeroDeFilas = rows.size();
@@ -679,7 +679,7 @@ public class WebElementWrapper {
             // FIXME : No hay forma de esperar después del evento filtrado, debido al evento
             // onKeyUp que mete un retraso aleatorio en la carga
             // del listado.
-            this.esperaIncondicional(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO.name())));
+            this.esperaIncondicional(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)));
             table = this.esperaBasica(testObject);
             rows = table.findElements(By.tagName("tr"));
             numeroDeFilas = rows.size();
@@ -747,7 +747,7 @@ public class WebElementWrapper {
    public void esperarHastaQueElementoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoNoPresente->" + testObject.toString());
       WebDriverWait wait = new WebDriverWait(this.driver,
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO.name()))),
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO))),
             Duration.ofMillis(100));
       try {
          wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
@@ -822,7 +822,7 @@ public class WebElementWrapper {
 
       String idElementoProcesando = null;
       try {
-         idElementoProcesando = VariablesGlobalesTest.getPropiedad(PropiedadesTest.ID_ELEMENTO_PROCESANDO.name());
+         idElementoProcesando = VariablesGlobalesTest.getPropiedad(PropiedadesTest.ID_ELEMENTO_PROCESANDO);
       }
       catch (IllegalArgumentException e) {
          log.trace("ID_ELEMENTO_PROCESANDO no definido en fichero properties");
@@ -844,8 +844,7 @@ public class WebElementWrapper {
                         log.error("Error al parar el procesamiento del hilo de ejecución");
                      }
                      tiempo += 100;
-                     if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))
-                           * 1000) {
+                     if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000) {
                         String mensaje = "La ventana \"Procesando...\" no desaparece";
                         log.error(mensaje);
                         throw new PruebaAceptacionExcepcion(mensaje);
@@ -873,7 +872,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          WebDriverWait wait = new WebDriverWait(this.driver,
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
                Duration.ofMillis(100));
          try {
             exito = wait.until(ExpectedConditions.visibilityOfElementLocated(testObject));
@@ -899,7 +898,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          WebDriverWait wait = new WebDriverWait(this.driver,
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
                Duration.ofMillis(100));
          try {
             wait.until(ExpectedConditions.invisibilityOf(this.driver.findElement(testObject)));
@@ -919,7 +918,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          WebDriverWait wait = new WebDriverWait(this.driver,
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
                Duration.ofMillis(100));
          try {
             exito = wait.until(ExpectedConditions.presenceOfElementLocated(testObject));
@@ -940,7 +939,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          WebDriverWait wait = new WebDriverWait(this.driver,
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO.name()))),
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
                Duration.ofMillis(100));
          try {
             exito = wait.until(ExpectedConditions.elementToBeClickable(testObject));

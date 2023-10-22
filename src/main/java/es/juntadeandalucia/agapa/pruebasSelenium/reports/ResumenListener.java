@@ -23,14 +23,14 @@ public class ResumenListener implements ITestListener {
       if (context.getPassedTests().getAllResults().size() > 0) {
          this.escribirTraza("Test ejecutados:");
          context.getPassedTests().getAllResults().forEach(result -> {
-            this.escribirTraza(result.getName());
+            this.escribirTraza(this.nombreCasoYCiclo(result));
          });
       }
 
       if (context.getFailedTests().getAllResults().size() > 0) {
          this.escribirTraza("Test fallidos");
          context.getFailedTests().getAllResults().forEach(result -> {
-            this.escribirTraza(result.getName());
+            this.escribirTraza(this.nombreCasoYCiclo(result));
          });
       }
 
@@ -40,12 +40,6 @@ public class ResumenListener implements ITestListener {
    @Override
    public void onStart(ITestContext arg0) {
       this.escribirTraza("Empiezan tests regresión: " + arg0.getStartDate().toString());
-   }
-
-   @Override
-   public void onTestFailedButWithinSuccessPercentage(ITestResult arg0) {
-      // TODO Auto-generated method stub
-
    }
 
    @Override
@@ -62,18 +56,22 @@ public class ResumenListener implements ITestListener {
 
    @Override
    public void onTestSkipped(ITestResult arg0) {
-      this.escribirTraza("Test saltados: " + arg0.getName());
+      this.escribirTraza("Test saltados: " + this.nombreCasoYCiclo(arg0));
    }
 
    @Override
    public void onTestStart(ITestResult arg0) {
-      this.escribirTraza("Ejecutando test: " + arg0.getName());
+      this.escribirTraza("Ejecutando test: " + this.nombreCasoYCiclo(arg0));
    }
 
    @Override
    public void onTestSuccess(ITestResult arg0) {
-      long timeTaken = ((arg0.getEndMillis() - arg0.getStartMillis()));
-      this.escribirTraza("Test: " + arg0.getName() + " Tiempo empleado:" + timeTaken + " ms");
+      long timeTaken = ((arg0.getEndMillis() - arg0.getStartMillis())) / 1000;
+      this.escribirTraza("Test: " + this.nombreCasoYCiclo(arg0) + " -> Tiempo empleado: " + timeTaken + " s");
+   }
+
+   protected String nombreCasoYCiclo(ITestResult arg0) {
+      return arg0.getTestClass().getRealClass().getSimpleName() + "." + arg0.getName();
    }
 
    /**

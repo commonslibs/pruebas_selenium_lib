@@ -24,7 +24,7 @@ public class VariablesGlobalesTest {
     *
     * @author ISOTROL
     */
-   public enum PropiedadesTest {
+   public enum PropiedadesTest implements PropiedadGenerica {
       NAVEGADOR, MAXIMIZAR, TIEMPO_RETRASO_CORTO, TIEMPO_RETRASO_MEDIO, TIEMPO_RETRASO_LARGO, ID_ELEMENTO_PROCESANDO, POSICION_CERTIFICADO
    }
 
@@ -35,7 +35,7 @@ public class VariablesGlobalesTest {
     * @return Valor de las propiedades del property
     * @throws IllegalArgumentException
     */
-   public static String getPropiedad(String propiedad) throws IllegalArgumentException {
+   public static String getPropiedad(PropiedadGenerica propiedad) throws IllegalArgumentException {
       String entorno = System.getProperty("entorno");
       if (propiedades == null) {
 
@@ -47,15 +47,16 @@ public class VariablesGlobalesTest {
 
       }
 
-      if (!propiedades.containsKey(propiedad)) {
+      String nombrePropiedad = propiedad.toString();
+      if (!propiedades.containsKey(nombrePropiedad)) {
          throw new IllegalArgumentException("Parámetro " + propiedad + " no se ha encontrado en el fichero de configuración");
       }
 
-      if (StringUtils.isBlank(propiedades.get(propiedad).toString())) {
+      if (StringUtils.isBlank(propiedades.get(nombrePropiedad).toString())) {
          throw new IllegalArgumentException("Parámetro " + propiedad + " de configuración inválido");
       }
 
-      return propiedades.get(propiedad).toString();
+      return propiedades.get(nombrePropiedad).toString();
    }
 
    /**
