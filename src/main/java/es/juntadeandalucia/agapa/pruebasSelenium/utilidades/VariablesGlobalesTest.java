@@ -36,15 +36,12 @@ public class VariablesGlobalesTest {
     * @throws IllegalArgumentException
     */
    public static String getPropiedad(PropiedadGenerica propiedad) throws IllegalArgumentException {
-      String entorno = System.getProperty("entorno");
       if (propiedades == null) {
-
-         propiedades = getFilePathToSaveStatic("application-ic.properties");
+         String entorno = System.getProperty("entorno");
 
          if (entorno != null && !entorno.equals("")) {
             propiedades = getFilePathToSaveStatic("application-" + entorno + ".properties");
          }
-
       }
 
       String nombrePropiedad = propiedad.toString();
@@ -55,7 +52,6 @@ public class VariablesGlobalesTest {
       if (StringUtils.isBlank(propiedades.get(nombrePropiedad).toString())) {
          throw new IllegalArgumentException("Parámetro " + propiedad + " de configuración inválido");
       }
-
       return propiedades.get(nombrePropiedad).toString();
    }
 

@@ -352,7 +352,6 @@ public class WebElementWrapper {
             if (conseguido) {
                this.resaltaObjeto(elemento, COLOR_AZUL);
             }
-
          }
          catch (Exception e) {
             log.debug("waitUntilElementTextChangedOrDisapeared", e);
@@ -465,6 +464,35 @@ public class WebElementWrapper {
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
+   }
+
+   public void verifyTextPresent(String texto) throws PruebaAceptacionExcepcion {
+      log.debug("verifyTextPresent->" + texto);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.encuentraTextoEnPagina(texto);
+      }
+      if (!conseguido) {
+         String mensaje = "Texto " + texto + " no presente";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   private boolean encuentraTextoEnPagina(String texto) {
+      boolean conseguido = false;
+      try {
+         this.esperaCorta();
+         WebElement textDemo = this.driver.findElement(By.xpath("//*[contains(text(),'" + texto + "')]"));
+         if (textDemo.isDisplayed()) {
+            conseguido = true;
+         }
+      }
+      catch (Exception e) {
+         conseguido = false;
+      }
+      return conseguido;
    }
 
    public void clickParaUploadFichero(By testObject, String rutaFichero) throws PruebaAceptacionExcepcion {
@@ -676,9 +704,8 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             // Localizar el body de la tabla
-            // FIXME : No hay forma de esperar después del evento filtrado, debido al evento
-            // onKeyUp que mete un retraso aleatorio en la carga
-            // del listado.
+            // FIXME : No hay forma de esperar después del evento filtrado, debido al evento onKeyUp que mete un retraso aleatorio en la
+            // carga del listado.
             this.esperaIncondicional(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)));
             table = this.esperaBasica(testObject);
             rows = table.findElements(By.tagName("tr"));
@@ -780,7 +807,7 @@ public class WebElementWrapper {
       return conseguido;
    }
 
-   private boolean isObjetoPresente(By testObject) throws PruebaAceptacionExcepcion {
+   public boolean isObjetoPresente(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("isObjetoPresente->" + testObject.toString());
       boolean conseguido = false;
       WebElement elemento = null;
@@ -817,8 +844,8 @@ public class WebElementWrapper {
       return conseguido;
    }
 
-   private void esperarDesaparezcaProcesando(WebDriver driver) throws PruebaAceptacionExcepcion {
-      log.debug("esperarDesaparezcaProcesando");
+   private void esperarDesaparezcaProcesando() throws PruebaAceptacionExcepcion {
+      log.trace("esperarDesaparezcaProcesando");
 
       String idElementoProcesando = null;
       try {
@@ -829,8 +856,8 @@ public class WebElementWrapper {
       }
       if (idElementoProcesando != null) {
          By by = By.id(idElementoProcesando);
-         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
-         List<WebElement> elementos = driver.findElements(by);
+         this.driver.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
+         List<WebElement> elementos = this.driver.findElements(by);
          try {
             if (elementos.size() > 0) {
                if (elementos.get(0).isDisplayed()) {
@@ -854,20 +881,20 @@ public class WebElementWrapper {
             }
          }
          catch (StaleElementReferenceException e) {
-            log.debug("La ventana procesando ya no está visible");
+            log.trace("La ventana procesando ya no está visible");
          }
       }
    }
 
    public WebElement esperaBasica(By testObject) throws PruebaAceptacionExcepcion {
-      log.debug("esperaBasica->" + testObject.toString());
-      this.esperarDesaparezcaProcesando(this.driver);
+      log.trace("esperaBasica->" + testObject.toString());
+      this.esperarDesaparezcaProcesando();
       this.esperarHastaQueElementoPresente(testObject);
       return this.esperarHastaQueElementoVisible(testObject);
    }
 
    public WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
-      log.debug("esperarHastaQueElementoVisible->" + testObject.toString());
+      log.trace("esperarHastaQueElementoVisible->" + testObject.toString());
       WebElement exito = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
@@ -894,7 +921,7 @@ public class WebElementWrapper {
     * @throws PruebaAceptacionExcepcion
     */
    public void esperarHastaQueElementoNoSeaVisible(By testObject) throws PruebaAceptacionExcepcion {
-      log.debug("esperarHastaQueElementoNoSeaVisible->" + testObject.toString());
+      log.trace("esperarHastaQueElementoNoSeaVisible->" + testObject.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          WebDriverWait wait = new WebDriverWait(this.driver,
@@ -913,7 +940,7 @@ public class WebElementWrapper {
    }
 
    public WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
-      log.debug("esperarHastaQueElementoPresente->" + testObject.toString());
+      log.trace("esperarHastaQueElementoPresente->" + testObject.toString());
       WebElement exito = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
@@ -934,7 +961,7 @@ public class WebElementWrapper {
    }
 
    public WebElement esperarHastaQueElementoClickable(WebElement testObject) throws PruebaAceptacionExcepcion {
-      log.debug("esperarHastaQueElementoClickable->" + testObject.getAttribute("id"));
+      log.trace("esperarHastaQueElementoClickable->" + testObject.getAttribute("id"));
       WebElement exito = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
@@ -1000,8 +1027,283 @@ public class WebElementWrapper {
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
-
       return "";
+   }
+
+   public boolean isTextPresent(String texto) {
+      log.debug("isTextPresent->" + texto);
+      // Se va a intentar localizar un numero finito de veces, si no se encuentra en ninguna esas veces, se considera no esta
+      boolean encontrado = false;
+      for (int i = 1; !encontrado && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            // Intento i-esimo
+            encontrado = this.encuentraTextoEnPagina(texto);
+         }
+         catch (Exception e) {
+            // Porque no parece funcionar bien si no lo encuentra, aunque, segun la descripcion, deberia devolver false y pto...
+            encontrado = false;
+         }
+      }
+      return encontrado;
+   }
+
+   private void esperaCorta() {
+      try {
+         this.esperarDesaparezcaProcesando();
+         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
+      }
+      catch (Exception e) {
+         log.error(e.getLocalizedMessage());
+      }
+   }
+
+   // FIXME: Mover al proyecto cliente de Selenium
+   public int obtieneNumeroResultadosIndicadoEnListado(String clase) throws PruebaAceptacionExcepcion {
+      log.debug("obtieneNumeroResultadosIndicadoEnListado->" + clase);
+      boolean conseguido = false;
+      int num = 0;
+
+      try {
+         By objetoBuscado = By.xpath("//*[@class = '" + clase + "']");
+         WebElement objetoEncontrado;
+         objetoEncontrado = this.esperaBasica(objetoBuscado);
+
+         String texto = objetoEncontrado.getText();
+         if (texto.contains("Resultados: ")) {
+
+            int indice = texto.indexOf(":");
+            String subcadena = texto.substring(indice + 1).trim();
+            num = Integer.parseInt(subcadena);
+            conseguido = true;
+         }
+
+         if (!conseguido) {
+            String mensaje =
+                  "No existe un tal elemento 'paragraph' con clase: " + clase + "que contenga el numero de resultados del listado";
+            log.error(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
+      }
+      catch (PruebaAceptacionExcepcion | NumberFormatException e) {
+         String mensaje = e.getLocalizedMessage();
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+      return num;
+   }
+
+   /**
+    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su titulo el parametro {@code titulo} y en su class el
+    * parametro {@code clase}. Ademas ese elemento debe ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los
+    * iconos de los listados y tener en un lugar centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este
+    * metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
+    *
+    * @param genericObjectPath
+    *           path hacia el objeto generico a utilizar.
+    * @param titulo
+    *           a considerar para el title.
+    * @param clase
+    *           a considerar para la clase CSS.
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void pulsaUnicoElementoPara(String titulo, String clase) throws PruebaAceptacionExcepcion {
+      log.debug("pulsaUnicoElementoPara->" + titulo + "-" + clase);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.pulsaUnicoElementoParaAux(titulo, clase);
+      }
+      if (!conseguido) {
+         String mensaje = "No existe un unico elemento a cliquear en el listado";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su titulo el parametro {@code titulo} y en su class el
+    * parametro {@code clase}. Ademas ese elemento debe ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los
+    * iconos de los listados y tener en un lugar centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este
+    * metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
+    *
+    * @param genericObjectPath
+    *           path hacia el objeto generico a utilizar.
+    * @param titulo
+    *           a considerar para el title.
+    * @param clase
+    *           a considerar para la clase CSS.
+    * @return devuelve true si consigue pulsar sobre ese unico elemento; en caso contrario, devuelve false.
+    * @throws PruebaAceptacionExcepcion
+    */
+   private boolean pulsaUnicoElementoParaAux(String titulo, String clase) {
+      log.trace("pulsaUnicoElementoParaAux->" + titulo + "-" + clase);
+      try {
+         By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
+         WebElement objetoEncontrado = this.esperaBasica(objetoBuscado);
+         objetoEncontrado.click();
+         return true;
+      }
+      catch (Exception e) {
+         log.debug(e.getLocalizedMessage());
+         return false;
+      }
+   }
+
+   /**
+    * Devuelve el numero de botones visibles en el listado de una pagina que sea un listado, que verifican las condiciones indicadas.
+    *
+    * @param genericObjectPath
+    *           path a objeto generico usado en la busqueda.
+    * @param titulo
+    *           el valor aqui indicado ha de estar incluido en el atributo 'title' de los elementos buscados.
+    * @param clase
+    *           el valor aqui indicado ha de estar incluido en el atributo 'class' de los elementos buscados.
+    * @return el numero de botones visibles en el listado de una pagina que sea un listado, que verifican las condiciones indicadas.
+    * @throws PruebaAceptacionExcepcion
+    */
+   public int obtieneNumeroBotonesVisiblesEnListadoPara(String titulo, String clase) throws PruebaAceptacionExcepcion {
+      log.debug("obtieneNumeroBotonesVisiblesEnListadoPara->" + titulo + "-" + clase);
+      try {
+         int num = 0;
+
+         // Se espera a que desaparezca el mensaje procesando o se cargue la pagina...
+         this.esperaCorta();
+
+         // Aqui no tiene sentido la repeticion de intentos pues, tras esperar la carga de la pagina, basta obtener el numero de botones que
+         // se consideren.
+         By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
+
+         // List<WebElement> webElements = WebUiCommonHelper.findWebElements(genericObject, GlobalVariable.tiempoRetrasoCorto)
+         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+
+         if (null != webElements) {
+            num = webElements.size();
+         }
+         return num;
+      }
+      catch (Exception e) {
+         log.error(e.getLocalizedMessage());
+         throw e;
+      }
+   }
+
+   /**
+    * Se intenta pulsar sobre el elemento i-esimo del listado. Si no se consigue se deja constancia de ello.
+    *
+    * @param genericObjectPath
+    *           path a objeto generico utilizado para llevar a cabo esta funcionalidad.
+    * @param pos
+    *           posicion i-esima cuyo elemento se pretende pulsar, comenzando en 1, 2, 3, ... tam del listado.
+    * @param titulo
+    *           a considerar para el title.
+    * @param clase
+    *           a considerar para la clase CSS.
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void pulsaElementoIesimoPara(int pos, String titulo, String clase) throws PruebaAceptacionExcepcion {
+      log.debug("pulsaElementoIesimoPara->" + pos + "-" + titulo + "-" + clase);
+      boolean conseguido;
+      try {
+         conseguido = false;
+         for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+
+            // Intento siguiente
+            conseguido = this.pulsaElementoIesimoParaAux(pos, titulo, clase);
+         }
+      }
+      catch (PruebaAceptacionExcepcion e) {
+         log.error(e.getLocalizedMessage());
+         throw e;
+      }
+      if (!conseguido) {
+         String mensaje = "No ha sido posible cliquear en elemento del listado de la posicion: " + pos;
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Se pulsa en el elemento i-esimo del listado de acuerdo a las condiciones indicadas.
+    *
+    * @param genericObjectPath
+    *           path a objeto generico utilizado para llevar a cabo esta funcionalidad.
+    * @param pos
+    *           posicion i-esima cuyo elemento es pulsado, comenzando en 1, 2, 3, ... tam del listado.
+    * @param titulo
+    *           a considerar para el title.
+    * @param clase
+    *           a considerar para la clase CSS.
+    * @return si se consigue pulsar sobre este elemento i-esimo o no.
+    * @throws PruebaAceptacionExcepcion
+    */
+   private boolean pulsaElementoIesimoParaAux(int pos, String titulo, String clase) throws PruebaAceptacionExcepcion {
+      log.trace("pulsaElementoIesimoParaAux->" + pos + "-" + titulo + "-" + clase);
+      boolean pulsado;
+      try {
+         pulsado = false;
+
+         By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
+
+         this.esperaCorta();
+
+         // List<WebElement> webElements = WebUiCommonHelper.findWebElements(genericObject, GlobalVariable.tiempoRetrasoCorto)
+         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+
+         if (null != webElements && webElements.size() > 0 && webElements.size() >= pos) {
+            log.info("" + webElements.size());
+            // Pulsamos el i-esimo
+            webElements.get(pos - 1).click();
+            this.esperaCorta();
+
+            pulsado = true;
+         }
+      }
+      catch (Exception e) {
+         log.error(e.getLocalizedMessage());
+         throw e;
+      }
+      return pulsado;
+   }
+
+   public void pulsaPrimerElementoDocsAnexos(String textoEnlace) throws PruebaAceptacionExcepcion {
+      log.debug("pulsaPrimerElementoDocsAnexos->" + textoEnlace);
+
+      boolean conseguido = false;
+      int numeroIntentos = 5;
+
+      for (int i = 1; !conseguido && i <= numeroIntentos; i++) {
+
+         // Intento i-esimo
+         conseguido = this.pulsaPrimerElementoDocsAnexosAux(textoEnlace);
+      }
+      if (!conseguido) {
+         String mensaje = "No existe un primer tipo de documentos anexos a seleccionar";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Intenta pulsar sobre el primer elemento que se encuentra en la pagina que contiene el texto que se pasa como parametro.
+    *
+    * @param textoEnlace
+    *           texto que aparece dentro del enlace.
+    * @return Si consigue pulsar sobre el texto, devuelve 1; caso contrario, devuelve 0.
+    * @throws PruebaAceptacionExcepcion
+    */
+   private boolean pulsaPrimerElementoDocsAnexosAux(String textoEnlace) throws PruebaAceptacionExcepcion {
+      log.trace("pulsaPrimerElementoDocsAnexosAux->" + textoEnlace);
+
+      this.esperaCorta();
+
+      By objetoBuscado = By.xpath("//a[contains(text(), '" + textoEnlace + "')]");
+      List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+      for (WebElement webElement : webElements) {
+         // Si lo encuentra, pulsa sobre el y punto..., devolviendo un 1 como que lo pulso
+         webElement.click();
+         return true;
+      }
+      return false;
    }
 
 }

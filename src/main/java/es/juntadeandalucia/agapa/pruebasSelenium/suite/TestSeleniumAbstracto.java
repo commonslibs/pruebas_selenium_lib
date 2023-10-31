@@ -43,6 +43,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          this.iniciar();
       }
       catch (Exception e) {
+         Traza.error(e.getLocalizedMessage());
          throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
       }
    }
