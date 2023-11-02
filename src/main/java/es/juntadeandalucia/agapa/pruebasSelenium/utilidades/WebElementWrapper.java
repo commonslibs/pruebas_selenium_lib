@@ -851,7 +851,7 @@ public class WebElementWrapper {
       try {
          idElementoProcesando = VariablesGlobalesTest.getPropiedad(PropiedadesTest.ID_ELEMENTO_PROCESANDO);
       }
-      catch (IllegalArgumentException e) {
+      catch (PruebaAceptacionExcepcion e) {
          log.trace("ID_ELEMENTO_PROCESANDO no definido en fichero properties");
       }
       if (idElementoProcesando != null) {
@@ -1306,4 +1306,16 @@ public class WebElementWrapper {
       return false;
    }
 
+   public void clickMensajePorTexto(String texto) throws PruebaAceptacionExcepcion {
+      log.debug("clickMensajePorTexto->" + texto);
+      By objetoBuscado = By.xpath("//p[contains(text(), '" + texto + "')]");
+      try {
+         this.click(objetoBuscado);
+      }
+      catch (PruebaAceptacionExcepcion e) {
+         String mensaje = "No se puede hacer clic en el \"p\" con el texto: " + texto;
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
 }

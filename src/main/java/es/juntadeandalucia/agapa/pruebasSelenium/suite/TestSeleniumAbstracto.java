@@ -62,7 +62,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       try {
          propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
       }
-      catch (IllegalArgumentException e) {
+      catch (PruebaAceptacionExcepcion e) {
          Traza.info("Propiedad MAXIMIZAR no definida. Se asume como TRUE");
       }
       boolean maximizar;

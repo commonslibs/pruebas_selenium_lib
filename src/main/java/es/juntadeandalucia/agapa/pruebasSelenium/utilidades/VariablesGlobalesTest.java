@@ -1,5 +1,6 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
+import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -33,9 +34,9 @@ public class VariablesGlobalesTest {
     *
     * @param propiedad
     * @return Valor de las propiedades del property
-    * @throws IllegalArgumentException
+    * @throws PruebaAceptacionExcepcion
     */
-   public static String getPropiedad(PropiedadGenerica propiedad) throws IllegalArgumentException {
+   public static String getPropiedad(PropiedadGenerica propiedad) throws PruebaAceptacionExcepcion {
       if (propiedades == null) {
          String entorno = System.getProperty("entorno");
 
@@ -46,11 +47,11 @@ public class VariablesGlobalesTest {
 
       String nombrePropiedad = propiedad.toString();
       if (!propiedades.containsKey(nombrePropiedad)) {
-         throw new IllegalArgumentException("Parámetro " + propiedad + " no se ha encontrado en el fichero de configuración");
+         throw new PruebaAceptacionExcepcion("Parámetro " + propiedad + " no se ha encontrado en el fichero de configuración");
       }
 
       if (StringUtils.isBlank(propiedades.get(nombrePropiedad).toString())) {
-         throw new IllegalArgumentException("Parámetro " + propiedad + " de configuración inválido");
+         throw new PruebaAceptacionExcepcion("Parámetro " + propiedad + " de configuración inválido");
       }
       return propiedades.get(nombrePropiedad).toString();
    }
