@@ -11,7 +11,6 @@ import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTes
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -25,9 +24,9 @@ import org.testng.annotations.Listeners;
 @Listeners({ ResumenListener.class, InformeListener.class, UniversalVideoListener.class })
 public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests {
 
-   /** Instacia de webdriver usado en el caso de prueba */
-   @Getter
-   protected WebDriver driver;
+   public WebDriver getDriver() {
+      return WebDriverFactory.getDriver();
+   }
 
    /**
     * Metodo que se ejecuta antes de los test.
@@ -49,15 +48,18 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    public void afterMethod() throws PruebaAceptacionExcepcion {
-      this.driver.quit();
+      ChromeDriver chrome = (ChromeDriver) WebDriverFactory.getDriver();
+      chrome.close();
+      WebDriverFactory.getDriver().quit();
+      WebDriverFactory.setDriver(null);
    }
 
    private void iniciar() throws PruebaAceptacionExcepcion {
       Navegador navegador = Navegador.valueOf(VariablesGlobalesTest.getPropiedad(PropiedadesTest.NAVEGADOR));
-      this.driver = WebDriverFactory.obtenerInstancia(navegador);
-      ChromeDriver chrome = (ChromeDriver) this.driver;
+      WebDriverFactory.setDriver(WebDriverFactory.obtenerInstancia(navegador));
+      ChromeDriver chrome = (ChromeDriver) WebDriverFactory.getDriver();
       Traza.info(chrome.toString());
-      assertNotNull(this.driver, "Error al instanciar el driver de " + navegador);
+      assertNotNull(WebDriverFactory.getDriver(), "Error al instanciar el driver de " + navegador);
       String propiedadMaximizar = null;
       try {
          propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
@@ -73,7 +75,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          maximizar = Boolean.valueOf(propiedadMaximizar);
       }
       if (maximizar) {
-         this.driver.manage().window().maximize();
+         WebDriverFactory.getDriver().manage().window().maximize();
       }
    }
 

@@ -2,6 +2,7 @@ package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import java.time.Duration;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -27,8 +27,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 @Slf4j
 public class WebElementWrapper {
 
-   private WebDriver           driver;
-
    private final static String COLOR_AMARILLO         = "yellow"; // Interacción
 
    private final static String COLOR_AZUL             = "cyan";   // Comprobación
@@ -36,10 +34,6 @@ public class WebElementWrapper {
    private final static int    NUMERO_MAXIMO_INTENTOS = 5;
 
    private final static int    NUMERO_MINIMO_INTENTOS = 2;
-
-   public WebElementWrapper(WebDriver driver) {
-      this.driver = driver;
-   }
 
    /**
     * Acción de seleccionar un elemento con etiqueta @param labelValue de un combo (select desplegable) identificado por el @param
@@ -94,7 +88,7 @@ public class WebElementWrapper {
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
 
             this.esperarHastaQueElementoClickable(elemento);
-            Actions actions = new Actions(this.driver);
+            Actions actions = new Actions(WebDriverFactory.getDriver());
             actions.doubleClick(elemento).perform();
             conseguido = true;
          }
@@ -434,8 +428,8 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             elemento = this.esperaCompleta(testObject);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             valorAtributo = elemento.getAttribute(atributo);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             conseguido = true;
          }
          catch (Exception e) {
@@ -456,16 +450,16 @@ public class WebElementWrapper {
       boolean conseguido = false;
       String valorAtributo = "";
       WebElement elemento = null;
-      PruebaAceptacionExcepcion excepcion = null;
+      Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             elemento = this.esperaCompleta(testObject);
-            this.resaltaObjeto(elemento, COLOR_AZUL);
             valorAtributo = elemento.getAttribute(atributo);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
 
          }
-         catch (PruebaAceptacionExcepcion e) {
+         catch (Exception e) {
             conseguido = false;
             excepcion = e;
          }
@@ -502,7 +496,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       try {
          this.esperaCorta();
-         WebElement textDemo = this.driver.findElement(By.xpath("//*[contains(text(),'" + texto + "')]"));
+         WebElement textDemo = WebDriverFactory.getDriver().findElement(By.xpath("//*[contains(text(),'" + texto + "')]"));
          if (textDemo.isDisplayed()) {
             this.resaltaObjeto(textDemo, COLOR_AMARILLO);
             conseguido = true;
@@ -548,8 +542,8 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             elemento = this.esperaCompleta(testObject);
-            this.resaltaObjeto(elemento, COLOR_AZUL);
             cadena = elemento.getText();
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
@@ -762,7 +756,7 @@ public class WebElementWrapper {
     */
    public void scrollTopPagina() {
       log.debug("scrollTopPagina");
-      ((JavascriptExecutor) this.driver).executeScript("window.scrollTo(0, -document.body.scrollHeight)");
+      ((JavascriptExecutor) WebDriverFactory.getDriver()).executeScript("window.scrollTo(0, -document.body.scrollHeight)");
    }
 
    /**
@@ -792,7 +786,7 @@ public class WebElementWrapper {
 
    public void esperarHastaQueElementoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoNoPresente->" + testObject.toString());
-      WebDriverWait wait = new WebDriverWait(this.driver,
+      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO))),
             Duration.ofMillis(100));
       try {
@@ -812,8 +806,8 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             elemento = this.esperaCompleta(testObject);
-            this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = elemento.isSelected();
+            this.resaltaObjeto(elemento, COLOR_AZUL);
          }
          catch (PruebaAceptacionExcepcion e) {
             conseguido = false;
@@ -875,8 +869,8 @@ public class WebElementWrapper {
       }
       if (idElementoProcesando != null) {
          By by = By.id(idElementoProcesando);
-         this.driver.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
-         List<WebElement> elementos = this.driver.findElements(by);
+         WebDriverFactory.getDriver().manage().timeouts().implicitlyWait(Duration.ofMillis(1));
+         List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
          try {
             if (elementos.size() > 0) {
                if (elementos.get(0).isDisplayed()) {
@@ -905,7 +899,7 @@ public class WebElementWrapper {
       }
    }
 
-   public WebElement esperaBreve(By testObject) throws PruebaAceptacionExcepcion {
+   private WebElement esperaBreve(By testObject) throws PruebaAceptacionExcepcion {
       log.trace("esperaMinima->" + testObject.toString());
       this.esperarDesaparezcaProcesando();
       this.esperarHastaQueElementoPresenteBreve(testObject);
@@ -922,7 +916,7 @@ public class WebElementWrapper {
    private WebElement esperarHastaQueElementoVisibleBreve(By testObject) throws PruebaAceptacionExcepcion {
       log.trace("esperarHastaQueElementoVisibleMinimo->" + testObject.toString());
       WebElement elemento = null;
-      WebDriverWait wait = new WebDriverWait(this.driver,
+      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
             Duration.ofMillis(100));
       try {
@@ -941,7 +935,7 @@ public class WebElementWrapper {
       WebElement exito = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(this.driver,
+         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
                Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
                Duration.ofMillis(100));
          try {
@@ -967,11 +961,11 @@ public class WebElementWrapper {
       log.trace("esperarHastaQueElementoNoSeaVisible->" + testObject.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(this.driver,
+         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
                Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
                Duration.ofMillis(100));
          try {
-            wait.until(ExpectedConditions.invisibilityOf(this.driver.findElement(testObject)));
+            wait.until(ExpectedConditions.invisibilityOf(WebDriverFactory.getDriver().findElement(testObject)));
             conseguido = true;
          }
          catch (TimeoutException e) {
@@ -984,7 +978,7 @@ public class WebElementWrapper {
 
    public void esperarHastaQueElementoPresenteBreve(By testObject) throws PruebaAceptacionExcepcion {
       log.trace("esperarHastaQueElementoPresenteMinimo->" + testObject.toString());
-      WebDriverWait wait = new WebDriverWait(this.driver,
+      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO))),
             Duration.ofMillis(100));
       try {
@@ -1002,7 +996,7 @@ public class WebElementWrapper {
       WebElement exito = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(this.driver,
+         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
                Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
                Duration.ofMillis(100));
          try {
@@ -1023,7 +1017,7 @@ public class WebElementWrapper {
       WebElement exito = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(this.driver,
+         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
                Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
                Duration.ofMillis(100));
          try {
@@ -1050,7 +1044,7 @@ public class WebElementWrapper {
    private void resaltaObjeto(WebElement element, String color) {
       log.trace("resaltaObjeto->" + element.toString() + ". Color=" + color);
       try {
-         JavascriptExecutor js = (JavascriptExecutor) this.driver;
+         JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
          js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element,
                "background: " + color + "; color: black; border: 3px solid black;");
       }
@@ -1232,7 +1226,7 @@ public class WebElementWrapper {
          By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
 
          // List<WebElement> webElements = WebUiCommonHelper.findWebElements(genericObject, GlobalVariable.tiempoRetrasoCorto)
-         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+         List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
 
          if (null != webElements) {
             num = webElements.size();
@@ -1305,7 +1299,7 @@ public class WebElementWrapper {
          this.esperaCorta();
 
          // List<WebElement> webElements = WebUiCommonHelper.findWebElements(genericObject, GlobalVariable.tiempoRetrasoCorto)
-         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+         List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
 
          if (null != webElements && webElements.size() > 0 && webElements.size() >= pos) {
             log.info("" + webElements.size());
@@ -1356,7 +1350,7 @@ public class WebElementWrapper {
       this.esperaCorta();
 
       By objetoBuscado = By.xpath("//a[contains(text(), '" + textoEnlace + "')]");
-      List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+      List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
       for (WebElement webElement : webElements) {
          // Si lo encuentra, pulsa sobre el y punto..., devolviendo un 1 como que lo pulso
          this.resaltaObjeto(webElement, COLOR_AMARILLO);
@@ -1420,7 +1414,7 @@ public class WebElementWrapper {
 
          this.esperaCorta();
 
-         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+         List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
          if (null != webElements && 1 == webElements.size()) {
             // La posicion es posible...
             WebElement elemento = webElements.get(0);
@@ -1468,7 +1462,7 @@ public class WebElementWrapper {
 
          this.esperaCorta();
 
-         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+         List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
          if (null != webElements && 1 == webElements.size()) {
             // SOLO debe quedar UNO!!!
             WebElement elemento = webElements.get(0);
@@ -1515,7 +1509,7 @@ public class WebElementWrapper {
 
       this.esperaCorta();
 
-      List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+      List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
       if (null != webElements && 0 < webElements.size()) {
          // NO DEBE QUEDAR NINGUNO, Y HAY ELEMENTOS
          WebElement elemento = webElements.get(0);
@@ -1560,7 +1554,7 @@ public class WebElementWrapper {
 
          this.esperaCorta();
 
-         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+         List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
          if (null != webElements && 1 == webElements.size()) {
             // Solo puede quedar UNO!!!
             WebElement elemento = webElements.get(0);

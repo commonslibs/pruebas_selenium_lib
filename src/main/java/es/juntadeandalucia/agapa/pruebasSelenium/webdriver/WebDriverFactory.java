@@ -1,9 +1,11 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.webdriver;
 
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WebElementWrapper;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -22,6 +24,12 @@ import org.openqa.selenium.firefox.GeckoDriverService;
  */
 @Slf4j
 public class WebDriverFactory {
+
+   // Almacén del WebDriver compartido por todos los servicios y clases de test del proyecto.
+   @Setter
+   private static WebDriver         driver;
+
+   private static WebElementWrapper webElementWrapper;
 
    public enum Navegador {
       CHROME, FIREFOX, MSEDGE
@@ -105,6 +113,17 @@ public class WebDriverFactory {
       log.error("El fichero " + filename + " no se encuentra en disco...");
 
       return "";
+   }
+
+   public static WebDriver getDriver() {
+      return WebDriverFactory.driver;
+   }
+
+   public static WebElementWrapper getWebElementWrapper() {
+      if (webElementWrapper == null) {
+         webElementWrapper = new WebElementWrapper();
+      }
+      return webElementWrapper;
    }
 
 }
