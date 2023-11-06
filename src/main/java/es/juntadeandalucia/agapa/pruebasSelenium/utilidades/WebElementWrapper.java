@@ -29,11 +29,13 @@ public class WebElementWrapper {
 
    private WebDriver           driver;
 
-   private final static String COLOR_AMARILLO         = "yellow";
+   private final static String COLOR_AMARILLO         = "yellow"; // Interacción
 
-   private final static String COLOR_AZUL             = "cyan";
+   private final static String COLOR_AZUL             = "cyan";   // Comprobación
 
    private final static int    NUMERO_MAXIMO_INTENTOS = 5;
+
+   private final static int    NUMERO_MINIMO_INTENTOS = 2;
 
    public WebElementWrapper(WebDriver driver) {
       this.driver = driver;
@@ -58,16 +60,16 @@ public class WebElementWrapper {
       log.debug("click->" + testObject.toString());
       boolean conseguido = false;
       WebElement elemento = null;
-      PruebaAceptacionExcepcion excepcion = null;
+      Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
 
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
             this.esperarHastaQueElementoClickable(elemento).click();
             conseguido = true;
          }
-         catch (PruebaAceptacionExcepcion e) {
+         catch (Exception e) {
             conseguido = false;
             excepcion = e;
          }
@@ -88,7 +90,7 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
 
             this.esperarHastaQueElementoClickable(elemento);
@@ -148,7 +150,7 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
 
             Select comboBox = new Select(elemento);
@@ -174,7 +176,7 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
 
             Select comboBox = new Select(elemento);
@@ -194,6 +196,22 @@ public class WebElementWrapper {
       }
    }
 
+   public void selectOptionByLabel(By testObject, String label, boolean conRetraso) throws PruebaAceptacionExcepcion {
+      log.debug("selectOptionByLabel->" + testObject.toString() + ". Label=" + label + ". Con retraso=" + conRetraso);
+      try {
+         this.selectOptionByLabel(testObject, label);
+         if (conRetraso) {
+            this.esperaCorta();
+         }
+      }
+      catch (PruebaAceptacionExcepcion e) {
+         String mensaje =
+               "Error al hacer seleccionar el valor del combo por etiqueta con retraso. Motivo del error: " + e.getLocalizedMessage();
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
    public void verifyOptionSelectedByLabel(By testObject, String label) throws PruebaAceptacionExcepcion {
       log.debug("verifyOptionSelectedByLabel->" + testObject.toString() + ". Label=" + label);
       boolean conseguido = false;
@@ -202,7 +220,7 @@ public class WebElementWrapper {
       String etiquetaSeleccionada = "";
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AZUL);
             Select comboBox = new Select(elemento);
             etiquetaSeleccionada = comboBox.getFirstSelectedOption().getText().trim();
@@ -235,7 +253,7 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
 
             Select comboBox = new Select(elemento);
@@ -263,8 +281,8 @@ public class WebElementWrapper {
       String valorSeleccionado = "";
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
 
             Select comboBox = new Select(elemento);
             valorSeleccionado = comboBox.getFirstSelectedOption().getText();
@@ -292,7 +310,7 @@ public class WebElementWrapper {
 
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             if (elemento == null) {
                throw new PruebaAceptacionExcepcion(testObject.toString() + " no existe");
             }
@@ -331,12 +349,12 @@ public class WebElementWrapper {
       boolean conseguido = false;
       WebElement elemento = null;
 
-      elemento = this.esperaBasica(testObject);
-      this.resaltaObjeto(elemento, COLOR_AMARILLO);
+      elemento = this.esperaCompleta(testObject);
+      this.resaltaObjeto(elemento, COLOR_AZUL);
 
       while (!conseguido) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
 
             if (elemento == null) {
                // Ha desaparecido --> ok
@@ -350,7 +368,7 @@ public class WebElementWrapper {
             }
 
             if (conseguido) {
-               this.resaltaObjeto(elemento, COLOR_AZUL);
+               this.resaltaObjeto(elemento, COLOR_AMARILLO);
             }
          }
          catch (Exception e) {
@@ -415,8 +433,8 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
-            this.resaltaObjeto(elemento, COLOR_AZUL);
+            elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             valorAtributo = elemento.getAttribute(atributo);
             conseguido = true;
          }
@@ -441,7 +459,7 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AZUL);
             valorAtributo = elemento.getAttribute(atributo);
             conseguido = true;
@@ -486,6 +504,7 @@ public class WebElementWrapper {
          this.esperaCorta();
          WebElement textDemo = this.driver.findElement(By.xpath("//*[contains(text(),'" + texto + "')]"));
          if (textDemo.isDisplayed()) {
+            this.resaltaObjeto(textDemo, COLOR_AMARILLO);
             conseguido = true;
          }
       }
@@ -502,7 +521,7 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
             this.esperarHastaQueElementoClickable(elemento);
             elemento.sendKeys(rutaFichero);
@@ -528,8 +547,8 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             cadena = elemento.getText();
             conseguido = true;
          }
@@ -562,8 +581,8 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
 
             Select comboBox = new Select(elemento);
             List<WebElement> listOptionDropdown = comboBox.getOptions();
@@ -609,7 +628,7 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             // Localizar el body de la tabla
-            table = this.esperaBasica(testObject);
+            table = this.esperaCompleta(testObject);
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
@@ -665,7 +684,7 @@ public class WebElementWrapper {
             // onKeyUp que mete un retraso aleatorio en la carga
             // del listado.
             Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
-            table = this.esperaBasica(testObject);
+            table = this.esperaCompleta(testObject);
             rows = table.findElements(By.tagName("tr"));
             numeroDeFilas = rows.size();
             conseguido = true;
@@ -707,7 +726,7 @@ public class WebElementWrapper {
             // FIXME : No hay forma de esperar después del evento filtrado, debido al evento onKeyUp que mete un retraso aleatorio en la
             // carga del listado.
             this.esperaIncondicional(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)));
-            table = this.esperaBasica(testObject);
+            table = this.esperaCompleta(testObject);
             rows = table.findElements(By.tagName("tr"));
             numeroDeFilas = rows.size();
             if (numeroDeFilas == numeroFilasEsperadas) {
@@ -756,7 +775,7 @@ public class WebElementWrapper {
     */
    public int obtenerNumeroRegistrosTabla(By tabla) throws PruebaAceptacionExcepcion {
       log.debug("obtenerNumeroRegistrosTabla->" + tabla.toString());
-      WebElement t = this.esperaBasica(tabla);
+      WebElement t = this.esperaCompleta(tabla);
 
       // Identificador de la informacion del nº de registros del listado. (Ej: 1-10 de
       // 100 resultados)
@@ -792,7 +811,7 @@ public class WebElementWrapper {
       WebElement elemento = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = elemento.isSelected();
          }
@@ -811,9 +830,9 @@ public class WebElementWrapper {
       log.debug("isObjetoPresente->" + testObject.toString());
       boolean conseguido = false;
       WebElement elemento = null;
-      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+      for (int i = 1; !conseguido && i <= NUMERO_MINIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaBreve(testObject);
             this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
@@ -832,7 +851,7 @@ public class WebElementWrapper {
       log.debug("isObjetoNoPresente->" + testObject.toString());
       boolean conseguido = false;
       try {
-         this.esperaBasica(testObject);
+         this.esperaCompleta(testObject);
       }
       catch (PruebaAceptacionExcepcion e) {
          conseguido = true;
@@ -886,11 +905,35 @@ public class WebElementWrapper {
       }
    }
 
-   public WebElement esperaBasica(By testObject) throws PruebaAceptacionExcepcion {
+   public WebElement esperaBreve(By testObject) throws PruebaAceptacionExcepcion {
+      log.trace("esperaMinima->" + testObject.toString());
+      this.esperarDesaparezcaProcesando();
+      this.esperarHastaQueElementoPresenteBreve(testObject);
+      return this.esperarHastaQueElementoVisibleBreve(testObject);
+   }
+
+   public WebElement esperaCompleta(By testObject) throws PruebaAceptacionExcepcion {
       log.trace("esperaBasica->" + testObject.toString());
       this.esperarDesaparezcaProcesando();
       this.esperarHastaQueElementoPresente(testObject);
       return this.esperarHastaQueElementoVisible(testObject);
+   }
+
+   private WebElement esperarHastaQueElementoVisibleBreve(By testObject) throws PruebaAceptacionExcepcion {
+      log.trace("esperarHastaQueElementoVisibleMinimo->" + testObject.toString());
+      WebElement elemento = null;
+      WebDriverWait wait = new WebDriverWait(this.driver,
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
+            Duration.ofMillis(100));
+      try {
+         elemento = wait.until(ExpectedConditions.visibilityOfElementLocated(testObject));
+      }
+      catch (TimeoutException e) {
+         String mensaje = "Error al esperar brevemente que el objeto " + testObject.toString() + " sea visible";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+      return elemento;
    }
 
    public WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
@@ -936,6 +979,21 @@ public class WebElementWrapper {
             log.error(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
+      }
+   }
+
+   public void esperarHastaQueElementoPresenteBreve(By testObject) throws PruebaAceptacionExcepcion {
+      log.trace("esperarHastaQueElementoPresenteMinimo->" + testObject.toString());
+      WebDriverWait wait = new WebDriverWait(this.driver,
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO))),
+            Duration.ofMillis(100));
+      try {
+         wait.until(ExpectedConditions.presenceOfElementLocated(testObject));
+      }
+      catch (TimeoutException e) {
+         String mensaje = "Error al esperar brevemente que el objeto " + testObject + " esté presente";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
 
@@ -989,7 +1047,7 @@ public class WebElementWrapper {
     * @param color
     * @throws PruebaAceptacionExcepcion
     */
-   private void resaltaObjeto(WebElement element, String color) throws PruebaAceptacionExcepcion {
+   private void resaltaObjeto(WebElement element, String color) {
       log.trace("resaltaObjeto->" + element.toString() + ". Color=" + color);
       try {
          JavascriptExecutor js = (JavascriptExecutor) this.driver;
@@ -997,9 +1055,8 @@ public class WebElementWrapper {
                "background: " + color + "; color: black; border: 3px solid black;");
       }
       catch (Exception e) {
-         String mensaje = "El elemento " + element + " no puede ser resaltado con color";
+         String mensaje = "El elemento " + element + " no puede ser resaltado con color " + color;
          log.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
 
@@ -1015,7 +1072,7 @@ public class WebElementWrapper {
       WebElement elemento = null;
       try {
          if (this.isObjetoPresente(testObject)) {
-            elemento = this.esperaBasica(testObject);
+            elemento = this.esperaCompleta(testObject);
 
             this.resaltaObjeto(elemento, COLOR_AZUL);
             return elemento.getText();
@@ -1066,7 +1123,7 @@ public class WebElementWrapper {
       try {
          By objetoBuscado = By.xpath("//*[@class = '" + clase + "']");
          WebElement objetoEncontrado;
-         objetoEncontrado = this.esperaBasica(objetoBuscado);
+         objetoEncontrado = this.esperaCompleta(objetoBuscado);
 
          String texto = objetoEncontrado.getText();
          if (texto.contains("Resultados: ")) {
@@ -1139,7 +1196,8 @@ public class WebElementWrapper {
       log.trace("pulsaUnicoElementoParaAux->" + titulo + "-" + clase);
       try {
          By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
-         WebElement objetoEncontrado = this.esperaBasica(objetoBuscado);
+         WebElement objetoEncontrado = this.esperaCompleta(objetoBuscado);
+         this.resaltaObjeto(objetoEncontrado, COLOR_AMARILLO);
          objetoEncontrado.click();
          return true;
       }
@@ -1252,6 +1310,7 @@ public class WebElementWrapper {
          if (null != webElements && webElements.size() > 0 && webElements.size() >= pos) {
             log.info("" + webElements.size());
             // Pulsamos el i-esimo
+            this.resaltaObjeto(webElements.get(pos - 1), COLOR_AMARILLO);
             webElements.get(pos - 1).click();
             this.esperaCorta();
 
@@ -1300,6 +1359,7 @@ public class WebElementWrapper {
       List<WebElement> webElements = this.driver.findElements(objetoBuscado);
       for (WebElement webElement : webElements) {
          // Si lo encuentra, pulsa sobre el y punto..., devolviendo un 1 como que lo pulso
+         this.resaltaObjeto(webElement, COLOR_AMARILLO);
          webElement.click();
          return true;
       }
@@ -1318,4 +1378,203 @@ public class WebElementWrapper {
          throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
+
+   /**
+    * Se hace click sobre el icono iesimo de subida de un fichero dentro del listado de documentos presentes en la pagina mostrada.
+    *
+    * @param rutaFichero
+    *           ruta hacia el fichero que va a ser subido a la aplicacion.
+    * @param posicion
+    *           posicion en el listado de iconos de subida que indica el icono sobre el que se va a pulsar.
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void clickParaUploadFicheroIesimoListado(String rutaFichero, int posicion) throws PruebaAceptacionExcepcion {
+      log.debug("clickParaUploadFicheroIesimoListado->" + rutaFichero + "-" + posicion);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.clickParaUploadFicheroIesimoListadoAux(rutaFichero, posicion);
+      }
+      if (!conseguido) {
+         String mensaje = "No se puede hacer click en elemento i-esimo del listado: posicion = " + posicion;
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Se hace click sobre el icono iesimo de subida de un fichero dentro del listado de documentos presentes en la pagina mostrada.
+    *
+    * @param rutaFichero
+    *           ruta hacia el fichero que va a ser subido a la aplicacion.
+    * @param posicion
+    *           posicion en el listado de iconos de subida que indica el icono sobre el que se va a pulsar.
+    * @return devuelve si ha sido posible o no pulsar sobre dicho icono en dicha posicion.
+    */
+   private boolean clickParaUploadFicheroIesimoListadoAux(String rutaFichero, int posicion) {
+      log.trace("clickParaUploadFicheroIesimoListadoAux->" + rutaFichero + "-" + posicion);
+      boolean conseguido = false;
+      try {
+         String id = ":" + (posicion - 1) + ":subirFichero:file";
+         By objetoBuscado = By.xpath("//input[@type = 'file' and contains(@id, '" + id + "')]");
+
+         this.esperaCorta();
+
+         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+         if (null != webElements && 1 == webElements.size()) {
+            // La posicion es posible...
+            WebElement elemento = webElements.get(0);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.esperarHastaQueElementoClickable(elemento).click();
+            elemento.sendKeys(rutaFichero);
+            conseguido = true;
+         }
+      }
+      catch (Exception e) {
+         String mensaje = "No se puede hacer clic en el fichero en posición: " + posicion;
+         log.error(mensaje);
+      }
+      return conseguido;
+   }
+
+   /**
+    * Pulsa sobre el unico elemento descargable en el listado de documentacion anexa.
+    *
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void pulsaUnicoElementoDescargable() throws PruebaAceptacionExcepcion {
+      log.debug("pulsaUnicoElementoDescargable");
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.pulsaUnicoElementoDescargableAux();
+      }
+      if (conseguido) {
+         String mensaje = "No existe un unico elemento descargable en el listado";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Intenta pulsar sobre el unico elemento descargable.
+    *
+    * @return Si consigue pulsar sobre el unico elemento descargable, devuelve 1; caso contrario, devuelve 0.
+    */
+   private boolean pulsaUnicoElementoDescargableAux() {
+      log.trace("pulsaUnicoElementoDescargableAux");
+      try {
+         By objetoBuscado = By.xpath("//input[@type = 'submit' and contains(@id, ':cLDescargaFichero')]");
+
+         this.esperaCorta();
+
+         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+         if (null != webElements && 1 == webElements.size()) {
+            // SOLO debe quedar UNO!!!
+            WebElement elemento = webElements.get(0);
+            // webElements.get(0).click();
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.esperarHastaQueElementoClickable(elemento).click();
+            return true;
+         }
+      }
+      catch (PruebaAceptacionExcepcion e) {
+         String mensaje = "No se puede hacer clic en el único elemento descargable";
+         log.error(mensaje);
+      }
+      return false;
+   }
+
+   /**
+    * Verifica que no existe elemento eliminable en el listado de documentacion anexa.
+    *
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void verificaNoExisteElementoEliminable() throws PruebaAceptacionExcepcion {
+      log.debug("verificaNoExisteElementoEliminable");
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.verificaNoExisteElementoEliminableAux();
+      }
+      if (!conseguido) {
+         String mensaje = "No debe haber elemento eliminable";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Metodo auxiliar para verificar que no existe elemento eliminable en el listado de documentacion anexa.
+    *
+    * @return Si consigue verificar que no existe elemento a eliminar, devuelve 1; caso contrario, devuelve 0.
+    */
+   private boolean verificaNoExisteElementoEliminableAux() {
+      log.trace("verificaNoExisteElementoEliminableAux");
+      By objetoBuscado = By.xpath("//input[contains(@id, ':aJCBEliminarFichero')]");
+
+      this.esperaCorta();
+
+      List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+      if (null != webElements && 0 < webElements.size()) {
+         // NO DEBE QUEDAR NINGUNO, Y HAY ELEMENTOS
+         WebElement elemento = webElements.get(0);
+         // webElements.get(0).click();
+         this.resaltaObjeto(elemento, COLOR_AZUL);
+         return true;
+      }
+      else {
+         // PERFECTO NO HAY NINGUNO
+         return false;
+      }
+   }
+
+   /**
+    * Pulsa sobre el único elemento a eliminar en el listado de documentación anexa.
+    *
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void pulsaUnicoElementoEliminable() throws PruebaAceptacionExcepcion {
+      log.debug("pulsaUnicoElementoEliminable");
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.pulsaUnicoElementoEliminableAux();
+      }
+      if (!conseguido) {
+         String mensaje = "No se ha podido pulsar en el único elemento eliminable";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Intenta pulsar sobre el unico elemento a eliminar en el listado de documentacion anexa.
+    *
+    * @return Si consigue pulsar sobre el unico elemento a eliminar, devuelve 1; caso contrario, devuelve 0.
+    */
+   private boolean pulsaUnicoElementoEliminableAux() {
+      log.trace("pulsaUnicoElementoEliminableAux");
+      try {
+         By objetoBuscado = By.xpath("//input[contains(@id, ':aJCBEliminarFichero')]");
+
+         this.esperaCorta();
+
+         List<WebElement> webElements = this.driver.findElements(objetoBuscado);
+         if (null != webElements && 1 == webElements.size()) {
+            // Solo puede quedar UNO!!!
+            WebElement elemento = webElements.get(0);
+            // webElements.get(0).click()
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.esperarHastaQueElementoClickable(elemento).click();
+            return true;
+         }
+      }
+      catch (PruebaAceptacionExcepcion e) {
+         String mensaje = "No se puede hacer clic en el único elemento eliminable";
+         log.error(mensaje);
+      }
+      return false;
+   }
+
 }
