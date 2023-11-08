@@ -2,7 +2,13 @@ package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath.ConditionType;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath.TestObject;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath.XPathBuilder;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.time.Duration;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +63,6 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-
             elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
             this.esperarHastaQueElementoClickable(elemento).click();
@@ -73,7 +78,6 @@ public class WebElementWrapper {
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
-
       return elemento;
    }
 
@@ -102,7 +106,6 @@ public class WebElementWrapper {
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
-
    }
 
    public void escribeTexto(By testObject, String texto) throws PruebaAceptacionExcepcion {
@@ -137,6 +140,29 @@ public class WebElementWrapper {
       }
    }
 
+   public void escribeTextoSinBorrar(By testObject, String texto) throws PruebaAceptacionExcepcion {
+      log.debug("escribeTextoSinBorrar->" + testObject.toString() + ". Texto=" + texto);
+
+      boolean conseguido = false;
+
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            this.esperarDesaparezcaProcesando();
+            WebElement elemento = this.esperarHastaQueElementoPresente(testObject);
+            elemento.sendKeys(texto);
+            conseguido = true;
+         }
+         catch (Exception e) {
+            conseguido = false;
+         }
+      }
+      if (!conseguido) {
+         String mensaje = "Error al escribir texto sin borrar. Motivo del error";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
    public void selectOptionByIndex(By testObject, Integer index) throws PruebaAceptacionExcepcion {
       log.debug("selectOptionByIndex->" + testObject.toString() + ". Index=" + index);
       boolean conseguido = false;
@@ -146,6 +172,7 @@ public class WebElementWrapper {
          try {
             elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.esperarHastaQueElementoClickable(elemento);
 
             Select comboBox = new Select(elemento);
             comboBox.selectByIndex(index);
@@ -172,6 +199,7 @@ public class WebElementWrapper {
          try {
             elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.esperarHastaQueElementoClickable(elemento);
 
             Select comboBox = new Select(elemento);
             comboBox.selectByVisibleText(label);
@@ -249,6 +277,7 @@ public class WebElementWrapper {
          try {
             elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.esperarHastaQueElementoClickable(elemento);
 
             Select comboBox = new Select(elemento);
             comboBox.selectByValue(value);
@@ -323,7 +352,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error al verificar el texto del elemento " + testObject.toString() + ". Texto: " + text;
          if (excepcion != null) {
-            mensaje += "Motivo del error: " + excepcion.getLocalizedMessage();
+            mensaje += ". Motivo del error: " + excepcion.getLocalizedMessage();
          }
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -371,14 +400,6 @@ public class WebElementWrapper {
             log.debug("se sigue intentando ...");
          }
       }
-   }
-
-   public boolean verifyElementPresentWithReturn(By testObject) throws PruebaAceptacionExcepcion {
-      log.debug("verifyElementPresentWithReturn->" + testObject.toString());
-      if (!this.isObjetoPresente(testObject)) {
-         return false;
-      }
-      return true;
    }
 
    public void verifyElementPresent(By testObject) throws PruebaAceptacionExcepcion {
@@ -900,21 +921,21 @@ public class WebElementWrapper {
    }
 
    private WebElement esperaBreve(By testObject) throws PruebaAceptacionExcepcion {
-      log.trace("esperaMinima->" + testObject.toString());
+      log.trace("esperaBreve->" + testObject.toString());
       this.esperarDesaparezcaProcesando();
       this.esperarHastaQueElementoPresenteBreve(testObject);
       return this.esperarHastaQueElementoVisibleBreve(testObject);
    }
 
    public WebElement esperaCompleta(By testObject) throws PruebaAceptacionExcepcion {
-      log.trace("esperaBasica->" + testObject.toString());
+      log.trace("esperaCompleta->" + testObject.toString());
       this.esperarDesaparezcaProcesando();
       this.esperarHastaQueElementoPresente(testObject);
       return this.esperarHastaQueElementoVisible(testObject);
    }
 
    private WebElement esperarHastaQueElementoVisibleBreve(By testObject) throws PruebaAceptacionExcepcion {
-      log.trace("esperarHastaQueElementoVisibleMinimo->" + testObject.toString());
+      log.trace("esperarHastaQueElementoVisibleBreve->" + testObject.toString());
       WebElement elemento = null;
       WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
@@ -977,7 +998,7 @@ public class WebElementWrapper {
    }
 
    public void esperarHastaQueElementoPresenteBreve(By testObject) throws PruebaAceptacionExcepcion {
-      log.trace("esperarHastaQueElementoPresenteMinimo->" + testObject.toString());
+      log.trace("esperarHastaQueElementoPresenteBreve->" + testObject.toString());
       WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO))),
             Duration.ofMillis(100));
@@ -1014,6 +1035,27 @@ public class WebElementWrapper {
 
    public WebElement esperarHastaQueElementoClickable(WebElement testObject) throws PruebaAceptacionExcepcion {
       log.trace("esperarHastaQueElementoClickable->" + testObject.getAttribute("id"));
+      WebElement exito = null;
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
+               Duration.ofMillis(100));
+         try {
+            exito = wait.until(ExpectedConditions.elementToBeClickable(testObject));
+            conseguido = true;
+         }
+         catch (TimeoutException e) {
+            String mensaje = "Error al esperar que el objeto " + testObject + " sea clickable";
+            log.error(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
+      }
+      return exito;
+   }
+
+   public WebElement esperarHastaQueElementoClickable(By testObject) throws PruebaAceptacionExcepcion {
+      log.trace("esperarHastaQueElementoClickable->" + testObject);
       WebElement exito = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
@@ -1165,7 +1207,7 @@ public class WebElementWrapper {
          conseguido = this.pulsaUnicoElementoParaAux(titulo, clase);
       }
       if (!conseguido) {
-         String mensaje = "No existe un unico elemento a cliquear en el listado";
+         String mensaje = "No existe un único elemento a cliquear en el listado";
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -1184,7 +1226,6 @@ public class WebElementWrapper {
     * @param clase
     *           a considerar para la clase CSS.
     * @return devuelve true si consigue pulsar sobre ese unico elemento; en caso contrario, devuelve false.
-    * @throws PruebaAceptacionExcepcion
     */
    private boolean pulsaUnicoElementoParaAux(String titulo, String clase) {
       log.trace("pulsaUnicoElementoParaAux->" + titulo + "-" + clase);
@@ -1197,8 +1238,8 @@ public class WebElementWrapper {
       }
       catch (Exception e) {
          log.debug(e.getLocalizedMessage());
-         return false;
       }
+      return false;
    }
 
    /**
@@ -1254,18 +1295,10 @@ public class WebElementWrapper {
     */
    public void pulsaElementoIesimoPara(int pos, String titulo, String clase) throws PruebaAceptacionExcepcion {
       log.debug("pulsaElementoIesimoPara->" + pos + "-" + titulo + "-" + clase);
-      boolean conseguido;
-      try {
-         conseguido = false;
-         for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-
-            // Intento siguiente
-            conseguido = this.pulsaElementoIesimoParaAux(pos, titulo, clase);
-         }
-      }
-      catch (PruebaAceptacionExcepcion e) {
-         log.error(e.getLocalizedMessage());
-         throw e;
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento siguiente
+         conseguido = this.pulsaElementoIesimoParaAux(pos, titulo, clase);
       }
       if (!conseguido) {
          String mensaje = "No ha sido posible cliquear en elemento del listado de la posicion: " + pos;
@@ -1286,14 +1319,11 @@ public class WebElementWrapper {
     * @param clase
     *           a considerar para la clase CSS.
     * @return si se consigue pulsar sobre este elemento i-esimo o no.
-    * @throws PruebaAceptacionExcepcion
     */
-   private boolean pulsaElementoIesimoParaAux(int pos, String titulo, String clase) throws PruebaAceptacionExcepcion {
+   private boolean pulsaElementoIesimoParaAux(int pos, String titulo, String clase) {
       log.trace("pulsaElementoIesimoParaAux->" + pos + "-" + titulo + "-" + clase);
-      boolean pulsado;
+      boolean pulsado = false;
       try {
-         pulsado = false;
-
          By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
 
          this.esperaCorta();
@@ -1313,19 +1343,14 @@ public class WebElementWrapper {
       }
       catch (Exception e) {
          log.error(e.getLocalizedMessage());
-         throw e;
       }
       return pulsado;
    }
 
    public void pulsaPrimerElementoDocsAnexos(String textoEnlace) throws PruebaAceptacionExcepcion {
       log.debug("pulsaPrimerElementoDocsAnexos->" + textoEnlace);
-
       boolean conseguido = false;
-      int numeroIntentos = 5;
-
-      for (int i = 1; !conseguido && i <= numeroIntentos; i++) {
-
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
          conseguido = this.pulsaPrimerElementoDocsAnexosAux(textoEnlace);
       }
@@ -1342,35 +1367,26 @@ public class WebElementWrapper {
     * @param textoEnlace
     *           texto que aparece dentro del enlace.
     * @return Si consigue pulsar sobre el texto, devuelve 1; caso contrario, devuelve 0.
-    * @throws PruebaAceptacionExcepcion
     */
-   private boolean pulsaPrimerElementoDocsAnexosAux(String textoEnlace) throws PruebaAceptacionExcepcion {
+   private boolean pulsaPrimerElementoDocsAnexosAux(String textoEnlace) {
       log.trace("pulsaPrimerElementoDocsAnexosAux->" + textoEnlace);
 
-      this.esperaCorta();
+      try {
+         this.esperaCorta();
 
-      By objetoBuscado = By.xpath("//a[contains(text(), '" + textoEnlace + "')]");
-      List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
-      for (WebElement webElement : webElements) {
-         // Si lo encuentra, pulsa sobre el y punto..., devolviendo un 1 como que lo pulso
-         this.resaltaObjeto(webElement, COLOR_AMARILLO);
-         webElement.click();
-         return true;
+         By objetoBuscado = By.xpath("//a[contains(text(), '" + textoEnlace + "')]");
+         List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
+         for (WebElement webElement : webElements) {
+            // Si lo encuentra, pulsa sobre el y punto..., devolviendo un 1 como que lo pulso
+            this.resaltaObjeto(webElement, COLOR_AMARILLO);
+            webElement.click();
+            return true;
+         }
+      }
+      catch (Exception e) {
+         log.debug(e.getLocalizedMessage());
       }
       return false;
-   }
-
-   public void clickMensajePorTexto(String texto) throws PruebaAceptacionExcepcion {
-      log.debug("clickMensajePorTexto->" + texto);
-      By objetoBuscado = By.xpath("//p[contains(text(), '" + texto + "')]");
-      try {
-         this.click(objetoBuscado);
-      }
-      catch (PruebaAceptacionExcepcion e) {
-         String mensaje = "No se puede hacer clic en el \"p\" con el texto: " + texto;
-         log.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
-      }
    }
 
    /**
@@ -1407,7 +1423,6 @@ public class WebElementWrapper {
     */
    private boolean clickParaUploadFicheroIesimoListadoAux(String rutaFichero, int posicion) {
       log.trace("clickParaUploadFicheroIesimoListadoAux->" + rutaFichero + "-" + posicion);
-      boolean conseguido = false;
       try {
          String id = ":" + (posicion - 1) + ":subirFichero:file";
          By objetoBuscado = By.xpath("//input[@type = 'file' and contains(@id, '" + id + "')]");
@@ -1421,14 +1436,13 @@ public class WebElementWrapper {
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
             this.esperarHastaQueElementoClickable(elemento).click();
             elemento.sendKeys(rutaFichero);
-            conseguido = true;
+            return true;
          }
       }
       catch (Exception e) {
-         String mensaje = "No se puede hacer clic en el fichero en posición: " + posicion;
-         log.error(mensaje);
+         log.error("No se puede hacer clic en el fichero en posición: " + posicion + ". " + e.getLocalizedMessage());
       }
-      return conseguido;
+      return false;
    }
 
    /**
@@ -1472,9 +1486,8 @@ public class WebElementWrapper {
             return true;
          }
       }
-      catch (PruebaAceptacionExcepcion e) {
-         String mensaje = "No se puede hacer clic en el único elemento descargable";
-         log.error(mensaje);
+      catch (Exception e) {
+         log.error("No se puede hacer clic en el único elemento descargable: " + e.getLocalizedMessage());
       }
       return false;
    }
@@ -1564,11 +1577,171 @@ public class WebElementWrapper {
             return true;
          }
       }
-      catch (PruebaAceptacionExcepcion e) {
-         String mensaje = "No se puede hacer clic en el único elemento eliminable";
-         log.error(mensaje);
+      catch (Exception e) {
+         log.error("No se puede hacer clic en el único elemento eliminable: " + e.getLocalizedMessage());
       }
       return false;
+   }
+
+   /**
+    * Se hace click cambiando el foco inmediatamente, para no dar tiempo a elemento alguno a suceder posteriormente.
+    *
+    * @param testObject
+    *           elmento sobre el que se hace clic.
+    * @return no se devuelve nada.
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void clickCambiandoFoco(By testObject) throws PruebaAceptacionExcepcion {
+      log.debug("clickCambiandoFoco->" + testObject.toString());
+      try {
+         this.click(testObject);
+      }
+      catch (PruebaAceptacionExcepcion e) {
+         log.error(e.getLocalizedMessage());
+         throw e;
+      }
+   }
+
+   public WebElement clickConUrlAfirmaProtocol(By testObject) throws PruebaAceptacionExcepcion {
+      log.debug("clickConUrlAfirmaProtocol->" + testObject.toString());
+      boolean conseguido = false;
+      WebElement elemento = null;
+      Exception excepcion = null;
+      this.ejecutaAccionesUrlAfirmaProtocol();
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            WebElement elementoClickable = this.esperarHastaQueElementoClickable(elemento);
+            if (elementoClickable != null) {
+               elementoClickable.click();
+               conseguido = true;
+            }
+            else {
+               this.ejecutaAccionesUrlAfirmaProtocol();
+            }
+         }
+         catch (Exception e) {
+            conseguido = false;
+            excepcion = e;
+         }
+      }
+      if (!conseguido) {
+         String mensaje =
+               "No se puede hacer click tras esperar el URL Afirma Protocol. Motivo del error: " + excepcion.getLocalizedMessage();
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+      return elemento;
+   }
+
+   private void ejecutaAccionesUrlAfirmaProtocol() throws PruebaAceptacionExcepcion {
+      try {
+         Robot rb = new Robot();
+
+         this.esperaCorta();
+
+         log.debug("Pulsar <DERECHA>");
+         rb.keyPress(KeyEvent.VK_RIGHT);
+         rb.keyRelease(KeyEvent.VK_RIGHT);
+         log.debug("Soltar <DERECHA>");
+         log.debug("Pulsar <INTRO>");
+         rb.keyPress(KeyEvent.VK_ENTER);
+         rb.keyRelease(KeyEvent.VK_ENTER);
+         log.debug("Soltar <INTRO>");
+      }
+      catch (AWTException e) {
+         String mensaje = "Error al manejar el robot";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Se intenta pulsar sobre el primer elemento del listado. Si no se consigue se deja constancia de ello.
+    *
+    * @param genericObjectPath
+    *           path a objeto generico utilizado para llevar a cabo esta funcionalidad.
+    * @param titulo
+    *           a considerar para el title.
+    * @param clase
+    *           a considerar para la clase CSS.
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void pulsaPrimerElementoPara(String titulo, String clase) throws PruebaAceptacionExcepcion {
+      log.debug("pulsaPrimerElementoPara->" + titulo + "-" + clase);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.pulsaPrimerElementoParaAux(titulo, clase);
+      }
+      if (!conseguido) {
+         String mensaje = "No ha sido posible cliquear en el primer elemento del listado";
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Se pulsa el primer elemento del listado de acuerdo a las condiciones indicadas.
+    *
+    * @param genericObjectPath
+    *           path a objeto generico utilizado para llevar a cabo esta funcionalidad.
+    * @param titulo
+    *           a considerar para el title.
+    * @param clase
+    *           a considerar para la clase CSS.
+    * @return si se consigue pulsar sobre este primer elemento o no.
+    */
+   private boolean pulsaPrimerElementoParaAux(String titulo, String clase) {
+      log.trace("pulsaPrimerElementoParaAux->" + titulo + "-" + clase);
+      try {
+         By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
+         WebElement objetoEncontrado = this.esperaCompleta(objetoBuscado);
+         this.resaltaObjeto(objetoEncontrado, COLOR_AMARILLO);
+         List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
+         if (null != webElements && webElements.size() > 0) {
+            // Pulsamos el primero
+            webElements.get(0).click();
+            return true;
+         }
+      }
+      catch (Exception e) {
+         log.error(e.getLocalizedMessage());
+      }
+      return false;
+   }
+
+   /**
+    * Hace click sobre el objeto que contenga el id pasado por parámetro. Para ello, crea un objeto genérico con el id como propiedad
+    */
+   public void clickGenerico(String id) throws PruebaAceptacionExcepcion {
+      log.debug("clickGenerico->" + id);
+      TestObject genericObject = new TestObject();
+      genericObject.addProperty("id", ConditionType.CONTAINS, id);
+      this.click(this.convertirXpath(genericObject));
+   }
+
+   public void clickMensajePorTexto(String texto) throws PruebaAceptacionExcepcion {
+      log.debug("clickMensajePorTexto->" + texto);
+      TestObject genericObject = new TestObject();
+      genericObject.addProperty("tag", ConditionType.EQUALS, "p");
+      genericObject.addProperty("text", ConditionType.CONTAINS, texto);
+      this.click(this.convertirXpath(genericObject));
+   }
+
+   public void clickNodoArbol(String id) throws PruebaAceptacionExcepcion {
+      log.debug("clickNodoArbol->" + id);
+      TestObject genericObject = new TestObject();
+      genericObject.addProperty("id", ConditionType.CONTAINS, id);
+      genericObject.addProperty("class", ConditionType.CONTAINS, "icon-collapsed");
+      this.click(this.convertirXpath(genericObject));
+   }
+
+   public By convertirXpath(TestObject genericObject) {
+      log.trace("convertirXpath->" + genericObject);
+      XPathBuilder xpath = new XPathBuilder(genericObject.getProperties());
+      return By.xpath(xpath.build());
    }
 
 }
