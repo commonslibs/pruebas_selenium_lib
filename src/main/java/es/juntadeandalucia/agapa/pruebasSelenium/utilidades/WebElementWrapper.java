@@ -140,8 +140,8 @@ public class WebElementWrapper {
       }
    }
 
-   public void escribeTextoSinBorrar(By testObject, String texto) throws PruebaAceptacionExcepcion {
-      log.debug("escribeTextoSinBorrar->" + testObject.toString() + ". Texto=" + texto);
+   public void subirFichero(By testObject, String ruta) throws PruebaAceptacionExcepcion {
+      log.debug("subirFichero->" + testObject.toString() + ". Texto=" + ruta);
 
       boolean conseguido = false;
 
@@ -149,7 +149,7 @@ public class WebElementWrapper {
          try {
             this.esperarDesaparezcaProcesando();
             WebElement elemento = this.esperarHastaQueElementoPresente(testObject);
-            elemento.sendKeys(texto);
+            elemento.sendKeys(ruta);
             conseguido = true;
          }
          catch (Exception e) {
@@ -1150,6 +1150,26 @@ public class WebElementWrapper {
       }
    }
 
+   private void esperaMedia() {
+      try {
+         this.esperarDesaparezcaProcesando();
+         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000);
+      }
+      catch (Exception e) {
+         log.error(e.getLocalizedMessage());
+      }
+   }
+
+   private void esperaLarga() {
+      try {
+         this.esperarDesaparezcaProcesando();
+         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO)) * 1000);
+      }
+      catch (Exception e) {
+         log.error(e.getLocalizedMessage());
+      }
+   }
+
    // FIXME: Mover al proyecto cliente de Selenium
    public int obtieneNumeroResultadosIndicadoEnListado(String clase) throws PruebaAceptacionExcepcion {
       log.debug("obtieneNumeroResultadosIndicadoEnListado->" + clase);
@@ -1607,6 +1627,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       WebElement elemento = null;
       Exception excepcion = null;
+      // String window = WebDriverFactory.getDriver().getWindowHandle();
       this.ejecutaAccionesUrlAfirmaProtocol();
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
@@ -1618,10 +1639,13 @@ public class WebElementWrapper {
                conseguido = true;
             }
             else {
-               this.ejecutaAccionesUrlAfirmaProtocol();
             }
          }
          catch (Exception e) {
+            // WebDriverFactory.getDriver().switchTo().window(window);
+            // this.cambiarFoco();
+            this.ejecutaAccionesUrlAfirmaProtocol();
+
             conseguido = false;
             excepcion = e;
          }
@@ -1639,7 +1663,7 @@ public class WebElementWrapper {
       try {
          Robot rb = new Robot();
 
-         this.esperaCorta();
+         this.esperaMedia();
 
          log.debug("Pulsar <DERECHA>");
          rb.keyPress(KeyEvent.VK_RIGHT);
@@ -1656,6 +1680,24 @@ public class WebElementWrapper {
          throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
+
+   // private void cambiarFoco() throws PruebaAceptacionExcepcion {
+   // try {
+   // Robot rb = new Robot();
+   // log.debug("Cambiar el foco a Autofirma");
+   // rb.keyPress(KeyEvent.VK_ALT);
+   // rb.keyPress(KeyEvent.VK_TAB);
+   // rb.delay(10);
+   // rb.keyRelease(KeyEvent.VK_ALT);
+   // rb.keyRelease(KeyEvent.VK_TAB);
+   // rb.delay(1000);
+   // }
+   // catch (AWTException e) {
+   // String mensaje = "Error al manejar el robot";
+   // log.error(mensaje);
+   // throw new PruebaAceptacionExcepcion(mensaje);
+   // }
+   // }
 
    /**
     * Se intenta pulsar sobre el primer elemento del listado. Si no se consigue se deja constancia de ello.
