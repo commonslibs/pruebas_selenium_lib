@@ -64,8 +64,9 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             elemento = this.esperaCompleta(testObject);
+            WebElement elementoAClicar = this.esperarHastaQueElementoClickable(elemento);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
-            this.esperarHastaQueElementoClickable(elemento).click();
+            elementoAClicar.click();
             conseguido = true;
          }
          catch (Exception e) {
@@ -296,8 +297,8 @@ public class WebElementWrapper {
       }
    }
 
-   public String obtieneValorSeleccionadoEnCombo(By testObject, String selector) throws PruebaAceptacionExcepcion {
-      log.debug("obtieneValorSeleccionadoEnCombo->" + testObject.toString() + ". Selector=" + selector);
+   public String obtieneValorSeleccionadoEnCombo(By testObject) throws PruebaAceptacionExcepcion {
+      log.debug("obtieneValorSeleccionadoEnCombo->" + testObject.toString());
       boolean conseguido = false;
       WebElement elemento = null;
       PruebaAceptacionExcepcion excepcion = null;
@@ -329,6 +330,7 @@ public class WebElementWrapper {
       log.debug("verifyElementText->" + testObject.toString() + ". Text=" + text);
       boolean conseguido = false;
       WebElement elemento = null;
+      String textoDelObjeto = null;
       PruebaAceptacionExcepcion excepcion = null;
 
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
@@ -339,8 +341,9 @@ public class WebElementWrapper {
             }
             this.resaltaObjeto(elemento, COLOR_AZUL);
 
-            log.debug("Comprobando que " + text + " es igual que " + elemento.getText());
-            if (elemento != null && text.equals(elemento.getText())) {
+            textoDelObjeto = elemento.getText();
+            log.trace("Comprobando que " + text + " es igual que " + textoDelObjeto);
+            if (elemento != null && text.equals(textoDelObjeto)) {
                conseguido = true;
             }
          }
@@ -350,7 +353,10 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error al verificar el texto del elemento " + testObject.toString() + ". Texto: " + text;
+         String mensaje = "Error al verificar el texto del elemento " + testObject.toString() + ". Texto esperado: " + text;
+         if (textoDelObjeto != null) {
+            mensaje += ". Texto encontrado: " + textoDelObjeto;
+         }
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + excepcion.getLocalizedMessage();
          }
@@ -683,11 +689,9 @@ public class WebElementWrapper {
       return fila;
    }
 
-   public int obtieneNumeroDeFilasListado(By testObject) throws PruebaAceptacionExcepcion {
-      log.debug("obtieneNumeroDeFilasListado->" + testObject.toString());
+   public int obtieneNumeroDeFilasListado(String idBodyTabla) throws PruebaAceptacionExcepcion {
+      log.debug("obtieneNumeroDeFilasListado->" + idBodyTabla);
       boolean conseguido = false;
-      WebElement table = null;
-      List<WebElement> rows = null;
       PruebaAceptacionExcepcion excepcion = null;
       int numeroDeFilas = 0;
 
@@ -696,20 +700,16 @@ public class WebElementWrapper {
 
             // Localizar el body de la tabla
             // FIXME : No hay forma de esperar después del evento filtrado, debido al evento
-            // onKeyUp que mete un retraso aleatorio en la carga
-            // del listado.
-            Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
-            table = this.esperaCompleta(testObject);
-            rows = table.findElements(By.tagName("tr"));
+            // onKeyUp que mete un retraso aleatorio en la carga del listado.
+            // Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
+            WebElement table = this.esperaCompleta(By.id(idBodyTabla));
+            List<WebElement> rows = table.findElements(By.tagName("tr"));
             numeroDeFilas = rows.size();
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
             conseguido = false;
             excepcion = e;
-         }
-         catch (InterruptedException e) {
-            log.error(e.getLocalizedMessage());
          }
       }
 
@@ -820,7 +820,7 @@ public class WebElementWrapper {
       }
    }
 
-   private boolean isElementChecked(By testObject) throws PruebaAceptacionExcepcion {
+   public boolean isElementChecked(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("isElementChecked->" + testObject.toString());
       boolean conseguido = false;
       WebElement elemento = null;
