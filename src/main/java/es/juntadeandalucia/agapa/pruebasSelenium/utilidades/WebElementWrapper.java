@@ -70,7 +70,6 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -98,7 +97,6 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -143,44 +141,43 @@ public class WebElementWrapper {
 
    public void subirFichero(By testObject, String ruta) throws PruebaAceptacionExcepcion {
       log.debug("subirFichero->" + testObject.toString() + ". Texto=" + ruta);
-
-      boolean conseguido = false;
-
-      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         try {
-            this.esperarDesaparezcaProcesando();
-            WebElement elemento = this.esperarHastaQueElementoPresente(testObject);
-            elemento.sendKeys(ruta);
-            conseguido = true;
-         }
-         catch (Exception e) {
-            conseguido = false;
-         }
-      }
-      if (!conseguido) {
-         String mensaje = "Error al escribir texto sin borrar. Motivo del error";
-         log.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
-      }
+      this.clickParaUploadFichero(testObject, ruta);
+      // boolean conseguido = false;
+      //
+      // for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+      // try {
+      // this.esperarDesaparezcaProcesando();
+      // WebElement elemento = this.esperarHastaQueElementoPresente(testObject);
+      // elemento.sendKeys(ruta);
+      // conseguido = true;
+      // }
+      // catch (Exception e) {
+      // conseguido = false;
+      // }
+      // }
+      // if (!conseguido) {
+      // String mensaje = "Error al escribir texto sin borrar. Motivo del error";
+      // log.error(mensaje);
+      // throw new PruebaAceptacionExcepcion(mensaje);
+      // }
    }
 
    public void selectOptionByIndex(By testObject, Integer index) throws PruebaAceptacionExcepcion {
       log.debug("selectOptionByIndex->" + testObject.toString() + ". Index=" + index);
       boolean conseguido = false;
       WebElement elemento = null;
-      PruebaAceptacionExcepcion excepcion = null;
+      Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaCompleta(testObject);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
-            this.esperarHastaQueElementoClickable(elemento);
+            this.esperaCompleta(testObject);
+            elemento = this.esperarHastaQueElementoClickable(testObject);
 
             Select comboBox = new Select(elemento);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             comboBox.selectByIndex(index);
             conseguido = true;
          }
-         catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
+         catch (Exception e) {
             excepcion = e;
          }
       }
@@ -198,16 +195,15 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaCompleta(testObject);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
-            this.esperarHastaQueElementoClickable(elemento);
+            this.esperaCompleta(testObject);
+            elemento = this.esperarHastaQueElementoClickable(testObject);
 
             Select comboBox = new Select(elemento);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             comboBox.selectByVisibleText(label);
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -250,7 +246,6 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -273,19 +268,18 @@ public class WebElementWrapper {
       log.debug("selectOptionByValue->" + testObject.toString() + ". Value=" + value);
       boolean conseguido = false;
       WebElement elemento = null;
-      PruebaAceptacionExcepcion excepcion = null;
+      Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaCompleta(testObject);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
-            this.esperarHastaQueElementoClickable(elemento);
+            this.esperaCompleta(testObject);
+            elemento = this.esperarHastaQueElementoClickable(testObject);
 
             Select comboBox = new Select(elemento);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             comboBox.selectByValue(value);
             conseguido = true;
          }
-         catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
+         catch (Exception e) {
             excepcion = e;
          }
       }
@@ -313,7 +307,6 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -348,7 +341,6 @@ public class WebElementWrapper {
             }
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -410,8 +402,14 @@ public class WebElementWrapper {
 
    public void verifyElementPresent(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("verifyElementPresent->" + testObject.toString());
-      if (!this.isObjetoPresente(testObject)) {
-         String mensaje = "El objeto con tipo selector no está presente cuando debería.";
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         if (this.isObjetoPresente(testObject)) {
+            conseguido = true;
+         }
+      }
+      if (!conseguido) {
+         String mensaje = "El objeto " + testObject.toString() + " no está presente";
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -419,8 +417,14 @@ public class WebElementWrapper {
 
    public void verifyElementNotPresent(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("verifyElementNotPresent->" + testObject.toString());
-      if (!this.isObjetoNoPresente(testObject)) {
-         String mensaje = "El objeto con tipo selector está presente cuando no debería.";
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS * 2; i++) {
+         if (this.isObjetoNoPresente(testObject)) {
+            conseguido = true;
+         }
+      }
+      if (!conseguido) {
+         String mensaje = "El objeto " + testObject.toString() + " está presente";
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -439,7 +443,7 @@ public class WebElementWrapper {
    public void verifyElementNotChecked(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("verifyElementNotChecked->" + testObject.toString());
       boolean conseguido = this.isElementChecked(testObject);
-      if (conseguido) {
+      if (!conseguido) {
          String mensaje = "El objeto con tipo selector está checkeado cuando no debería";
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -460,7 +464,7 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            conseguido = false;
+
             excepcion = new PruebaAceptacionExcepcion(e.getLocalizedMessage());
          }
       }
@@ -484,10 +488,8 @@ public class WebElementWrapper {
             valorAtributo = elemento.getAttribute(atributo);
             this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
-
          }
          catch (Exception e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -542,14 +544,11 @@ public class WebElementWrapper {
       PruebaAceptacionExcepcion excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaCompleta(testObject);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
-            this.esperarHastaQueElementoClickable(elemento);
+            elemento = this.esperaParaSubirFichero(testObject);
             elemento.sendKeys(rutaFichero);
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -558,6 +557,14 @@ public class WebElementWrapper {
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
+   }
+
+   private WebElement esperaParaSubirFichero(By testObject) throws PruebaAceptacionExcepcion {
+      log.trace("esperaParaSubirFichero->" + testObject.toString());
+      this.esperarDesaparezcaProcesando();
+      WebElement elemento = this.esperarHastaQueElementoPresente(testObject);
+      this.resaltaObjeto(elemento, COLOR_AMARILLO);
+      return elemento;
    }
 
    public String getText(By testObject) throws PruebaAceptacionExcepcion {
@@ -574,7 +581,6 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -611,7 +617,6 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -653,7 +658,6 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -708,7 +712,6 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -749,11 +752,9 @@ public class WebElementWrapper {
             }
          }
          catch (PruebaAceptacionExcepcion e) {
-            conseguido = false;
             excepcion = e;
          }
       }
-
       if (!conseguido) {
          String mensaje = "Error al hacer seleccionar el valor del combo por índice. Motivo del error: " + excepcion.getLocalizedMessage();
          log.error(mensaje);
@@ -863,10 +864,11 @@ public class WebElementWrapper {
    }
 
    private boolean isObjetoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
-      log.debug("isObjetoNoPresente->" + testObject.toString());
+      log.trace("isObjetoNoPresente->" + testObject.toString());
       boolean conseguido = false;
       try {
-         this.esperaCompleta(testObject);
+         WebElement elemento = this.esperaCompleta(testObject);
+         this.resaltaObjeto(elemento, COLOR_AZUL);
       }
       catch (PruebaAceptacionExcepcion e) {
          conseguido = true;
@@ -1447,17 +1449,19 @@ public class WebElementWrapper {
          String id = ":" + (posicion - 1) + ":subirFichero:file";
          By objetoBuscado = By.xpath("//input[@type = 'file' and contains(@id, '" + id + "')]");
 
-         this.esperaCorta();
-
-         List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
-         if (null != webElements && 1 == webElements.size()) {
-            // La posicion es posible...
-            WebElement elemento = webElements.get(0);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
-            this.esperarHastaQueElementoClickable(elemento).click();
-            elemento.sendKeys(rutaFichero);
-            return true;
-         }
+         // this.esperaCorta();
+         // List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
+         // if (null != webElements && 1 == webElements.size()) {
+         // // La posicion es posible...
+         // WebElement elemento = webElements.get(0);
+         // this.resaltaObjeto(elemento, COLOR_AMARILLO);
+         // this.esperarHastaQueElementoClickable(elemento).click();
+         // elemento.sendKeys(rutaFichero);
+         // return true;
+         // }
+         WebElement elemento = this.esperaParaSubirFichero(objetoBuscado);
+         elemento.sendKeys(rutaFichero);
+         return true;
       }
       catch (Exception e) {
          log.error("No se puede hacer clic en el fichero en posición: " + posicion + ". " + e.getLocalizedMessage());
@@ -1477,7 +1481,7 @@ public class WebElementWrapper {
          // Intento i-esimo
          conseguido = this.pulsaUnicoElementoDescargableAux();
       }
-      if (conseguido) {
+      if (!conseguido) {
          String mensaje = "No existe un unico elemento descargable en el listado";
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -1519,16 +1523,18 @@ public class WebElementWrapper {
     */
    public void verificaNoExisteElementoEliminable() throws PruebaAceptacionExcepcion {
       log.debug("verificaNoExisteElementoEliminable");
-      boolean conseguido = false;
-      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         // Intento i-esimo
-         conseguido = this.verificaNoExisteElementoEliminableAux();
-      }
-      if (!conseguido) {
-         String mensaje = "No debe haber elemento eliminable";
-         log.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
-      }
+      this.verifyElementNotPresent(By.xpath("//input[contains(@id, ':aJCBEliminarFichero')]"));
+
+      // boolean conseguido = false;
+      // for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+      // // Intento i-esimo
+      // conseguido = this.verificaNoExisteElementoEliminableAux();
+      // }
+      // if (!conseguido) {
+      // String mensaje = "No debe haber elemento eliminable";
+      // log.error(mensaje);
+      // throw new PruebaAceptacionExcepcion(mensaje);
+      // }
    }
 
    /**
@@ -1646,7 +1652,6 @@ public class WebElementWrapper {
             // this.cambiarFoco();
             this.ejecutaAccionesUrlAfirmaProtocol();
 
-            conseguido = false;
             excepcion = e;
          }
       }
@@ -1784,6 +1789,26 @@ public class WebElementWrapper {
       log.trace("convertirXpath->" + genericObject);
       XPathBuilder xpath = new XPathBuilder(genericObject.getProperties());
       return By.xpath(xpath.build());
+   }
+
+   public boolean isElementoClickable(By testObject) throws PruebaAceptacionExcepcion {
+      log.debug("isElementoClickable->" + testObject);
+      WebElement elemento = null;
+      try {
+         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO))),
+               Duration.ofMillis(100));
+         elemento = wait.until(ExpectedConditions.elementToBeClickable(testObject));
+      }
+      catch (TimeoutException e) {
+         String mensaje = "El objeto " + testObject + " no es clickable";
+         log.trace(mensaje);
+      }
+      catch (PruebaAceptacionExcepcion e) {
+         log.error(e.getLocalizedMessage());
+         throw e;
+      }
+      return elemento != null;
    }
 
 }
