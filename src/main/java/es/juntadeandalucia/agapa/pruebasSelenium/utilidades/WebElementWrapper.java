@@ -1265,6 +1265,83 @@ public class WebElementWrapper {
    }
 
    /**
+    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su id el parametro {@code id}. Ademas ese elemento debe
+    * ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los iconos de los listados y tener en un lugar
+    * centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de
+    * tener sentido los nombres de los parametros.
+    *
+    * @param genericObjectPath
+    *           path hacia el objeto generico a utilizar.
+    * @param id
+    *           a considerar para el id.
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void pulsaUnicoElementoParaIdTitulo(String id, String titulo) throws PruebaAceptacionExcepcion {
+      log.debug("pulsaUnicoElementoParaIdTitulo->" + id + ". Título->" + titulo);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.pulsaUnicoElementoParaIdTituloAux(id, titulo);
+      }
+      if (!conseguido) {
+         String mensaje = "No se ha podido pulsar el elemento con id que contiene la cadena " + id + " y el titulo " + titulo;
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su id el parametro {@code id}. Ademas ese elemento debe
+    * ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los iconos de los listados y tener en un lugar
+    * centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de
+    * tener sentido los nombres de los parametros.
+    *
+    * @param genericObjectPath
+    *           path hacia el objeto generico a utilizar.
+    * @param id
+    *           a considerar para el id.
+    * @return devuelve true si consigue pulsar sobre ese unico elemento; en caso contrario, devuelve false.
+    */
+   private boolean pulsaUnicoElementoParaIdTituloAux(String id, String titulo) {
+      log.trace("pulsaUnicoElementoParaIdTituloAux->" + id + ". Título->" + titulo);
+      try {
+         By objetoBuscado = By.xpath("//input[contains(@id, '" + id + "') and contains(@title, '" + titulo + "')]");
+         return this.pulsaEnElUnico(objetoBuscado);
+      }
+      catch (Exception e) {
+         log.debug(e.getLocalizedMessage());
+      }
+      return false;
+   }
+
+   /**
+    * Busca el objeto {@code genericObject} y si solo existe él, le hace clic y hace una espera mínima.
+    *
+    * @param genericObject
+    * @return true si localizó el objeto, era único y le hizo clic, false en caso contrario
+    */
+   private boolean pulsaEnElUnico(By objetoBuscado) {
+      log.trace("pulsaEnElUnico->" + objetoBuscado);
+      try {
+         // Se espera a que desaparezca el mensaje procesando o se cargue la pagina...
+         this.esperaCompleta(objetoBuscado);
+
+         List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
+         if (null != webElements && 1 == webElements.size()) {
+            // Solo puede quedar UNO!!!
+            WebElement elemento = webElements.get(0);
+            elemento.click();
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            return true;
+         }
+      }
+      catch (Exception e) {
+         log.debug(e.getLocalizedMessage());
+      }
+      return false;
+   }
+
+   /**
     * Devuelve el numero de botones visibles en el listado de una pagina que sea un listado, que verifican las condiciones indicadas.
     *
     * @param genericObjectPath
