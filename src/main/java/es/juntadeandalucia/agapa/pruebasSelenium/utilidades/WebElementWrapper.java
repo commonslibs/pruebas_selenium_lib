@@ -240,14 +240,13 @@ public class WebElementWrapper {
    }
 
    public void verifyOptionSelectedByLabel(By testObject, String label) throws PruebaAceptacionExcepcion {
-      log.debug("verifyOptionSelectedByLabel->" + testObject.toString() + ". Label=" + label);
+      log.debug("verifyOptionSelectedByLabel->" + testObject + ". Label=" + label);
       boolean conseguido = false;
-      WebElement elemento = null;
       Exception excepcion = null;
       String etiquetaSeleccionada = "";
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaCompleta(testObject);
+            WebElement elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AZUL);
             Select comboBox = new Select(elemento);
             etiquetaSeleccionada = comboBox.getFirstSelectedOption().getText().trim();
@@ -269,6 +268,80 @@ public class WebElementWrapper {
             log.error(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
+      }
+   }
+
+   /**
+    * Verifica que la opción con la etiqueta label SI está presente en el combo testObject
+    *
+    * @param testObject
+    * @param label
+    * @return
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void verifyOptionPresentByLabel(By testObject, String label) throws PruebaAceptacionExcepcion {
+      log.debug("verifyOptionPresentByLabel->" + testObject + ". Label=" + label);
+      boolean conseguido = false;
+      Exception excepcion = null;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            WebElement elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
+            Select comboBox = new Select(elemento);
+            for (WebElement opcion : comboBox.getOptions()) {
+               if (opcion.getText().equals(label)) {
+                  conseguido = true;
+                  break;
+               }
+            }
+         }
+         catch (Exception e) {
+            excepcion = e;
+         }
+      }
+      if (!conseguido) {
+         String mensaje = "La opción " + label + " de " + testObject.toString() + " no está presente. Motivo del error: "
+               + excepcion.getLocalizedMessage();
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Verifica que la opción con la etiqueta label no está presente en el combo testObject
+    *
+    * @param testObject
+    * @param label
+    * @return
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void verifyOptionNotPresentByLabel(By testObject, String label) throws PruebaAceptacionExcepcion {
+      log.debug("verifyOptionNotPresentByLabel->" + testObject + ". Label=" + label);
+      boolean encontrado = false;
+      boolean conseguido = false;
+      Exception excepcion = null;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            WebElement elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
+            encontrado = true;
+            Select comboBox = new Select(elemento);
+            for (WebElement opcion : comboBox.getOptions()) {
+               if (opcion.getText().equals(label)) {
+                  conseguido = true;
+                  break;
+               }
+            }
+         }
+         catch (Exception e) {
+            excepcion = e;
+         }
+      }
+      if (!encontrado || !conseguido) {
+         String mensaje = "La opción " + label + " de " + testObject.toString() + " está presente cuando no debería. Motivo del error: "
+               + excepcion.getLocalizedMessage();
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
 
@@ -1325,6 +1398,55 @@ public class WebElementWrapper {
       log.trace("pulsaUnicoElementoParaIdTituloAux->" + id + ". Título->" + titulo);
       try {
          By objetoBuscado = By.xpath("//input[contains(@id, '" + id + "') and contains(@title, '" + titulo + "')]");
+         return this.pulsaEnElUnico(objetoBuscado);
+      }
+      catch (Exception e) {
+         log.debug(e.getLocalizedMessage());
+      }
+      return false;
+   }
+
+   /**
+    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su id el parametro {@code id}. Ademas ese elemento debe
+    * ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los iconos de los listados y tener en un lugar
+    * centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de
+    * tener sentido los nombres de los parametros.
+    *
+    * @param genericObjectPath
+    *           path hacia el objeto generico a utilizar.
+    * @param id
+    *           a considerar para el id.
+    */
+   public void pulsaUnicoElementoParaId(String id) throws PruebaAceptacionExcepcion {
+      log.debug("pulsaUnicoElementoParaId->" + id);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.pulsaUnicoElementoParaIdAux(id);
+      }
+      if (!conseguido) {
+         String mensaje = "No se ha podido pulsar el elemento con id que contiene la cadena " + id;
+         log.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su id el parametro {@code id}. Ademas ese elemento debe
+    * ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los iconos de los listados y tener en un lugar
+    * centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de
+    * tener sentido los nombres de los parametros.
+    *
+    * @param genericObjectPath
+    *           path hacia el objeto generico a utilizar.
+    * @param id
+    *           a considerar para el id.
+    * @return devuelve true si consigue pulsar sobre ese unico elemento; en caso contrario, devuelve false.
+    */
+   private boolean pulsaUnicoElementoParaIdAux(String id) {
+      log.trace("pulsaUnicoElementoParaIdAux->" + id);
+      try {
+         By objetoBuscado = By.xpath("//input[contains(@id, '" + id + "')]");
          return this.pulsaEnElUnico(objetoBuscado);
       }
       catch (Exception e) {
