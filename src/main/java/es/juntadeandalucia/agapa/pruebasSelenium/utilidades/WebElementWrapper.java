@@ -427,11 +427,11 @@ public class WebElementWrapper {
       log.debug("verifyElementNotPresent->" + testObject.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         this.esperarHastaQueElementoNoPresente(testObject);
-         // this.esperaCorta();
-         // if (this.isObjetoNoPresente(testObject)) {
-         // conseguido = true;
-         // }
+         if (this.esperarHastaQueElementoNoPresente(testObject)) {
+            // this.esperaCorta();
+            // if (this.isObjetoNoPresente(testObject)) {
+            conseguido = true;
+         }
       }
       if (!conseguido) {
          String mensaje = "El objeto " + testObject.toString() + " está presente";
@@ -819,19 +819,21 @@ public class WebElementWrapper {
       return Integer.valueOf(res);
    }
 
-   public void esperarHastaQueElementoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
+   public boolean esperarHastaQueElementoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarHastaQueElementoNoPresente->" + testObject.toString());
+      boolean conseguido = false;
       WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO))),
             Duration.ofMillis(100));
       try {
-         wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
+         conseguido = wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
       }
       catch (TimeoutException | StaleElementReferenceException e) {
          String mensaje = "Error al esperar que el objeto " + testObject + " NO esté presente";
          log.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
+      return conseguido;
    }
 
    public boolean isElementChecked(By testObject) throws PruebaAceptacionExcepcion {
