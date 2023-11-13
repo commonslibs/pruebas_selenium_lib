@@ -426,10 +426,12 @@ public class WebElementWrapper {
    public void verifyElementNotPresent(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("verifyElementNotPresent->" + testObject.toString());
       boolean conseguido = false;
-      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS * 2; i++) {
-         if (this.isObjetoNoPresente(testObject)) {
-            conseguido = true;
-         }
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         this.esperarHastaQueElementoNoPresente(testObject);
+         // this.esperaCorta();
+         // if (this.isObjetoNoPresente(testObject)) {
+         // conseguido = true;
+         // }
       }
       if (!conseguido) {
          String mensaje = "El objeto " + testObject.toString() + " está presente";
@@ -1606,52 +1608,6 @@ public class WebElementWrapper {
          log.error("No se puede hacer clic en el único elemento descargable: " + e.getLocalizedMessage());
       }
       return false;
-   }
-
-   /**
-    * Verifica que no existe elemento eliminable en el listado de documentacion anexa.
-    *
-    * @throws PruebaAceptacionExcepcion
-    */
-   public void verificaNoExisteElementoEliminable() throws PruebaAceptacionExcepcion {
-      log.debug("verificaNoExisteElementoEliminable");
-      this.verifyElementNotPresent(By.xpath("//input[contains(@id, ':aJCBEliminarFichero')]"));
-
-      // boolean conseguido = false;
-      // for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-      // // Intento i-esimo
-      // conseguido = this.verificaNoExisteElementoEliminableAux();
-      // }
-      // if (!conseguido) {
-      // String mensaje = "No debe haber elemento eliminable";
-      // log.error(mensaje);
-      // throw new PruebaAceptacionExcepcion(mensaje);
-      // }
-   }
-
-   /**
-    * Metodo auxiliar para verificar que no existe elemento eliminable en el listado de documentacion anexa.
-    *
-    * @return Si consigue verificar que no existe elemento a eliminar, devuelve 1; caso contrario, devuelve 0.
-    */
-   private boolean verificaNoExisteElementoEliminableAux() {
-      log.trace("verificaNoExisteElementoEliminableAux");
-      By objetoBuscado = By.xpath("//input[contains(@id, ':aJCBEliminarFichero')]");
-
-      this.esperaCorta();
-
-      List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
-      if (null != webElements && 0 < webElements.size()) {
-         // NO DEBE QUEDAR NINGUNO, Y HAY ELEMENTOS
-         WebElement elemento = webElements.get(0);
-         // webElements.get(0).click();
-         this.resaltaObjeto(elemento, COLOR_AZUL);
-         return true;
-      }
-      else {
-         // PERFECTO NO HAY NINGUNO
-         return false;
-      }
    }
 
    /**
