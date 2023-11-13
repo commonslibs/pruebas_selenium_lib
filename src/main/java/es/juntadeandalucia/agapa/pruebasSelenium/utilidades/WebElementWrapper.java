@@ -404,7 +404,6 @@ public class WebElementWrapper {
       log.debug("verifyElementText->" + testObject.toString() + ". Text=" + text);
       boolean conseguido = false;
       WebElement elemento = null;
-      String textoDelObjeto = null;
       Exception excepcion = null;
 
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
@@ -414,12 +413,7 @@ public class WebElementWrapper {
                throw new PruebaAceptacionExcepcion(testObject.toString() + " no existe");
             }
             this.resaltaObjeto(elemento, COLOR_AZUL);
-
-            textoDelObjeto = elemento.getText();
-            log.trace("Comprobando que " + text + " es igual que " + textoDelObjeto);
-            if (elemento != null && text.equals(textoDelObjeto)) {
-               conseguido = true;
-            }
+            conseguido = this.esperarHastaQueElementoTengaTexto(testObject, text);
          }
          catch (Exception e) {
             excepcion = e;
@@ -427,9 +421,6 @@ public class WebElementWrapper {
       }
       if (!conseguido) {
          String mensaje = "Error al verificar el texto del elemento " + testObject.toString() + ". Texto esperado: " + text;
-         if (textoDelObjeto != null) {
-            mensaje += ". Texto encontrado: " + textoDelObjeto;
-         }
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + excepcion.getLocalizedMessage();
          }
@@ -1166,6 +1157,25 @@ public class WebElementWrapper {
          }
       }
       return exito;
+   }
+
+   private boolean esperarHastaQueElementoTengaTexto(By testObject, String texto) throws PruebaAceptacionExcepcion {
+      log.trace("esperarHastaQueElementoContengaTexto->" + testObject);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
+               Duration.ofMillis(100));
+         try {
+            conseguido = wait.until(ExpectedConditions.textToBe(testObject, texto));
+         }
+         catch (TimeoutException | StaleElementReferenceException e) {
+            String mensaje = "Error al esperar que el objeto " + testObject + " contenga el texto";
+            log.error(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
+      }
+      return conseguido;
    }
 
    /**
