@@ -21,10 +21,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<ojdbc7.version>12.1.0.2</ojdbc7.version>
 		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
-		<testng.version>7.5</testng.version>
+		<testng.version>7.8.0</testng.version>
 		<jacoco.version>0.8.6</jacoco.version>
 		<selenium.version>4.15.0</selenium.version>
 	</properties>
