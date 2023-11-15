@@ -84,11 +84,10 @@ public class WebElementWrapper {
    public void doubleClick(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("doubleClick->" + testObject.toString());
       var conseguido = false;
-      WebElement elemento = null;
       Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = esperaCompleta(testObject);
+            var elemento = esperaCompleta(testObject);
             resaltaObjeto(elemento, COLOR_AMARILLO);
 
             this.esperarHastaQueElementoClickable(elemento);
@@ -173,12 +172,11 @@ public class WebElementWrapper {
    public void selectOptionByIndex(By testObject, Integer index) throws PruebaAceptacionExcepcion {
       log.debug("selectOptionByIndex->" + testObject.toString() + ". Index=" + index);
       var conseguido = false;
-      WebElement elemento = null;
       Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             esperaCompleta(testObject);
-            elemento = this.esperarHastaQueElementoClickable(testObject);
+            var elemento = this.esperarHastaQueElementoClickable(testObject);
 
             var comboBox = new Select(elemento);
             resaltaObjeto(elemento, COLOR_AMARILLO);
@@ -199,12 +197,11 @@ public class WebElementWrapper {
    public void selectOptionByLabel(By testObject, String label) throws PruebaAceptacionExcepcion {
       log.debug("selectOptionByLabel->" + testObject.toString() + ". Label=" + label);
       var conseguido = false;
-      WebElement elemento = null;
       Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             esperaCompleta(testObject);
-            elemento = this.esperarHastaQueElementoClickable(testObject);
+            var elemento = this.esperarHastaQueElementoClickable(testObject);
 
             var comboBox = new Select(elemento);
             resaltaObjeto(elemento, COLOR_AMARILLO);
@@ -344,12 +341,11 @@ public class WebElementWrapper {
    public void selectOptionByValue(By testObject, String value) throws PruebaAceptacionExcepcion {
       log.debug("selectOptionByValue->" + testObject.toString() + ". Value=" + value);
       var conseguido = false;
-      WebElement elemento = null;
       Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             esperaCompleta(testObject);
-            elemento = this.esperarHastaQueElementoClickable(testObject);
+            var elemento = this.esperarHastaQueElementoClickable(testObject);
 
             var comboBox = new Select(elemento);
             resaltaObjeto(elemento, COLOR_AMARILLO);
@@ -371,12 +367,11 @@ public class WebElementWrapper {
    public String obtieneValorSeleccionadoEnCombo(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("obtieneValorSeleccionadoEnCombo->" + testObject.toString());
       var conseguido = false;
-      WebElement elemento = null;
       Exception excepcion = null;
       var valorSeleccionado = "";
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = esperaCompleta(testObject);
+            var elemento = esperaCompleta(testObject);
             resaltaObjeto(elemento, COLOR_AZUL);
 
             var comboBox = new Select(elemento);
@@ -399,12 +394,10 @@ public class WebElementWrapper {
    public void verifyElementText(By testObject, String text) throws PruebaAceptacionExcepcion {
       log.debug("verifyElementText->" + testObject.toString() + ". Text=" + text);
       var conseguido = false;
-      WebElement elemento = null;
       Exception excepcion = null;
-
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = esperaCompleta(testObject);
+            var elemento = esperaCompleta(testObject);
             if (elemento == null) {
                throw new PruebaAceptacionExcepcion(testObject.toString() + " no existe");
             }
@@ -516,11 +509,10 @@ public class WebElementWrapper {
       log.debug("getAttribute->" + testObject.toString() + ". Atributo=" + atributo);
       var conseguido = false;
       var valorAtributo = "";
-      WebElement elemento = null;
       Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = esperaCompleta(testObject);
+            var elemento = esperaCompleta(testObject);
             valorAtributo = elemento.getAttribute(atributo);
             resaltaObjeto(elemento, COLOR_AMARILLO);
             conseguido = true;
@@ -541,11 +533,10 @@ public class WebElementWrapper {
       log.debug("verifyElementAttributeValue->" + testObject.toString() + ". Atributo=" + atributo + ". Value=" + value);
       var conseguido = false;
       var valorAtributo = "";
-      WebElement elemento = null;
       Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = esperaCompleta(testObject);
+            var elemento = esperaCompleta(testObject);
             valorAtributo = elemento.getAttribute(atributo);
             resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
@@ -600,11 +591,10 @@ public class WebElementWrapper {
    public void clickParaUploadFichero(By testObject, String rutaFichero) throws PruebaAceptacionExcepcion {
       log.debug("clickParaUploadFichero->" + testObject.toString() + ". RutaFichero=" + rutaFichero);
       var conseguido = false;
-      WebElement elemento = null;
       Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = esperaParaSubirFichero(testObject);
+            var elemento = esperaParaSubirFichero(testObject);
             elemento.sendKeys(rutaFichero);
             conseguido = true;
          }
@@ -631,14 +621,13 @@ public class WebElementWrapper {
       log.debug("getText->" + testObject.toString());
       var conseguido = false;
       var cadena = "";
-      WebElement elemento = null;
       Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             if (i == 1) {
                esperaBreve(testObject);
             }
-            elemento = esperaCompleta(testObject);
+            var elemento = esperaCompleta(testObject);
             cadena = elemento.getText();
             resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
@@ -667,11 +656,10 @@ public class WebElementWrapper {
       log.debug("cuentaNumeroDeOpcionesEnSelect->" + testObject.toString());
       var conseguido = false;
       var numeroOpciones = 0;
-      WebElement elemento = null;
       Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = esperaCompleta(testObject);
+            var elemento = esperaCompleta(testObject);
             resaltaObjeto(elemento, COLOR_AZUL);
 
             var comboBox = new Select(elemento);
@@ -889,20 +877,21 @@ public class WebElementWrapper {
    public boolean isElementChecked(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("isElementChecked->" + testObject.toString());
       var conseguido = false;
-      WebElement elemento = null;
+      Exception excepcion = null;
       for (var i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = esperaCompleta(testObject);
+            var elemento = esperaCompleta(testObject);
             conseguido = elemento.isSelected();
             resaltaObjeto(elemento, COLOR_AZUL);
          }
          catch (Exception e) {
+            excepcion = e;
             log.error(e.getLocalizedMessage());
             conseguido = false;
          }
       }
       if (!conseguido) {
-         var mensaje = "El objeto " + testObject + " NO está chequeado";
+         var mensaje = "El objeto " + testObject + " NO está chequeado. Motivo: " + excepcion.getLocalizedMessage();
          log.error(mensaje);
       }
       return conseguido;
@@ -911,10 +900,9 @@ public class WebElementWrapper {
    public boolean isObjetoPresente(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("isObjetoPresente->" + testObject.toString());
       var conseguido = false;
-      WebElement elemento = null;
       for (var i = 1; !conseguido && i <= NUMERO_MINIMO_INTENTOS; i++) {
          try {
-            elemento = esperaBreve(testObject);
+            var elemento = esperaBreve(testObject);
             resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
@@ -1174,10 +1162,9 @@ public class WebElementWrapper {
     */
    public String obtenerTextoElemento(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("obtenerTextoElemento->" + testObject.toString());
-      WebElement elemento = null;
       try {
          if (isObjetoPresente(testObject)) {
-            elemento = esperaCompleta(testObject);
+            var elemento = esperaCompleta(testObject);
 
             resaltaObjeto(elemento, COLOR_AZUL);
             return elemento.getText();
