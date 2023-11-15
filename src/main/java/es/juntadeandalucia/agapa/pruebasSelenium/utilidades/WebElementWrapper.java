@@ -891,8 +891,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         var mensaje = "El objeto " + testObject + " NO está chequeado. Motivo: " + excepcion.getLocalizedMessage();
-         log.error(mensaje);
+         var mensaje = new StringBuilder("El objeto ").append(testObject).append(" NO está chequeado.");
+         if (excepcion != null) {
+            mensaje.append(". Motivo del error: ").append(excepcion.getLocalizedMessage());
+         }
+         log.error(mensaje.toString());
       }
       return conseguido;
    }
