@@ -52,8 +52,8 @@ public class WebElementWrapper {
     * @throws PruebaAceptacionExcepcion
     */
    public void seleccionarElementoCombo(By testObject, String labelValue) throws PruebaAceptacionExcepcion {
-      click(testObject);
-      click(By.xpath("//span[text() = '" + labelValue + "']"));
+      this.click(testObject);
+      this.click(By.xpath("//span[text() = '" + labelValue + "']"));
    }
 
    public WebElement click(By testObject) throws PruebaAceptacionExcepcion {
@@ -63,8 +63,8 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elementoEsperado = esperaCompleta(testObject);
-            resaltaObjeto(elementoEsperado, COLOR_AMARILLO);
+            WebElement elementoEsperado = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elementoEsperado, COLOR_AMARILLO);
             elemento = this.esperarHastaQueElementoClickable(testObject);
             elemento.click();
             conseguido = true;
@@ -87,8 +87,8 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
-            resaltaObjeto(elemento, COLOR_AMARILLO);
+            WebElement elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
 
             this.esperarHastaQueElementoClickable(elemento);
             Actions actions = new Actions(WebDriverFactory.getDriver());
@@ -112,11 +112,11 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = click(testObject);
+            WebElement elemento = this.click(testObject);
             if (elemento.getAttribute("value").length() > 0) {
                // Para borrar campos que tienen mucho texto y así sea mas rápido
                elemento.clear();
-               elemento = esperaCompleta(testObject);
+               elemento = this.esperaCompleta(testObject);
             }
             if (elemento.getAttribute("value").length() > 0) {
                // Para borrar campos numéricos formateados con deciamles
@@ -125,7 +125,7 @@ public class WebElementWrapper {
                   elemento.sendKeys(Keys.DELETE.toString());
                   elemento.sendKeys(Keys.BACK_SPACE.toString());
                }
-               elemento = esperaCompleta(testObject);
+               elemento = this.esperaCompleta(testObject);
             }
             for (int x = 0; x < texto.length(); x++) {
                elemento.sendKeys(texto.substring(x, x + 1));
@@ -147,7 +147,7 @@ public class WebElementWrapper {
 
    public void subirFichero(By testObject, String ruta) throws PruebaAceptacionExcepcion {
       log.debug("subirFichero->" + testObject.toString() + ". Texto=" + ruta);
-      clickParaUploadFichero(testObject, ruta);
+      this.clickParaUploadFichero(testObject, ruta);
       // boolean conseguido = false;
       //
       // for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
@@ -174,11 +174,11 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            esperaCompleta(testObject);
+            this.esperaCompleta(testObject);
             WebElement elemento = this.esperarHastaQueElementoClickable(testObject);
 
             Select comboBox = new Select(elemento);
-            resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             comboBox.selectByIndex(index);
             conseguido = true;
          }
@@ -208,11 +208,11 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
+            WebElement elemento = this.esperaCompleta(testObject);
             // WebElement elemento = this.esperarHastaQueElementoClickable(testObject);
 
             Select comboBox = new Select(elemento);
-            resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             if (elemento.isEnabled()) {
                comboBox.selectByVisibleText(label);
                conseguido = true;
@@ -238,7 +238,7 @@ public class WebElementWrapper {
       try {
          this.selectOptionByLabel(testObject, label);
          if (conRetraso) {
-            esperaCorta();
+            this.esperaCorta();
          }
       }
       catch (PruebaAceptacionExcepcion e) {
@@ -256,8 +256,8 @@ public class WebElementWrapper {
       String etiquetaSeleccionada = "";
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
-            resaltaObjeto(elemento, COLOR_AZUL);
+            WebElement elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             Select comboBox = new Select(elemento);
             etiquetaSeleccionada = comboBox.getFirstSelectedOption().getText().trim();
             conseguido = true;
@@ -293,8 +293,8 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
-            resaltaObjeto(elemento, COLOR_AZUL);
+            WebElement elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             Select comboBox = new Select(elemento);
             for (WebElement opcion : comboBox.getOptions()) {
                if (opcion.getText().equals(label)) {
@@ -330,8 +330,8 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
-            resaltaObjeto(elemento, COLOR_AZUL);
+            WebElement elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             encontrado = true;
             Select comboBox = new Select(elemento);
             for (WebElement opcion : comboBox.getOptions()) {
@@ -359,11 +359,11 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            esperaCompleta(testObject);
+            this.esperaCompleta(testObject);
             WebElement elemento = this.esperarHastaQueElementoClickable(testObject);
 
             Select comboBox = new Select(elemento);
-            resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             comboBox.selectByValue(value);
             conseguido = true;
          }
@@ -386,8 +386,8 @@ public class WebElementWrapper {
       String valorSeleccionado = "";
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
-            resaltaObjeto(elemento, COLOR_AZUL);
+            WebElement elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
 
             Select comboBox = new Select(elemento);
             valorSeleccionado = comboBox.getFirstSelectedOption().getText();
@@ -412,12 +412,12 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
+            WebElement elemento = this.esperaCompleta(testObject);
             if (elemento == null) {
                throw new PruebaAceptacionExcepcion(testObject.toString() + " no existe");
             }
-            resaltaObjeto(elemento, COLOR_AZUL);
-            conseguido = esperarHastaQueElementoTengaTexto(testObject, text);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
+            conseguido = this.esperarHastaQueElementoTengaTexto(testObject, text);
          }
          catch (Exception e) {
             excepcion = e;
@@ -445,12 +445,12 @@ public class WebElementWrapper {
    public void waitUntilElementTextChangedOrDisapeared(By testObject, String text) throws PruebaAceptacionExcepcion {
       log.debug("waitUntilElementTextChangedOrDisapeared->" + testObject.toString() + ". Text=" + text);
       boolean conseguido = false;
-      WebElement elemento = esperaCompleta(testObject);
-      resaltaObjeto(elemento, COLOR_AZUL);
+      WebElement elemento = this.esperaCompleta(testObject);
+      this.resaltaObjeto(elemento, COLOR_AZUL);
 
       while (!conseguido) {
          try {
-            elemento = esperaCompleta(testObject);
+            elemento = this.esperaCompleta(testObject);
 
             if ((elemento == null) || StringUtils.isBlank(elemento.getText()) || !text.equals(elemento.getText())) {
                // Ha desaparecido --> ok
@@ -458,7 +458,7 @@ public class WebElementWrapper {
             }
 
             if (conseguido) {
-               resaltaObjeto(elemento, COLOR_AMARILLO);
+               this.resaltaObjeto(elemento, COLOR_AMARILLO);
             }
          }
          catch (Exception e) {
@@ -473,7 +473,7 @@ public class WebElementWrapper {
       log.debug("verifyElementPresent->" + testObject.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         if (isObjetoPresente(testObject)) {
+         if (this.isObjetoPresente(testObject)) {
             conseguido = true;
          }
       }
@@ -488,7 +488,7 @@ public class WebElementWrapper {
       log.debug("verifyElementNotPresent->" + testObject.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         if (esperarHastaQueElementoNoPresente(testObject)) {
+         if (this.esperarHastaQueElementoNoPresente(testObject)) {
             // this.esperaCorta();
             // if (this.isObjetoNoPresente(testObject)) {
             conseguido = true;
@@ -503,7 +503,7 @@ public class WebElementWrapper {
 
    public void verifyElementChecked(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("verifyElementChecked->" + testObject.toString());
-      boolean conseguido = isElementChecked(testObject);
+      boolean conseguido = this.isElementChecked(testObject);
       if (!conseguido) {
          String mensaje = "El objeto " + testObject + " no está checkeado cuando debería";
          log.error(mensaje);
@@ -513,7 +513,7 @@ public class WebElementWrapper {
 
    public void verifyElementNotChecked(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("verifyElementNotChecked->" + testObject.toString());
-      boolean marcado = isElementChecked(testObject);
+      boolean marcado = this.isElementChecked(testObject);
       if (marcado) {
          String mensaje = "El objeto " + testObject + " está checkeado cuando no debería";
          log.error(mensaje);
@@ -528,9 +528,9 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
+            WebElement elemento = this.esperaCompleta(testObject);
             valorAtributo = elemento.getAttribute(atributo);
-            resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             conseguido = true;
          }
          catch (Exception e) {
@@ -553,9 +553,9 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
+            WebElement elemento = this.esperaCompleta(testObject);
             valorAtributo = elemento.getAttribute(atributo);
-            resaltaObjeto(elemento, COLOR_AZUL);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
          catch (Exception e) {
@@ -580,7 +580,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = encuentraTextoEnPagina(texto);
+         conseguido = this.encuentraTextoEnPagina(texto);
       }
       if (!conseguido) {
          String mensaje = "Texto " + texto + " no presente";
@@ -592,10 +592,10 @@ public class WebElementWrapper {
    private boolean encuentraTextoEnPagina(String texto) {
       boolean conseguido = false;
       try {
-         esperaCorta();
+         this.esperaCorta();
          WebElement textDemo = WebDriverFactory.getDriver().findElement(By.xpath("//*[contains(text(),'" + texto + "')]"));
          if (textDemo.isDisplayed()) {
-            resaltaObjeto(textDemo, COLOR_AMARILLO);
+            this.resaltaObjeto(textDemo, COLOR_AMARILLO);
             conseguido = true;
          }
       }
@@ -612,7 +612,7 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaParaSubirFichero(testObject);
+            WebElement elemento = this.esperaParaSubirFichero(testObject);
             elemento.sendKeys(rutaFichero);
             conseguido = true;
          }
@@ -630,9 +630,9 @@ public class WebElementWrapper {
 
    private WebElement esperaParaSubirFichero(By testObject) throws PruebaAceptacionExcepcion {
       log.trace("esperaParaSubirFichero->" + testObject.toString());
-      esperarDesaparezcaProcesando();
-      WebElement elemento = esperarHastaQueElementoPresente(testObject);
-      resaltaObjeto(elemento, COLOR_AMARILLO);
+      this.esperarDesaparezcaProcesando();
+      WebElement elemento = this.esperarHastaQueElementoPresente(testObject);
+      this.resaltaObjeto(elemento, COLOR_AMARILLO);
       return elemento;
    }
 
@@ -644,11 +644,11 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             if (i == 1) {
-               esperaBreve(testObject);
+               this.esperaBreve(testObject);
             }
-            WebElement elemento = esperaCompleta(testObject);
+            WebElement elemento = this.esperaCompleta(testObject);
             cadena = elemento.getText();
-            resaltaObjeto(elemento, COLOR_AZUL);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
          catch (Exception e) {
@@ -679,8 +679,8 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
-            resaltaObjeto(elemento, COLOR_AZUL);
+            WebElement elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
 
             Select comboBox = new Select(elemento);
             List<WebElement> listOptionDropdown = comboBox.getOptions();
@@ -725,7 +725,7 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             // Localizar el body de la tabla
-            table = esperaCompleta(testObject);
+            table = this.esperaCompleta(testObject);
             conseguido = true;
          }
          catch (Exception e) {
@@ -777,7 +777,7 @@ public class WebElementWrapper {
             // FIXME : No hay forma de esperar después del evento filtrado, debido al evento
             // onKeyUp que mete un retraso aleatorio en la carga del listado.
             // Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
-            WebElement table = esperaCompleta(By.id(idBodyTabla));
+            WebElement table = this.esperaCompleta(By.id(idBodyTabla));
             List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
             numeroDeFilas = rows.size();
             conseguido = true;
@@ -798,7 +798,7 @@ public class WebElementWrapper {
 
    public void esperarFilaUnicaListado(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("esperarFilaUnicaListado->" + testObject.toString());
-      esperarListadoConFilas(testObject, 1);
+      this.esperarListadoConFilas(testObject, 1);
    }
 
    public void esperarListadoConFilas(By testObject, int numeroFilasEsperadas) throws PruebaAceptacionExcepcion {
@@ -813,8 +813,8 @@ public class WebElementWrapper {
             // Localizar el body de la tabla
             // FIXME : No hay forma de esperar después del evento filtrado, debido al evento onKeyUp que mete un retraso aleatorio en la
             // carga del listado.
-            esperaIncondicional(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)));
-            table = esperaCompleta(testObject);
+            this.esperaIncondicional(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)));
+            table = this.esperaCompleta(testObject);
             List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
             numeroDeFilas = rows.size();
             if (numeroDeFilas == numeroFilasEsperadas) {
@@ -876,9 +876,9 @@ public class WebElementWrapper {
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaCompleta(testObject);
+            WebElement elemento = this.esperaCompleta(testObject);
             marcado = elemento.isSelected();
-            resaltaObjeto(elemento, COLOR_AZUL);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
          catch (Exception e) {
@@ -901,8 +901,8 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MINIMO_INTENTOS; i++) {
          try {
-            WebElement elemento = esperaBreve(testObject);
-            resaltaObjeto(elemento, COLOR_AZUL);
+            WebElement elemento = this.esperaBreve(testObject);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
          catch (Exception e) {
@@ -959,16 +959,16 @@ public class WebElementWrapper {
 
    private WebElement esperaBreve(By testObject) throws PruebaAceptacionExcepcion {
       log.trace("esperaBreve->" + testObject.toString());
-      esperarDesaparezcaProcesando();
-      esperarHastaQueElementoPresenteBreve(testObject);
-      return esperarHastaQueElementoVisibleBreve(testObject);
+      this.esperarDesaparezcaProcesando();
+      this.esperarHastaQueElementoPresenteBreve(testObject);
+      return this.esperarHastaQueElementoVisibleBreve(testObject);
    }
 
    public WebElement esperaCompleta(By testObject) throws PruebaAceptacionExcepcion {
       log.trace("esperaCompleta->" + testObject.toString());
-      esperarDesaparezcaProcesando();
-      esperarHastaQueElementoPresente(testObject);
-      return esperarHastaQueElementoVisible(testObject);
+      this.esperarDesaparezcaProcesando();
+      this.esperarHastaQueElementoPresente(testObject);
+      return this.esperarHastaQueElementoVisible(testObject);
    }
 
    private WebElement esperarHastaQueElementoVisibleBreve(By testObject) throws PruebaAceptacionExcepcion {
@@ -1162,10 +1162,10 @@ public class WebElementWrapper {
    public String obtenerTextoElemento(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("obtenerTextoElemento->" + testObject.toString());
       try {
-         if (isObjetoPresente(testObject)) {
-            WebElement elemento = esperaCompleta(testObject);
+         if (this.isObjetoPresente(testObject)) {
+            WebElement elemento = this.esperaCompleta(testObject);
 
-            resaltaObjeto(elemento, COLOR_AZUL);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             return elemento.getText();
          }
 
@@ -1185,7 +1185,7 @@ public class WebElementWrapper {
       for (int i = 1; !encontrado && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             // Intento i-esimo
-            encontrado = encuentraTextoEnPagina(texto);
+            encontrado = this.encuentraTextoEnPagina(texto);
          }
          catch (Exception e) {
             log.error(e.getLocalizedMessage());
@@ -1198,7 +1198,7 @@ public class WebElementWrapper {
 
    private void esperaCorta() {
       try {
-         esperarDesaparezcaProcesando();
+         this.esperarDesaparezcaProcesando();
          Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
       }
       catch (Exception e) {
@@ -1208,8 +1208,18 @@ public class WebElementWrapper {
 
    private void esperaMedia() {
       try {
-         esperarDesaparezcaProcesando();
+         this.esperarDesaparezcaProcesando();
          Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000);
+      }
+      catch (Exception e) {
+         log.error(e.getLocalizedMessage());
+      }
+   }
+
+   public void retrasoLargo() {
+      try {
+         this.esperarDesaparezcaProcesando();
+         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO)) * 1000);
       }
       catch (Exception e) {
          log.error(e.getLocalizedMessage());
@@ -1223,7 +1233,7 @@ public class WebElementWrapper {
       int num = 0;
       try {
          By objetoBuscado = By.xpath("//*[@class = '" + clase + "']");
-         String texto = getText(objetoBuscado);
+         String texto = this.getText(objetoBuscado);
          if (texto.contains("Resultados: ")) {
 
             int indice = texto.indexOf(":");
@@ -1265,7 +1275,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = pulsaUnicoElementoParaAux(titulo, clase);
+         conseguido = this.pulsaUnicoElementoParaAux(titulo, clase);
       }
       if (!conseguido) {
          String mensaje = "No existe un único elemento a cliquear en el listado";
@@ -1292,8 +1302,8 @@ public class WebElementWrapper {
       log.trace("pulsaUnicoElementoParaAux->" + titulo + "-" + clase);
       try {
          By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
-         WebElement objetoEncontrado = esperaCompleta(objetoBuscado);
-         resaltaObjeto(objetoEncontrado, COLOR_AMARILLO);
+         WebElement objetoEncontrado = this.esperaCompleta(objetoBuscado);
+         this.resaltaObjeto(objetoEncontrado, COLOR_AMARILLO);
          objetoEncontrado.click();
          return true;
       }
@@ -1320,7 +1330,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = pulsaUnicoElementoParaIdTituloAux(id, titulo);
+         conseguido = this.pulsaUnicoElementoParaIdTituloAux(id, titulo);
       }
       if (!conseguido) {
          String mensaje = "No se ha podido pulsar el elemento con id que contiene la cadena " + id + " y el titulo " + titulo;
@@ -1345,7 +1355,7 @@ public class WebElementWrapper {
       log.trace("pulsaUnicoElementoParaIdTituloAux->" + id + ". Título->" + titulo);
       try {
          By objetoBuscado = By.xpath("//input[contains(@id, '" + id + "') and contains(@title, '" + titulo + "')]");
-         return pulsaEnElUnico(objetoBuscado);
+         return this.pulsaEnElUnico(objetoBuscado);
       }
       catch (Exception e) {
          log.debug(e.getLocalizedMessage());
@@ -1369,7 +1379,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = pulsaUnicoElementoParaIdAux(id);
+         conseguido = this.pulsaUnicoElementoParaIdAux(id);
       }
       if (!conseguido) {
          String mensaje = "No se ha podido pulsar el elemento con id que contiene la cadena " + id;
@@ -1394,7 +1404,7 @@ public class WebElementWrapper {
       log.trace("pulsaUnicoElementoParaIdAux->" + id);
       try {
          By objetoBuscado = By.xpath("//input[contains(@id, '" + id + "')]");
-         return pulsaEnElUnico(objetoBuscado);
+         return this.pulsaEnElUnico(objetoBuscado);
       }
       catch (Exception e) {
          log.debug(e.getLocalizedMessage());
@@ -1412,14 +1422,14 @@ public class WebElementWrapper {
       log.trace("pulsaEnElUnico->" + objetoBuscado);
       try {
          // Se espera a que desaparezca el mensaje procesando o se cargue la pagina...
-         esperaCompleta(objetoBuscado);
+         this.esperaCompleta(objetoBuscado);
 
          List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
          if (null != webElements && 1 == webElements.size()) {
             // Solo puede quedar UNO!!!
             WebElement elemento = webElements.get(0);
             elemento.click();
-            resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             return true;
          }
       }
@@ -1447,7 +1457,7 @@ public class WebElementWrapper {
          int num = 0;
 
          // Se espera a que desaparezca el mensaje procesando o se cargue la pagina...
-         esperaCorta();
+         this.esperaCorta();
 
          // Aqui no tiene sentido la repeticion de intentos pues, tras esperar la carga de la pagina, basta obtener el numero de botones que
          // se consideren.
@@ -1485,7 +1495,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento siguiente
-         conseguido = pulsaElementoIesimoParaAux(pos, titulo, clase);
+         conseguido = this.pulsaElementoIesimoParaAux(pos, titulo, clase);
       }
       if (!conseguido) {
          String mensaje = "No ha sido posible cliquear en elemento del listado de la posicion: " + pos;
@@ -1513,7 +1523,7 @@ public class WebElementWrapper {
       try {
          By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
 
-         esperaCorta();
+         this.esperaCorta();
 
          // List<WebElement> webElements = WebUiCommonHelper.findWebElements(genericObject, GlobalVariable.tiempoRetrasoCorto)
          List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
@@ -1521,9 +1531,9 @@ public class WebElementWrapper {
          if (null != webElements && webElements.size() > 0 && webElements.size() >= pos) {
             log.trace("" + webElements.size());
             // Pulsamos el i-esimo
-            resaltaObjeto(webElements.get(pos - 1), COLOR_AMARILLO);
+            this.resaltaObjeto(webElements.get(pos - 1), COLOR_AMARILLO);
             webElements.get(pos - 1).click();
-            esperaCorta();
+            this.esperaCorta();
 
             pulsado = true;
          }
@@ -1539,7 +1549,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = pulsaPrimerElementoDocsAnexosAux(textoEnlace);
+         conseguido = this.pulsaPrimerElementoDocsAnexosAux(textoEnlace);
       }
       if (!conseguido) {
          String mensaje = "No existe un primer tipo de documentos anexos a seleccionar";
@@ -1559,13 +1569,13 @@ public class WebElementWrapper {
       log.trace("pulsaPrimerElementoDocsAnexosAux->" + textoEnlace);
 
       try {
-         esperaCorta();
+         this.esperaCorta();
 
          By objetoBuscado = By.xpath("//a[contains(text(), '" + textoEnlace + "')]");
          List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
          for (WebElement webElement : webElements) {
             // Si lo encuentra, pulsa sobre el y punto..., devolviendo un 1 como que lo pulso
-            resaltaObjeto(webElement, COLOR_AMARILLO);
+            this.resaltaObjeto(webElement, COLOR_AMARILLO);
             webElement.click();
             return true;
          }
@@ -1590,7 +1600,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = clickParaUploadFicheroIesimoListadoAux(rutaFichero, posicion);
+         conseguido = this.clickParaUploadFicheroIesimoListadoAux(rutaFichero, posicion);
       }
       if (!conseguido) {
          String mensaje = "No se puede hacer click en elemento i-esimo del listado: posicion = " + posicion;
@@ -1624,7 +1634,7 @@ public class WebElementWrapper {
          // elemento.sendKeys(rutaFichero);
          // return true;
          // }
-         WebElement elemento = esperaParaSubirFichero(objetoBuscado);
+         WebElement elemento = this.esperaParaSubirFichero(objetoBuscado);
          elemento.sendKeys(rutaFichero);
          return true;
       }
@@ -1644,7 +1654,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = pulsaUnicoElementoDescargableAux();
+         conseguido = this.pulsaUnicoElementoDescargableAux();
       }
       if (!conseguido) {
          String mensaje = "No existe un unico elemento descargable en el listado";
@@ -1663,14 +1673,14 @@ public class WebElementWrapper {
       try {
          By objetoBuscado = By.xpath("//input[@type = 'submit' and contains(@id, ':cLDescargaFichero')]");
 
-         esperaCorta();
+         this.esperaCorta();
 
          List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
          if (null != webElements && 1 == webElements.size()) {
             // SOLO debe quedar UNO!!!
             WebElement elemento = webElements.get(0);
             // webElements.get(0).click();
-            resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             this.esperarHastaQueElementoClickable(elemento).click();
             return true;
          }
@@ -1691,7 +1701,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = pulsaUnicoElementoEliminableAux();
+         conseguido = this.pulsaUnicoElementoEliminableAux();
       }
       if (!conseguido) {
          String mensaje = "No se ha podido pulsar en el único elemento eliminable";
@@ -1710,14 +1720,14 @@ public class WebElementWrapper {
       try {
          By objetoBuscado = By.xpath("//input[contains(@id, ':aJCBEliminarFichero')]");
 
-         esperaCorta();
+         this.esperaCorta();
 
          List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
          if (null != webElements && 1 == webElements.size()) {
             // Solo puede quedar UNO!!!
             WebElement elemento = webElements.get(0);
             // webElements.get(0).click()
-            resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             this.esperarHastaQueElementoClickable(elemento).click();
             return true;
          }
@@ -1739,7 +1749,7 @@ public class WebElementWrapper {
    public void clickCambiandoFoco(By testObject) throws PruebaAceptacionExcepcion {
       log.debug("clickCambiandoFoco->" + testObject.toString());
       try {
-         click(testObject);
+         this.click(testObject);
       }
       catch (PruebaAceptacionExcepcion e) {
          log.error(e.getLocalizedMessage());
@@ -1753,11 +1763,11 @@ public class WebElementWrapper {
       WebElement elemento = null;
       Exception excepcion = null;
       // String window = WebDriverFactory.getDriver().getWindowHandle();
-      ejecutaAccionesUrlAfirmaProtocol();
+      this.ejecutaAccionesUrlAfirmaProtocol();
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = esperaCompleta(testObject);
-            resaltaObjeto(elemento, COLOR_AMARILLO);
+            elemento = this.esperaCompleta(testObject);
+            this.resaltaObjeto(elemento, COLOR_AMARILLO);
             WebElement elementoClickable = this.esperarHastaQueElementoClickable(elemento);
             if (elementoClickable != null) {
                elementoClickable.click();
@@ -1770,7 +1780,7 @@ public class WebElementWrapper {
             log.error(e.getLocalizedMessage());
             // WebDriverFactory.getDriver().switchTo().window(window);
             // this.cambiarFoco();
-            ejecutaAccionesUrlAfirmaProtocol();
+            this.ejecutaAccionesUrlAfirmaProtocol();
 
             excepcion = e;
          }
@@ -1788,7 +1798,7 @@ public class WebElementWrapper {
       try {
          Robot rb = new Robot();
 
-         esperaMedia();
+         this.esperaMedia();
 
          log.debug("Pulsar <DERECHA>");
          rb.keyPress(KeyEvent.VK_RIGHT);
@@ -1840,7 +1850,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = pulsaPrimerElementoParaAux(titulo, clase);
+         conseguido = this.pulsaPrimerElementoParaAux(titulo, clase);
       }
       if (!conseguido) {
          String mensaje = "No ha sido posible cliquear en el primer elemento del listado";
@@ -1864,8 +1874,8 @@ public class WebElementWrapper {
       log.trace("pulsaPrimerElementoParaAux->" + titulo + "-" + clase);
       try {
          By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
-         WebElement objetoEncontrado = esperaCompleta(objetoBuscado);
-         resaltaObjeto(objetoEncontrado, COLOR_AMARILLO);
+         WebElement objetoEncontrado = this.esperaCompleta(objetoBuscado);
+         this.resaltaObjeto(objetoEncontrado, COLOR_AMARILLO);
          List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
          if (null != webElements && webElements.size() > 0) {
             // Pulsamos el primero
@@ -1886,7 +1896,7 @@ public class WebElementWrapper {
       log.debug("clickGenerico->" + id);
       TestObject genericObject = new TestObject();
       genericObject.addProperty("id", ConditionType.CONTAINS, id);
-      click(convertirXpath(genericObject));
+      this.click(this.convertirXpath(genericObject));
    }
 
    public void clickMensajePorTexto(String texto) throws PruebaAceptacionExcepcion {
@@ -1894,7 +1904,7 @@ public class WebElementWrapper {
       TestObject genericObject = new TestObject();
       genericObject.addProperty("tag", ConditionType.EQUALS, "p");
       genericObject.addProperty("text", ConditionType.CONTAINS, texto);
-      click(convertirXpath(genericObject));
+      this.click(this.convertirXpath(genericObject));
    }
 
    public void clickNodoArbol(String id) throws PruebaAceptacionExcepcion {
@@ -1902,7 +1912,7 @@ public class WebElementWrapper {
       TestObject genericObject = new TestObject();
       genericObject.addProperty("id", ConditionType.CONTAINS, id);
       genericObject.addProperty("class", ConditionType.CONTAINS, "icon-collapsed");
-      click(convertirXpath(genericObject));
+      this.click(this.convertirXpath(genericObject));
    }
 
    public By convertirXpath(TestObject genericObject) {
@@ -1930,5 +1940,4 @@ public class WebElementWrapper {
       }
       return elemento != null;
    }
-
 }
