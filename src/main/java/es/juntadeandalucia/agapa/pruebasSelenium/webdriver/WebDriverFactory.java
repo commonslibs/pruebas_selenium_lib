@@ -50,8 +50,6 @@ public class WebDriverFactory {
                                                                                            "");
                                                                                      ChromeOptions options = new ChromeOptions();
 
-                                                                                     options.setBinary(
-                                                                                           "c:/trja451/workspace-sts-4.20.1/chrome-win32/chrome.exe");
                                                                                      options.addArguments("--no-sandbox");
                                                                                      options.addArguments("--disable-dev-shm-usage");
                                                                                      options.addArguments("--verbose");
