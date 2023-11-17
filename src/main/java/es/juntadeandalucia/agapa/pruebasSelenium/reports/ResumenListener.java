@@ -18,6 +18,8 @@ import org.testng.Reporter;
 @Slf4j
 public class ResumenListener implements ITestListener {
 
+   private String directorioDeSalida = "";
+
    @Override
    public void onFinish(ITestContext context) {
       if (context.getPassedTests().getAllResults().size() > 0) {
@@ -40,18 +42,18 @@ public class ResumenListener implements ITestListener {
    @Override
    public void onStart(ITestContext arg0) {
       this.escribirTraza("Empiezan tests regresión: " + arg0.getStartDate().toString());
+      this.directorioDeSalida = arg0.getOutputDirectory();
    }
 
    @Override
    public void onTestFailure(ITestResult arg0) {
-      this.escribirTraza("Fallido: " + arg0.getName());
-      this.escribirTraza("getTestName: " + arg0.getTestName());
-      this.escribirTraza("getTestClass : " + arg0.getClass());
-      this.escribirTraza("getMethod : " + arg0.getMethod());
+      this.escribirTraza("Test: " + arg0.getMethod().getDescription());
+      this.escribirTraza("Clase: " + arg0.getMethod().getInstance().getClass().getSimpleName());
+      this.escribirTraza("Método: " + arg0.getMethod().getMethodName());
 
       Object testClass = arg0.getInstance();
       WebDriver driver = ((TestSeleniumAbstracto) testClass).getDriver();
-      this.takeSnapShot(driver);
+      // this.takeSnapShot(driver, this.nombreCasoYCiclo(arg0));
    }
 
    @Override
@@ -85,9 +87,9 @@ public class ResumenListener implements ITestListener {
    /**
     * Toma una foto del navegador y la guarda en test-output como snapshot.png
     */
-   private void takeSnapShot(WebDriver driver) {
+   private void takeSnapShot(WebDriver driver, String fichero) {
       Assert.notNull(driver, "Driver no puede ser nulo");
-      String fileWithPath = "test-output//snapshot.png";
+      String fileWithPath = this.directorioDeSalida + "/" + fichero + ".png";
       TakesScreenshot scrShot = ((TakesScreenshot) driver);
       File SrcFile = scrShot.getScreenshotAs(OutputType.FILE);
       File DestFile = new File(fileWithPath);

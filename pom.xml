@@ -27,6 +27,7 @@
 		<testng.version>7.8.0</testng.version>
 		<jacoco.version>0.8.6</jacoco.version>
 		<selenium.version>4.15.0</selenium.version>
+		<extentreports-version>5.1.1</extentreports-version>
 	</properties>
 
 	<dependencies>
@@ -79,6 +80,11 @@
 			<version>${testng.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.aventstack</groupId>
+			<artifactId>extentreports</artifactId>
+			<version>${extentreports-version}</version>
+		</dependency>
 
 	</dependencies>
 
