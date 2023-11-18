@@ -43,7 +43,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
 
    protected ExtentReports     extent;
    private ExtentSparkReporter spark;
-   protected ExtentTest        logger;
+   private ExtentTest               logger;
+
 
    public WebDriver getDriver() {
       return WebDriverFactory.getDriver();
@@ -111,7 +112,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
     *
     * @throws PruebaAceptacionExcepcion
     */
-   public void beforeMethod() throws PruebaAceptacionExcepcion {
+   protected void beforeMethod() throws PruebaAceptacionExcepcion {
       try {
          // Indicara la carpeta donde se guardaran los videos.
          System.setProperty("video.folder", System.getProperty("user.dir") + "//test-output//video//" + this.getClass().getSimpleName());
@@ -124,7 +125,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
    }
 
-   public void cerrarNavegador() throws PruebaAceptacionExcepcion {
+   private void cerrarNavegador() throws PruebaAceptacionExcepcion {
       // ChromeDriver chrome = (ChromeDriver) WebDriverFactory.getDriver();
       // chrome.close();
       WebDriverFactory.getDriver().quit();
