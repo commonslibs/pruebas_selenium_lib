@@ -25,12 +25,15 @@ import org.openqa.selenium.firefox.GeckoDriverService;
 @Slf4j
 public class WebDriverFactory {
 
-   // Almacén del WebDriver compartido por todos los servicios y clases de test del proyecto.
-   @Setter
    @Getter
-   private static WebDriver         driver;
+   static @Setter private ExtentTest logger;
 
-   private static WebElementWrapper webElementWrapper;
+   // Almacén del WebDriver compartido por todos los servicios y clases de test del proyecto.
+   @Getter
+   @Setter
+   private static WebDriver          driver;
+
+   private static WebElementWrapper  webElementWrapper;
 
    public enum Navegador {
       CHROME, FIREFOX, MSEDGE
