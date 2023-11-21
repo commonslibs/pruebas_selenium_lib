@@ -106,6 +106,7 @@ public class WebElementWrapper {
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al hacer click en el elemento. Motivo del error: " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -133,6 +134,7 @@ public class WebElementWrapper {
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al hacer click en el elemento. Motivo del error: " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -172,6 +174,43 @@ public class WebElementWrapper {
       }
       if (!conseguido) {
          String mensaje = "Error al escribir texto en " + testObject + ". Motivo del error : " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Escribe un texto tecleando caracter por caracter en el campo sugerencia, y pulsa el caracter de "down arrow" y a continuacion "enter".
+    */
+   public void escibeTextoEnSugerencia(By testObject, String texto) throws PruebaAceptacionExcepcion {
+      this.debug("escibeTextoEnSugerencia->" + testObject.toString() + ". Texto=" + texto);
+      boolean conseguido = false;
+      Exception excepcion = null;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+
+         try {
+            WebElement elemento = this.click(testObject);
+            while (elemento.getAttribute("value").length() > 0) {
+               // necesario porque así se soluciona donde aparece el cursor al hacer click (izq o der)
+               elemento.sendKeys(Keys.DELETE.toString());
+               elemento.sendKeys(Keys.BACK_SPACE.toString());
+            }
+            for (int x = 0; x < texto.length(); x++) {
+               elemento.sendKeys(texto.substring(x, x + 1));
+            }
+            elemento.sendKeys(Keys.DOWN.toString());
+            elemento.sendKeys(Keys.ENTER.toString());
+            conseguido = true;
+         }
+         catch (Exception e) {
+            this.warning(e.getLocalizedMessage());
+            excepcion = e;
+         }
+      }
+      if (!conseguido) {
+         String mensaje = "No se puede escribir el texto " + texto + " en el campo sugerencia " + testObject.toString();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -222,6 +261,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al hacer seleccionar el valor del combo por índice. Motivo del error: "
                + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -262,6 +302,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al hacer seleccionar el valor del combo por etiqueta. Motivo del error: "
                + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -304,6 +345,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error  en " + testObject + "al hacer seleccionar el valor del combo por etiqueta. Motivo del error: "
                + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -346,6 +388,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "La opción " + label + " de " + testObject.toString() + " no está presente en " + testObject
                + ". Motivo del error: " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -385,6 +428,7 @@ public class WebElementWrapper {
       if (!encontrado || !conseguido) {
          String mensaje = "La opción " + label + " de " + testObject.toString() + " está presente cuando no debería en " + testObject
                + ". Motivo del error: " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -412,6 +456,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al hacer seleccionar el valor del combo por value del option. Motivo del error: "
                + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -439,6 +484,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al hacer seleccionar el valor del combo por value del option. Motivo del error: "
                + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -469,6 +515,7 @@ public class WebElementWrapper {
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + excepcion.getLocalizedMessage();
          }
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -579,6 +626,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al obtener el atributo del elemento " + testObject + ". Motivo del error: "
                + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -605,6 +653,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje =
                "Error en " + testObject + " al obtener el atributo del elemento web. Motivo del error: " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -663,6 +712,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al hacer click para subir fichero en el elemento. Motivo del error: "
                + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -699,6 +749,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje =
                "Error en " + testObject + " al obtener el texto del elemento. Motivo del error: " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -736,6 +787,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al hacer seleccionar el valor del combo por índice. Motivo del error: "
                + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -794,6 +846,7 @@ public class WebElementWrapper {
       }
       else {
          String mensaje = "Error al obtener el id del cuerpo de la tabla. Motivo del error: " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -833,6 +886,7 @@ public class WebElementWrapper {
 
       if (!conseguido) {
          String mensaje = "Error al hacer seleccionar el valor del combo por índice. Motivo del error: " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -873,6 +927,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje = "Error en " + testObject + " al hacer seleccionar el valor del combo por índice. Motivo del error: "
                + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -897,7 +952,7 @@ public class WebElementWrapper {
       ((JavascriptExecutor) WebDriverFactory.getDriver()).executeScript("window.scrollTo(0, -document.body.scrollHeight)");
    }
 
-   public boolean esperarHastaQueElementoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
+   private boolean esperarHastaQueElementoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
       this.debug("esperarHastaQueElementoNoPresente->" + testObject.toString());
       boolean conseguido = false;
       WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
@@ -908,7 +963,7 @@ public class WebElementWrapper {
       }
       catch (TimeoutException | StaleElementReferenceException e) {
          String mensaje = "Error al esperar que el objeto " + testObject + " NO esté presente";
-         this.error(mensaje);
+         this.warning(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
       return conseguido;
@@ -1027,13 +1082,13 @@ public class WebElementWrapper {
       }
       catch (TimeoutException | StaleElementReferenceException e) {
          String mensaje = "Error al esperar brevemente que el objeto " + testObject.toString() + " sea visible";
-         this.error(mensaje);
+         this.warning(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
       return elemento;
    }
 
-   public WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
+   private WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoVisible->" + testObject.toString());
       WebElement exito = null;
       boolean conseguido = false;
@@ -1047,7 +1102,7 @@ public class WebElementWrapper {
          }
          catch (TimeoutException | StaleElementReferenceException e) {
             String mensaje = "Error al esperar que el objeto " + testObject.toString() + " sea visible";
-            this.error(mensaje);
+            this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
@@ -1060,7 +1115,7 @@ public class WebElementWrapper {
     * @param testObject
     * @throws PruebaAceptacionExcepcion
     */
-   public void esperarHastaQueElementoNoSeaVisible(By testObject) throws PruebaAceptacionExcepcion {
+   private void esperarHastaQueElementoNoSeaVisible(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoNoSeaVisible->" + testObject.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
@@ -1073,13 +1128,13 @@ public class WebElementWrapper {
          }
          catch (TimeoutException | StaleElementReferenceException e) {
             String mensaje = "Error al esperar que el objeto " + testObject.toString() + " dejara de ser visible";
-            this.error(mensaje);
+            this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
    }
 
-   public void esperarHastaQueElementoPresenteBreve(By testObject) throws PruebaAceptacionExcepcion {
+   private void esperarHastaQueElementoPresenteBreve(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoPresenteBreve->" + testObject.toString());
       WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO))),
@@ -1089,12 +1144,12 @@ public class WebElementWrapper {
       }
       catch (TimeoutException | StaleElementReferenceException e) {
          String mensaje = "Error al esperar brevemente que el objeto " + testObject + " esté presente";
-         this.error(mensaje);
+         this.warning(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
 
-   public WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
+   private WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoPresente->" + testObject.toString());
       WebElement exito = null;
       boolean conseguido = false;
@@ -1108,14 +1163,14 @@ public class WebElementWrapper {
          }
          catch (TimeoutException | StaleElementReferenceException e) {
             String mensaje = "Error al esperar que el objeto " + testObject + " esté presente";
-            this.error(mensaje);
+            this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
       return exito;
    }
 
-   public WebElement esperarHastaQueElementoClickable(WebElement testObject) throws PruebaAceptacionExcepcion {
+   private WebElement esperarHastaQueElementoClickable(WebElement testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoClickable->" + testObject.getAttribute("id"));
       WebElement exito = null;
       boolean conseguido = false;
@@ -1129,7 +1184,7 @@ public class WebElementWrapper {
          }
          catch (TimeoutException | StaleElementReferenceException e) {
             String mensaje = "Error al esperar que el objeto " + testObject + " sea clickable";
-            this.error(mensaje);
+            this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
@@ -1150,6 +1205,7 @@ public class WebElementWrapper {
          }
          catch (TimeoutException | StaleElementReferenceException e) {
             String mensaje = "Error al esperar que el objeto " + testObject + " sea clickable";
+            this.error(e);
             this.error(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
@@ -1169,7 +1225,7 @@ public class WebElementWrapper {
          }
          catch (TimeoutException | StaleElementReferenceException e) {
             String mensaje = "Error al esperar que el objeto " + testObject + " contenga el texto";
-            this.error(mensaje);
+            this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
@@ -1193,7 +1249,7 @@ public class WebElementWrapper {
       }
       catch (Exception e) {
          String mensaje = "El elemento " + element + " no puede ser resaltado con color " + color;
-         this.error(mensaje);
+         this.warning(mensaje);
       }
    }
 
@@ -1213,10 +1269,10 @@ public class WebElementWrapper {
             this.resaltaObjeto(elemento, COLOR_AZUL);
             return elemento.getText();
          }
-
       }
       catch (PruebaAceptacionExcepcion e) {
          String mensaje = "Error al verificar el texto del elemento. Motivo del error: " + e.getLocalizedMessage();
+         this.error(e);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -1245,7 +1301,7 @@ public class WebElementWrapper {
          Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
       }
       catch (Exception e) {
-         this.error(e.getLocalizedMessage());
+         this.warning(e.getLocalizedMessage());
       }
    }
 
@@ -1255,7 +1311,7 @@ public class WebElementWrapper {
          Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000);
       }
       catch (Exception e) {
-         this.error(e.getLocalizedMessage());
+         this.warning(e.getLocalizedMessage());
       }
    }
 
@@ -1293,6 +1349,7 @@ public class WebElementWrapper {
       }
       catch (Exception e) {
          String mensaje = e.getLocalizedMessage();
+         this.error(e);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -1515,6 +1572,7 @@ public class WebElementWrapper {
          return num;
       }
       catch (Exception e) {
+         this.error(e);
          this.error(e.getLocalizedMessage());
          throw e;
       }
@@ -1795,6 +1853,7 @@ public class WebElementWrapper {
          this.click(testObject);
       }
       catch (PruebaAceptacionExcepcion e) {
+         this.error(e);
          this.error(e.getLocalizedMessage());
          throw e;
       }
@@ -1831,6 +1890,7 @@ public class WebElementWrapper {
       if (!conseguido) {
          String mensaje =
                "No se puede hacer click tras esperar el URL Afirma Protocol. Motivo del error: " + excepcion.getLocalizedMessage();
+         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -1854,6 +1914,7 @@ public class WebElementWrapper {
       }
       catch (AWTException e) {
          String mensaje = "Error al manejar el robot";
+         this.error(e);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -1978,9 +2039,65 @@ public class WebElementWrapper {
          this.warning(mensaje);
       }
       catch (PruebaAceptacionExcepcion e) {
+         this.error(e);
          this.error(e.getLocalizedMessage());
          throw e;
       }
       return elemento != null;
    }
+
+   /**
+    * Pulsa sobre el unico boton que debe existir en la pagina de detalle/formulario en la parte de las acciones a realizar que aparecen en
+    * la parte inferior de la pagina que contenga en su titulo el parametro {@code titulo} y en su class el parametro {@code clase}. Ademas
+    * ese elemento debe ser un 'tag = input' y de 'type = button' o 'type = submit'. NOTA - esto es para pulsar sobre los botones de accion
+    * que aparecen en la parte inferior de la pagina de detalle/formulario, y tener en un lugar centralizado lo que se debe hacer con lo que
+    * si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
+    *
+    * @param genericObjectPath
+    *           path hacia el objeto generico a utilizar.
+    * @param titulo
+    *           a considerar para el title.
+    * @param clase
+    *           a considerar para la clase CSS.
+    * @throws PruebaAceptacionExcepcion
+    */
+   public void pulsaUnicoBotonAccionesInferioresPara(String titulo, String clase) throws PruebaAceptacionExcepcion {
+      this.debug("pulsaUnicoBotonAccionesInferioresPara->" + titulo + "-" + clase);
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         // Intento i-esimo
+         conseguido = this.pulsaUnicoBotonAccionesInferioresParaAux(titulo, clase, "button")
+               || this.pulsaUnicoBotonAccionesInferioresParaAux(titulo, clase, "submit");
+      }
+      if (!conseguido) {
+         String mensaje = "No existe un unico boton a cliquear en la parte inferior de acciones";
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   /**
+    * Pulsa sobre el unico boton que debe existir en la pagina de detalle/formulario en la parte de las acciones a realizar que aparecen en
+    * la parte inferior de la pagina que contenga en su titulo el parametro {@code titulo}, en su class el parametro {@code clase}, y en su
+    * type el parametro {@code tipo}. Ademas ese elemento debe ser un 'tag = input'. NOTA - esto es para pulsar sobre los botones de accion
+    * que aparecen en la parte inferior de la pagina de detalle/formulario, y tener en un lugar centralizado lo que se debe hacer con lo que
+    * si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
+    *
+    * @param titulo
+    *           a considerar para el title.
+    * @param clase
+    *           a considerar para la clase CSS.
+    * @param tipo
+    *           a considerar para type.
+    * @return devuelve true si consigue pulsar sobre ese unico boton; en caso contrario, devuelve false.
+    */
+   private boolean pulsaUnicoBotonAccionesInferioresParaAux(String titulo, String clase, String tipo) {
+      TestObject genericObject = new TestObject();
+      genericObject.addProperty("class", ConditionType.CONTAINS, clase);
+      genericObject.addProperty("title", ConditionType.CONTAINS, titulo);
+      genericObject.addProperty("tag", ConditionType.EQUALS, "input");
+      genericObject.addProperty("type", ConditionType.EQUALS, tipo);
+      return this.pulsaEnElUnico(this.convertirXpath(genericObject));
+   }
+
 }
