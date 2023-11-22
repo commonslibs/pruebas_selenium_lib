@@ -161,9 +161,7 @@ public class WebElementWrapper {
                }
                elemento = this.esperaCompleta(testObject);
             }
-            for (int x = 0; x < texto.length(); x++) {
-               elemento.sendKeys(texto.substring(x, x + 1));
-            }
+            this.asignaTexto(elemento, texto);
             elemento.sendKeys(Keys.TAB.toString()); // Hay veces que si no se pulsa TAB, no funciona
             conseguido = true;
          }
@@ -177,6 +175,21 @@ public class WebElementWrapper {
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   private void asignaTexto(WebElement elemento, String texto) {
+      this.trace("asignaTexto->" + elemento.toString() + ". Color=" + texto);
+      try {
+         JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
+         js.executeScript("arguments[0].value = arguments[1];", elemento, texto);
+         // for (int x = 0; x < texto.length(); x++) {
+         // elemento.sendKeys(texto.substring(x, x + 1));
+         // }
+      }
+      catch (Exception e) {
+         String mensaje = "No se puede escribir " + texto + "en " + elemento;
+         this.warning(mensaje);
       }
    }
 
