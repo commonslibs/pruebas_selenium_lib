@@ -902,7 +902,8 @@ public class WebElementWrapper {
             // onKeyUp que mete un retraso aleatorio en la carga del listado.
             // Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
             WebElement table = this.esperaCompleta(By.id(idBodyTabla));
-            List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
+            List<WebElement> rows = table.findElements(By.xpath("//table[@id='" + idBodyTabla + "']/tbody/tr"));
+            // +"//tr[contains(@class, 'rich-table-row')]"));
             numeroDeFilas = rows.size();
             conseguido = true;
          }
