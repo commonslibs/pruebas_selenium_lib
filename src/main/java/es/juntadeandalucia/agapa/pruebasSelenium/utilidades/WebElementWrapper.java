@@ -21,6 +21,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -71,6 +72,13 @@ public class WebElementWrapper {
       WebDriverFactory.getLogger().log(Status.FAIL, t);
    }
 
+   private String mensajeDeError(Exception e) {
+      if (e instanceof WebDriverException) {
+         return ((WebDriverException) e).getRawMessage();
+      }
+      return e.getLocalizedMessage();
+   }
+
    /**
     * Acción de seleccionar un elemento con etiqueta @param labelValue de un combo (select desplegable) identificado por el @param
     * testObject.
@@ -100,13 +108,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje =
-               "Error en " + testObject.toString() + " al hacer click en el elemento. Motivo del error: " + excepcion.getLocalizedMessage();
+               "Error en " + testObject.toString() + " al hacer click en el elemento. Motivo del error: " + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -129,13 +137,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje =
-               "Error en " + testObject.toString() + " al hacer click en el elemento. Motivo del error: " + excepcion.getLocalizedMessage();
+               "Error en " + testObject.toString() + " al hacer click en el elemento. Motivo del error: " + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -170,12 +178,12 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
-         String mensaje = "Error al escribir texto en " + testObject.toString() + ". Motivo del error : " + excepcion.getLocalizedMessage();
+         String mensaje = "Error al escribir texto en " + testObject.toString() + ". Motivo del error : " + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -183,16 +191,19 @@ public class WebElementWrapper {
    }
 
    private void asignaTexto(WebElement elemento, String texto) {
-      this.trace("asignaTexto->" + elemento.toString() + ". Color=" + texto);
+      this.trace("asignaTexto->" + elemento.toString() + ". texto=" + texto);
       try {
-         // JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
-         // js.executeScript("arguments[0].value = arguments[1];", elemento, texto);
-         for (int x = 0; x < texto.length(); x++) {
-            elemento.sendKeys(texto.substring(x, x + 1));
+         if (texto.length() > 1) {
+            elemento.sendKeys(texto.substring(0, 1));
          }
+         JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
+         js.executeScript("arguments[0].value = arguments[1];", elemento, texto);
+         // for (int x = 0; x < texto.length(); x++) {
+         // elemento.sendKeys(texto.substring(x, x + 1));
+         // }
       }
       catch (Exception e) {
-         String mensaje = "No se puede escribir " + texto + "en " + elemento;
+         String mensaje = "No se puede escribir " + texto + " en " + elemento.toString() + ". Motivo: " + this.mensajeDeError(e);
          this.warning(mensaje);
       }
    }
@@ -221,7 +232,7 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
@@ -271,13 +282,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice. Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -312,13 +323,13 @@ public class WebElementWrapper {
             }
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por etiqueta. Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -335,7 +346,7 @@ public class WebElementWrapper {
       }
       catch (PruebaAceptacionExcepcion e) {
          String mensaje = "Error en " + testObject.toString()
-               + " al hacer seleccionar el valor del combo por etiqueta con retraso. Motivo del error: " + e.getLocalizedMessage();
+               + " al hacer seleccionar el valor del combo por etiqueta con retraso. Motivo del error: " + this.mensajeDeError(e);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -355,13 +366,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error  en " + testObject.toString() + "al hacer seleccionar el valor del combo por etiqueta. Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -398,13 +409,13 @@ public class WebElementWrapper {
             }
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "La opción " + label + " no está presente en " + testObject.toString() + ". Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -438,13 +449,13 @@ public class WebElementWrapper {
             }
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!encontrado || !conseguido) {
          String mensaje = "La opción " + label + " está presente cuando no debería en " + testObject.toString() + ". Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -466,13 +477,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString()
-               + " al hacer seleccionar el valor del combo por value del option. Motivo del error: " + excepcion.getLocalizedMessage();
+               + " al hacer seleccionar el valor del combo por value del option. Motivo del error: " + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -494,13 +505,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString()
-               + " al hacer seleccionar el valor del combo por value del option. Motivo del error: " + excepcion.getLocalizedMessage();
+               + " al hacer seleccionar el valor del combo por value del option. Motivo del error: " + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -522,7 +533,7 @@ public class WebElementWrapper {
             conseguido = this.esperarHastaQueElementoTengaTexto(testObject, text);
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
@@ -530,7 +541,7 @@ public class WebElementWrapper {
          String mensaje = "Error en " + testObject.toString() + " al verificar el texto del elemento " + testObject.toString()
                + ". Texto esperado: " + text;
          if (excepcion != null) {
-            mensaje += ". Motivo del error: " + excepcion.getLocalizedMessage();
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
          }
          this.error(excepcion);
          this.error(mensaje);
@@ -566,7 +577,7 @@ public class WebElementWrapper {
             }
          }
          catch (Exception e) {
-            this.error(e.getLocalizedMessage());
+            this.error(this.mensajeDeError(e));
          }
       }
    }
@@ -636,13 +647,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString() + " al obtener el atributo " + atributo + ". Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -663,13 +674,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString() + " al obtener el atributo del elemento web. Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -706,7 +717,7 @@ public class WebElementWrapper {
          }
       }
       catch (Exception e) {
-         this.error(e.getLocalizedMessage());
+         this.error(this.mensajeDeError(e));
       }
       return conseguido;
    }
@@ -722,13 +733,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString() + " al hacer click para subir fichero en el elemento. Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -759,13 +770,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString() + " al obtener el texto del elemento. Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -797,13 +808,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice. Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -840,7 +851,7 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
@@ -862,7 +873,7 @@ public class WebElementWrapper {
          }
       }
       else {
-         String mensaje = "Error al obtener el id del cuerpo de la tabla. Motivo del error: " + excepcion.getLocalizedMessage();
+         String mensaje = "Error al obtener el id del cuerpo de la tabla. Motivo del error: " + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -896,13 +907,13 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
 
       if (!conseguido) {
-         String mensaje = "Error al hacer seleccionar el valor del combo por índice. Motivo del error: " + excepcion.getLocalizedMessage();
+         String mensaje = "Error al hacer seleccionar el valor del combo por índice. Motivo del error: " + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -937,13 +948,13 @@ public class WebElementWrapper {
             }
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
       if (!conseguido) {
          String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice. Motivo del error: "
-               + excepcion.getLocalizedMessage();
+               + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -1000,13 +1011,13 @@ public class WebElementWrapper {
          }
          catch (Exception e) {
             excepcion = e;
-            this.error(e.getLocalizedMessage());
+            this.error(this.mensajeDeError(e));
          }
       }
       if (!conseguido) {
          StringBuilder mensaje = new StringBuilder("El objeto ").append(testObject).append(" NO está chequeado.");
          if (excepcion != null) {
-            mensaje.append(". Motivo del error: ").append(excepcion.getLocalizedMessage());
+            mensaje.append(". Motivo del error: ").append(this.mensajeDeError(excepcion));
          }
          this.error(mensaje.toString());
       }
@@ -1023,7 +1034,7 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             conseguido = false;
          }
       }
@@ -1288,7 +1299,7 @@ public class WebElementWrapper {
          }
       }
       catch (PruebaAceptacionExcepcion e) {
-         String mensaje = "Error al verificar el texto del elemento. Motivo del error: " + e.getLocalizedMessage();
+         String mensaje = "Error al verificar el texto del elemento. Motivo del error: " + this.mensajeDeError(e);
          this.error(e);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -1306,7 +1317,7 @@ public class WebElementWrapper {
             encontrado = this.encuentraTextoEnPagina(texto);
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
          }
       }
       return encontrado;
@@ -1318,7 +1329,7 @@ public class WebElementWrapper {
          Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
       }
       catch (Exception e) {
-         this.warning(e.getLocalizedMessage());
+         this.warning(this.mensajeDeError(e));
       }
    }
 
@@ -1328,7 +1339,7 @@ public class WebElementWrapper {
          Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000);
       }
       catch (Exception e) {
-         this.warning(e.getLocalizedMessage());
+         this.warning(this.mensajeDeError(e));
       }
    }
 
@@ -1338,7 +1349,7 @@ public class WebElementWrapper {
          Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO)) * 1000);
       }
       catch (Exception e) {
-         this.error(e.getLocalizedMessage());
+         this.error(this.mensajeDeError(e));
       }
    }
 
@@ -1365,7 +1376,7 @@ public class WebElementWrapper {
          }
       }
       catch (Exception e) {
-         String mensaje = e.getLocalizedMessage();
+         String mensaje = this.mensajeDeError(e);
          this.error(e);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -1425,7 +1436,7 @@ public class WebElementWrapper {
          return true;
       }
       catch (Exception e) {
-         this.warning(e.getLocalizedMessage());
+         this.warning(this.mensajeDeError(e));
       }
       return false;
    }
@@ -1475,7 +1486,7 @@ public class WebElementWrapper {
          return this.pulsaEnElUnico(objetoBuscado);
       }
       catch (Exception e) {
-         this.warning(e.getLocalizedMessage());
+         this.warning(this.mensajeDeError(e));
       }
       return false;
    }
@@ -1524,7 +1535,7 @@ public class WebElementWrapper {
          return this.pulsaEnElUnico(objetoBuscado);
       }
       catch (Exception e) {
-         this.warning(e.getLocalizedMessage());
+         this.warning(this.mensajeDeError(e));
       }
       return false;
    }
@@ -1551,7 +1562,7 @@ public class WebElementWrapper {
          }
       }
       catch (Exception e) {
-         this.warning(e.getLocalizedMessage());
+         this.warning(this.mensajeDeError(e));
       }
       return false;
    }
@@ -1590,7 +1601,7 @@ public class WebElementWrapper {
       }
       catch (Exception e) {
          this.error(e);
-         this.error(e.getLocalizedMessage());
+         this.error(this.mensajeDeError(e));
          throw e;
       }
    }
@@ -1657,7 +1668,7 @@ public class WebElementWrapper {
          }
       }
       catch (Exception e) {
-         this.warning(e.getLocalizedMessage());
+         this.warning(this.mensajeDeError(e));
       }
       return pulsado;
    }
@@ -1699,7 +1710,7 @@ public class WebElementWrapper {
          }
       }
       catch (Exception e) {
-         this.warning(e.getLocalizedMessage());
+         this.warning(this.mensajeDeError(e));
       }
       return false;
    }
@@ -1757,7 +1768,7 @@ public class WebElementWrapper {
          return true;
       }
       catch (Exception e) {
-         this.warning("No se puede hacer clic en el fichero en posición: " + posicion + ". " + e.getLocalizedMessage());
+         this.warning("No se puede hacer clic en el fichero en posición: " + posicion + ". " + this.mensajeDeError(e));
       }
       return false;
    }
@@ -1804,7 +1815,7 @@ public class WebElementWrapper {
          }
       }
       catch (Exception e) {
-         this.warning("No se puede hacer clic en el único elemento descargable: " + e.getLocalizedMessage());
+         this.warning("No se puede hacer clic en el único elemento descargable: " + this.mensajeDeError(e));
       }
       return false;
    }
@@ -1851,7 +1862,7 @@ public class WebElementWrapper {
          }
       }
       catch (Exception e) {
-         this.warning("No se puede hacer clic en el único elemento eliminable: " + e.getLocalizedMessage());
+         this.warning("No se puede hacer clic en el único elemento eliminable: " + this.mensajeDeError(e));
       }
       return false;
    }
@@ -1871,7 +1882,7 @@ public class WebElementWrapper {
       }
       catch (PruebaAceptacionExcepcion e) {
          this.error(e);
-         this.error(e.getLocalizedMessage());
+         this.error(this.mensajeDeError(e));
          throw e;
       }
    }
@@ -1896,7 +1907,7 @@ public class WebElementWrapper {
             }
          }
          catch (Exception e) {
-            this.warning(e.getLocalizedMessage());
+            this.warning(this.mensajeDeError(e));
             // WebDriverFactory.getDriver().switchTo().window(window);
             // this.cambiarFoco();
             this.ejecutaAccionesUrlAfirmaProtocol();
@@ -1906,7 +1917,7 @@ public class WebElementWrapper {
       }
       if (!conseguido) {
          String mensaje =
-               "No se puede hacer click tras esperar el URL Afirma Protocol. Motivo del error: " + excepcion.getLocalizedMessage();
+               "No se puede hacer click tras esperar el URL Afirma Protocol. Motivo del error: " + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -2005,7 +2016,7 @@ public class WebElementWrapper {
          }
       }
       catch (Exception e) {
-         this.warning(e.getLocalizedMessage());
+         this.warning(this.mensajeDeError(e));
       }
       return false;
    }
@@ -2057,7 +2068,7 @@ public class WebElementWrapper {
       }
       catch (PruebaAceptacionExcepcion e) {
          this.error(e);
-         this.error(e.getLocalizedMessage());
+         this.error(this.mensajeDeError(e));
          throw e;
       }
       return elemento != null;
