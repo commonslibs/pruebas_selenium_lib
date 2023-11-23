@@ -1040,7 +1040,7 @@ public class WebElementWrapper {
       }
       if (!conseguido) {
          String mensaje = "El objeto " + testObject.toString() + " NO está presente";
-         this.error(mensaje);
+         this.debug(mensaje);
       }
       return conseguido;
    }
