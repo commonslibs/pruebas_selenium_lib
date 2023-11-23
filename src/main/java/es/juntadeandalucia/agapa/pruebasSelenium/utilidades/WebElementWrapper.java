@@ -274,7 +274,7 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             WebElement elemento = this.esperaCompleta(testObject);
-            elemento = this.esperarHastaQueElementoClickable(elemento);
+            // elemento = this.esperarHastaQueElementoClickable(elemento);
 
             Select comboBox = new Select(elemento);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
@@ -310,7 +310,7 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             WebElement elemento = this.esperaCompleta(testObject);
-            elemento = this.esperarHastaQueElementoClickable(elemento);
+            // elemento = this.esperarHastaQueElementoClickable(elemento);
 
             Select comboBox = new Select(elemento);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
@@ -469,7 +469,7 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             WebElement elemento = this.esperaCompleta(testObject);
-            elemento = this.esperarHastaQueElementoClickable(elemento);
+            // elemento = this.esperarHastaQueElementoClickable(elemento);
 
             Select comboBox = new Select(elemento);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
