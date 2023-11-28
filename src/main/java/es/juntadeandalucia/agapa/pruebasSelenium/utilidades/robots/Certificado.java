@@ -8,11 +8,11 @@ import java.awt.event.KeyEvent;
 import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
 /**
  * Proporciona una utilidad para poder seleccionar un certificado digital. Es importante que durante el proceso, el navegador de pruebas se
  * mantenga en primer plano, de lo contrario el robot ejecutará los comandos sobre la aplicación que se encuentre en primer plano
  */
+@Slf4j
 public class Certificado {
 
    /**
@@ -38,33 +38,29 @@ public class Certificado {
    }
 
    public static void seleccionarCertificadoChrome(int posicionCertificado) throws PruebaAceptacionExcepcion {
-      Runnable runnable = new Runnable() {
-         @Override
-         public void run() {
-            log.info("Iniciando selección de certificado digital (chrome)...");
-            Robot robot = null;
-            try {
-               robot = new Robot();
-               robot.delay(1500);
+      Runnable runnable = () -> {
+         log.info("Iniciando selección de certificado digital (chrome)...");
+         Robot robot = null;
+         try {
+            robot = new Robot();
+            robot.delay(1500);
 
-               for (int i = 1; i < posicionCertificado; i++) {
-                  robot.keyPress(KeyEvent.VK_DOWN);
-                  robot.keyRelease(KeyEvent.VK_DOWN);
-                  robot.delay(300);
-               }
-
+            for (int i = 1; i < posicionCertificado; i++) {
+               robot.keyPress(KeyEvent.VK_DOWN);
+               robot.keyRelease(KeyEvent.VK_DOWN);
                robot.delay(300);
-               robot.keyPress(KeyEvent.VK_ENTER);
-               robot.keyRelease(KeyEvent.VK_ENTER);
+            }
 
-            }
-            catch (AWTException e) {
-               log.error("Error al seleccionar el certificado digital con robots (chrome)", e);
-            }
+            robot.delay(300);
+            robot.keyPress(KeyEvent.VK_ENTER);
+            robot.keyRelease(KeyEvent.VK_ENTER);
 
          }
-      };
+         catch (AWTException e) {
+            log.error("Error al seleccionar el certificado digital con robots (chrome)", e);
+         }
 
+      };
       new Thread(runnable).start();
    }
 
