@@ -842,49 +842,43 @@ public class WebElementWrapper {
       boolean conseguido = false;
       WebElement table = null;
       Exception excepcion = null;
-      String textoEsperado = texto;
 
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             // Localizar el body de la tabla
             table = this.esperaCompleta(testObject);
-            conseguido = true;
+            // Se obtienen todas las filas de la tabla
+            List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
+            // Se recorren todas las filas de la tabla
+            for (int x = 0; !conseguido && x < rows.size(); x++) {
+               // Se recorre columna por columna buscando el texto esperado
+               List<WebElement> cols = rows.get(x).findElements(By.tagName("td"));
+               for (WebElement col : cols) {
+                  if (col.getText().trim().equalsIgnoreCase(texto)) {
+                     fila = x;
+                     conseguido = true;
+                     this.resaltaObjeto(col, COLOR_AZUL);
+                     break;
+                  }
+               }
+            }
          }
          catch (Exception e) {
             this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
       }
-
-      if (conseguido && table != null) {
-         // Se obtienen todas las filas de la tabla
-         List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
-         // Se recorren todas las filas de la tabla
-         for (int i = 0; i < rows.size(); i++) {
-            // Se recorre columna por columna buscando el texto esperado
-            List<WebElement> cols = rows.get(i).findElements(By.tagName("td"));
-            for (WebElement col : cols) {
-               if (col.getText().trim().equalsIgnoreCase(textoEsperado)) {
-                  fila = i;
-                  break;
-               }
-            }
-
-         }
-      }
-      else {
+      if (table == null) {
          String mensaje = "Error al obtener el id del cuerpo de la tabla. Motivo del error: " + this.mensajeDeError(excepcion);
          this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
-
-      if (fila == -1) {
+      else if (fila == -1) {
          String mensaje = "No se encuentra la fila de la tabla con idBodyTabla: " + table.getAttribute("id") + " y texto buscado: " + texto;
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
-
       return fila;
    }
 
