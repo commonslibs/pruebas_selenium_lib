@@ -17,10 +17,19 @@ import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTes
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.OutputType;
@@ -28,6 +37,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
@@ -39,7 +49,21 @@ import org.testng.annotations.Listeners;
  * Añade por defecto listeners
  */
 @Listeners({ ResumenListener.class, InformeListener.class, UniversalVideoListener.class })
+@Slf4j
 public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests {
+
+   private static final String     REMITENTE = "noreply.agapa@juntadeandalucia.es";
+   private static final String     HOST      = "mtaprod.dap.es";
+   private static final String     PORT      = "25";
+   private static final Properties props     = new Properties();
+
+   static {
+      props.put("mail.smtp.host", HOST);
+      props.put("mail.smtp.starttls.enable", "false");
+      props.put("mail.smtp.port", PORT);
+      props.put("mail.smtp.mail.sender", REMITENTE);
+      props.put("mail.smtp.auth", "false");
+   }
 
    protected ExtentReports     extent;
    private ExtentSparkReporter spark;
@@ -89,6 +113,13 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          // To add it in the extent report
          this.getLogger().addScreenCaptureFromPath(screenshotPath);
          this.getLogger().fail("Test Case Failed Snapshot is below " + screenshotPath);
+         if ("SI".equalsIgnoreCase(VariablesGlobalesTest.getPropiedad(PropiedadesTest.ENVIAR_CORREO_FALLO))) {
+            ITestNGMethod metodo = result.getMethod();
+            String asunto = "PROA: Pruebas selenium. El test " + metodo.getInstance().getClass().getSimpleName() + "." + result.getName()
+                  + " (" + metodo.getDescription() + ") ha fallado";
+            // String cuerpo = "<h3>El test <b>" + result.getName() + " (" + result.getMethod().getDescription() + ")</b> ha fallado.</h3>";
+            this.enviarCorreo(asunto, asunto);
+         }
       }
       else if (result.getStatus() == ITestResult.SKIP) {
          this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(result.getName() + " - Test saltado", ExtentColor.ORANGE));
@@ -110,6 +141,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
     * @throws PruebaAceptacionExcepcion
     */
    protected void beforeMethod() throws PruebaAceptacionExcepcion {
+      Logger logger = Logger.getLogger("");
+      logger.setLevel(Level.FINE);
       try {
          // Indicara la carpeta donde se guardaran los videos.
          System.setProperty("video.folder", System.getProperty("user.dir") + "//test-output//video//" + this.getClass().getSimpleName());
@@ -155,4 +188,26 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
    }
 
+   public void enviarCorreo(String asunto, String cuerpo) throws PruebaAceptacionExcepcion {
+      String destinatario = VariablesGlobalesTest.getPropiedad(PropiedadesTest.DESTINATARIO_CORREO);
+      assertNotNull(destinatario);
+      this.enviarEmail(asunto, destinatario, cuerpo, new Date());
+   }
+
+   private void enviarEmail(String asunto, String destinatarios, String cuerpo, Date fecha) {
+      try {
+         Session session = Session.getInstance(TestSeleniumAbstracto.props);
+         MimeMessage msg = new MimeMessage(session);
+         msg.setFrom(new InternetAddress(REMITENTE));
+         msg.setSentDate(fecha);
+         msg.setSubject(asunto);
+         msg.setRecipients(Message.RecipientType.TO, destinatarios);
+         msg.setContent(cuerpo, "text/html; charset=utf-8");
+         Transport.send(msg);
+         log.info("Correo de fallo enviado a " + destinatarios);
+      }
+      catch (Exception e) {
+         log.error(e.getLocalizedMessage());
+      }
+   }
 }
