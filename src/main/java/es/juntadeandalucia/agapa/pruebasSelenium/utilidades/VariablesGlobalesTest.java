@@ -1,7 +1,6 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import lombok.Data;
@@ -40,7 +39,7 @@ public class VariablesGlobalesTest {
       if (propiedades == null) {
          String entorno = System.getProperty("entorno");
 
-         if (entorno != null && !entorno.equals("")) {
+         if (entorno != null && !"".equals(entorno)) {
             propiedades = getFilePathToSaveStatic("application-" + entorno + ".properties");
          }
       }
@@ -68,7 +67,7 @@ public class VariablesGlobalesTest {
       try (InputStream inputStream = VariablesGlobalesTest.class.getClassLoader().getResourceAsStream(fileName)) {
          prop.load(inputStream);
       }
-      catch (IOException e) {
+      catch (Exception e) {
          log.error(e.getLocalizedMessage());
       }
 

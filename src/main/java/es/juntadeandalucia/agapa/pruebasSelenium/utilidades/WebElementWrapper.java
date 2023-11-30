@@ -432,18 +432,18 @@ public class WebElementWrapper {
     */
    public void verifyOptionNotPresentByLabel(By testObject, String label) throws PruebaAceptacionExcepcion {
       this.debug("verifyOptionNotPresentByLabel->" + testObject.toString() + ". Label=" + label);
-      boolean encontrado = false;
       boolean conseguido = false;
+      boolean presente = false;
       Exception excepcion = null;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             WebElement elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AZUL);
-            encontrado = true;
             Select comboBox = new Select(elemento);
+            conseguido = true;
             for (WebElement opcion : comboBox.getOptions()) {
                if (opcion.getText().equals(label)) {
-                  conseguido = true;
+                  presente = true;
                   break;
                }
             }
@@ -453,10 +453,18 @@ public class WebElementWrapper {
             excepcion = e;
          }
       }
-      if (!encontrado || !conseguido) {
-         String mensaje = "La opción " + label + " está presente cuando no debería en " + testObject.toString() + ". Motivo del error: "
-               + this.mensajeDeError(excepcion);
+      if (!conseguido) {
+         String mensaje = "Elemento " + testObject.toString() + " no encontrado. Motivo del error: " + this.mensajeDeError(excepcion);
          this.error(excepcion);
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+      else if (presente) {
+         String mensaje = "La opción " + label + " está presente cuando no debería en " + testObject.toString();
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
