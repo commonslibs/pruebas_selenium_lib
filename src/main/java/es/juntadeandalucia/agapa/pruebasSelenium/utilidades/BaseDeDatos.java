@@ -52,28 +52,27 @@ public class BaseDeDatos {
    public static ResultSet executeQuery(Connection conexion, String queryString) throws PruebaAceptacionExcepcion {
       Assert.assertNotNull(conexion);
 
-      Statement stm;
+      Statement stm = null;
 
       ResultSet rs = null;
       try {
          stm = conexion.createStatement();
 
          rs = stm.executeQuery(queryString);
+
+         stm.closeOnCompletion();
       }
       catch (SQLException e) {
          log.error("Error al ejecutar consulta." + queryString + ". Error SQL: " + e.getErrorCode() + "-" + e.getLocalizedMessage(), e);
          throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
       }
-
       return rs;
    }
 
    public static void desconectar(Connection conexion) throws PruebaAceptacionExcepcion {
       try {
          if (conexion != null && !conexion.isClosed()) {
-
             conexion.close();
-
          }
       }
       catch (SQLException e) {
@@ -93,19 +92,20 @@ public class BaseDeDatos {
    public static boolean execute(Connection conexion, String queryString) throws PruebaAceptacionExcepcion {
       Assert.assertNotNull(conexion);
 
-      Statement stm;
+      Statement stm = null;
 
       boolean result = false;
       try {
          stm = conexion.createStatement();
 
          result = stm.execute(queryString);
+
+         stm.close();
       }
       catch (SQLException e) {
          log.error("Error al ejecutar consulta." + queryString + ". Error SQL: " + e.getErrorCode() + "-" + e.getLocalizedMessage(), e);
          throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
       }
-
       return result;
    }
 }

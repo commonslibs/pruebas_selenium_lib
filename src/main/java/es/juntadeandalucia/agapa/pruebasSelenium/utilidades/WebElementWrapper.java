@@ -113,9 +113,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje =
-               "Error en " + testObject.toString() + " al hacer click en el elemento. Motivo del error: " + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al hacer click en el elemento";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -142,9 +144,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje =
-               "Error en " + testObject.toString() + " al hacer click en el elemento. Motivo del error: " + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al hacer click en el elemento";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -183,8 +187,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error al escribir texto en " + testObject.toString() + ". Motivo del error : " + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error al escribir texto en " + testObject.toString();
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -287,9 +294,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice. Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -328,9 +337,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por etiqueta. Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por etiqueta";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -371,9 +382,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error  en " + testObject.toString() + "al hacer seleccionar el valor del combo por etiqueta. Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error  en " + testObject.toString() + "al hacer seleccionar el valor del combo por etiqueta";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -414,9 +427,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "La opción " + label + " no está presente en " + testObject.toString() + ". Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "La opción " + label + " no está presente en " + testObject.toString();
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -454,8 +469,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Elemento " + testObject.toString() + " no encontrado. Motivo del error: " + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Elemento " + testObject.toString() + " no encontrado";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -490,9 +508,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString()
-               + " al hacer seleccionar el valor del combo por value del option. Motivo del error: " + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por value del option";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -518,9 +538,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString()
-               + " al hacer seleccionar el valor del combo por value del option. Motivo del error: " + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por value del option";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -550,8 +572,8 @@ public class WebElementWrapper {
                + ". Texto esperado: " + text;
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
          }
-         this.error(excepcion);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -660,9 +682,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al obtener el atributo " + atributo + ". Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al obtener el atributo " + atributo;
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -687,9 +711,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al obtener el atributo del elemento web. Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al obtener el atributo del elemento web";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -746,9 +772,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al hacer click para subir fichero en el elemento. Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al hacer click para subir fichero en el elemento";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -783,9 +811,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al obtener el texto del elemento. Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al obtener el texto del elemento";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -821,9 +851,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice. Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -877,8 +909,11 @@ public class WebElementWrapper {
          }
       }
       if (table == null) {
-         String mensaje = "Error al obtener el id del cuerpo de la tabla. Motivo del error: " + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error al obtener el id del cuerpo de la tabla";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -916,12 +951,14 @@ public class WebElementWrapper {
       }
 
       if (!conseguido) {
-         String mensaje = "Error al hacer seleccionar el valor del combo por índice. Motivo del error: " + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error al hacer seleccionar el valor del combo por índice";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
-
       return numeroDeFilas;
    }
 
@@ -956,9 +993,11 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice. Motivo del error: "
-               + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -1906,22 +1945,19 @@ public class WebElementWrapper {
                elementoClickable.click();
                conseguido = true;
             }
-            else {
-            }
          }
          catch (Exception e) {
             this.warning(this.mensajeDeError(e));
-            // WebDriverFactory.getDriver().switchTo().window(window);
-            // this.cambiarFoco();
             this.ejecutaAccionesUrlAfirmaProtocol();
-
             excepcion = e;
          }
       }
       if (!conseguido) {
-         String mensaje =
-               "No se puede hacer click tras esperar el URL Afirma Protocol. Motivo del error: " + this.mensajeDeError(excepcion);
-         this.error(excepcion);
+         String mensaje = "No se puede hacer click tras esperar el URL Afirma Protocol";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
