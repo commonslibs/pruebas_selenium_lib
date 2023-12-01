@@ -82,7 +82,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // Create an object of Extent Reports
       this.extent = new ExtentReports();
 
-      this.spark = new ExtentSparkReporter(System.getProperty("user.dir") + "/test-output/STMExtentReport.html");
+      this.spark = new ExtentSparkReporter(System.getProperty("user.dir") + "/target/surefire-reports/STMExtentReport.html");
       this.extent.attachReporter(this.spark);
       // this.extent.setSystemInfo("Environment", "Production");
       this.spark.config().setDocumentTitle("PROA");
@@ -95,7 +95,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       String dateName = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date());
       TakesScreenshot ts = (TakesScreenshot) driver;
       File source = ts.getScreenshotAs(OutputType.FILE);
-      String destination = System.getProperty("user.dir") + "/test-output/pantallazos/" + screenshotName + "_" + dateName + ".png";
+      String destination =
+            System.getProperty("user.dir") + "/target/surefire-reports/pantallazos/" + screenshotName + "_" + dateName + ".png";
       File finalDestination = new File(destination);
       FileUtils.copyFile(source, finalDestination);
       return destination;
@@ -154,7 +155,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
 
       try {
          // Indicara la carpeta donde se guardaran los videos.
-         System.setProperty("video.folder", System.getProperty("user.dir") + "//test-output//video//" + this.getClass().getSimpleName());
+         System.setProperty("video.folder",
+               System.getProperty("user.dir") + "/target/surefire-reports/video/" + this.getClass().getSimpleName());
 
          this.iniciar();
       }
