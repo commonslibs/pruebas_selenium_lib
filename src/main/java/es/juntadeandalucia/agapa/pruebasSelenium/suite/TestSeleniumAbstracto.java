@@ -25,6 +25,7 @@ import jakarta.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -141,8 +142,16 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
     * @throws PruebaAceptacionExcepcion
     */
    protected void beforeMethod() throws PruebaAceptacionExcepcion {
+      Level nivelLog = Level.FINEST;
+
       Logger logger = Logger.getLogger("");
-      logger.setLevel(Level.FINE);
+      logger.setLevel(nivelLog);
+      Arrays.stream(logger.getHandlers()).forEach(handler -> {
+         // handler.setLevel(nivelLog);
+      });
+      // Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
+      // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
+
       try {
          // Indicara la carpeta donde se guardaran los videos.
          System.setProperty("video.folder", System.getProperty("user.dir") + "//test-output//video//" + this.getClass().getSimpleName());

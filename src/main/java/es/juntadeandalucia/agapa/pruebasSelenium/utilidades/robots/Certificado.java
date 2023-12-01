@@ -43,15 +43,15 @@ public class Certificado {
          Robot robot = null;
          try {
             robot = new Robot();
-            robot.delay(1500);
+            robot.delay(3000);
 
             for (int i = 1; i < posicionCertificado; i++) {
                robot.keyPress(KeyEvent.VK_DOWN);
                robot.keyRelease(KeyEvent.VK_DOWN);
-               robot.delay(300);
+               robot.delay(500);
             }
 
-            robot.delay(300);
+            robot.delay(500);
             robot.keyPress(KeyEvent.VK_ENTER);
             robot.keyRelease(KeyEvent.VK_ENTER);
 
