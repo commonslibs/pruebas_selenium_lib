@@ -603,7 +603,7 @@ public class WebElementWrapper {
             }
 
             if (conseguido) {
-               this.resaltaObjeto(elemento, COLOR_AMARILLO);
+               this.resaltaObjeto(elemento, COLOR_AZUL);
             }
          }
          catch (Exception e) {
@@ -673,7 +673,7 @@ public class WebElementWrapper {
          try {
             WebElement elemento = this.esperaCompleta(testObject);
             valorAtributo = elemento.getAttribute(atributo);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
          catch (Exception e) {
@@ -746,7 +746,7 @@ public class WebElementWrapper {
          this.esperaCorta();
          WebElement textDemo = WebDriverFactory.getDriver().findElement(By.xpath("//*[contains(text(),'" + texto + "')]"));
          if (textDemo.isDisplayed()) {
-            this.resaltaObjeto(textDemo, COLOR_AMARILLO);
+            this.resaltaObjeto(textDemo, COLOR_AZUL);
             conseguido = true;
          }
       }
@@ -1099,7 +1099,6 @@ public class WebElementWrapper {
       }
       if (idElementoProcesando != null) {
          By by = By.id(idElementoProcesando);
-         WebDriverFactory.getDriver().manage().timeouts().implicitlyWait(Duration.ofMillis(1));
          List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
          try {
             if ((elementos.size() > 0) && elementos.get(0).isDisplayed()) {
@@ -1121,7 +1120,8 @@ public class WebElementWrapper {
                }
             }
          }
-         catch (StaleElementReferenceException e) {
+         catch (Exception e) {
+            this.warning(this.mensajeDeError(e));
             this.trace("La ventana procesando ya no está visible");
          }
       }
@@ -1795,16 +1795,6 @@ public class WebElementWrapper {
          String id = ":" + (posicion - 1) + ":subirFichero:file";
          By objetoBuscado = By.xpath("//input[@type = 'file' and contains(@id, '" + id + "')]");
 
-         // this.esperaCorta();
-         // List<WebElement> webElements = WebDriverFactory.getDriver().findElements(objetoBuscado);
-         // if (null != webElements && 1 == webElements.size()) {
-         // // La posicion es posible...
-         // WebElement elemento = webElements.get(0);
-         // this.resaltaObjeto(elemento, COLOR_AMARILLO);
-         // this.esperarHastaQueElementoClickable(elemento).click();
-         // elemento.sendKeys(rutaFichero);
-         // return true;
-         // }
          WebElement elemento = this.esperaParaSubirFichero(objetoBuscado);
          elemento.sendKeys(rutaFichero);
          return true;

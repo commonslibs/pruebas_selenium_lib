@@ -25,6 +25,7 @@ import jakarta.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
@@ -37,6 +38,9 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.manager.SeleniumManager;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.service.DriverCommandExecutor;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
@@ -143,17 +147,20 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
     * @throws PruebaAceptacionExcepcion
     */
    protected void beforeMethod() throws PruebaAceptacionExcepcion {
-      Level nivelLog = Level.FINEST;
+      Level nivelLog = Level.INFO;
 
       Logger logger = Logger.getLogger("");
       logger.setLevel(nivelLog);
       Arrays.stream(logger.getHandlers()).forEach(handler -> {
-         // handler.setLevel(nivelLog);
+         handler.setLevel(nivelLog);
+         // handler.setFormatter("%(asctime)s :%(levelname)s : %(name)s :%(message)s");
       });
-      // Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
-      // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
+      Logger.getLogger(DriverCommandExecutor.class.getName()).setLevel(nivelLog);
+      Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
+      Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
 
       try {
+
          // Indicara la carpeta donde se guardaran los videos.
          System.setProperty("video.folder",
                System.getProperty("user.dir") + "/target/surefire-reports/video/" + this.getClass().getSimpleName());
@@ -180,6 +187,10 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       ChromeDriver chrome = (ChromeDriver) WebDriverFactory.getDriver();
       Traza.info(chrome.toString());
       assertNotNull(WebDriverFactory.getDriver(), "Error al instanciar el driver de " + navegador);
+      chrome.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
+      // chrome.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+      chrome.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+      // chrome.manage().logs().
       String propiedadMaximizar = null;
       try {
          propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
