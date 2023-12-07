@@ -254,24 +254,6 @@ public class WebElementWrapper {
    public void subirFichero(By testObject, String ruta) throws PruebaAceptacionExcepcion {
       this.debug("subirFichero->" + testObject.toString() + ". Texto=" + ruta);
       this.clickParaUploadFichero(testObject, ruta);
-      // boolean conseguido = false;
-      //
-      // for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-      // try {
-      // this.esperarDesaparezcaProcesando();
-      // WebElement elemento = this.esperarHastaQueElementoPresente(testObject);
-      // elemento.sendKeys(ruta);
-      // conseguido = true;
-      // }
-      // catch (Exception e) {
-      // conseguido = false;
-      // }
-      // }
-      // if (!conseguido) {
-      // String mensaje = "Error al escribir texto sin borrar. Motivo del error";
-      // error(mensaje);
-      // throw new PruebaAceptacionExcepcion(mensaje);
-      // }
    }
 
    public void selectOptionByIndex(By testObject, Integer index) throws PruebaAceptacionExcepcion {
@@ -1077,7 +1059,6 @@ public class WebElementWrapper {
          }
          catch (Exception e) {
             this.warning(this.mensajeDeError(e));
-            conseguido = false;
          }
       }
       if (!conseguido) {
