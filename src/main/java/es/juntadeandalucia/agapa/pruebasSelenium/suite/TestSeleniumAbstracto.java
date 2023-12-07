@@ -39,6 +39,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.manager.SeleniumManager;
+import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.service.DriverCommandExecutor;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -152,10 +153,11 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       Logger logger = Logger.getLogger("");
       logger.setLevel(nivelLog);
       Arrays.stream(logger.getHandlers()).forEach(handler -> {
-         handler.setLevel(nivelLog);
+         // handler.setLevel(nivelLog);
          // handler.setFormatter("%(asctime)s :%(levelname)s : %(name)s :%(message)s");
       });
-      Logger.getLogger(DriverCommandExecutor.class.getName()).setLevel(nivelLog);
+      Logger.getLogger(HttpCommandExecutor.class.getName()).setLevel(Level.FINE);
+      Logger.getLogger(DriverCommandExecutor.class.getName()).setLevel(Level.FINE);
       Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
       Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
 
