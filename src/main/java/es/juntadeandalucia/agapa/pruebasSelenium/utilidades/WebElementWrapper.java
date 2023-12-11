@@ -1366,6 +1366,16 @@ public class WebElementWrapper {
       }
    }
 
+   private void esperaAdicionalAutofirma() {
+      try {
+         this.esperarDesaparezcaProcesando();
+         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_AUTOFIRMA)) * 1000);
+      }
+      catch (Exception e) {
+         this.warning(this.mensajeDeError(e));
+      }
+   }
+
    public void retrasoLargo() {
       try {
          this.esperarDesaparezcaProcesando();
@@ -1940,6 +1950,7 @@ public class WebElementWrapper {
          Robot rb = new Robot();
 
          this.esperaMedia();
+         this.esperaAdicionalAutofirma();
 
          this.debug("Pulsar <DERECHA>");
          rb.keyPress(KeyEvent.VK_RIGHT);
