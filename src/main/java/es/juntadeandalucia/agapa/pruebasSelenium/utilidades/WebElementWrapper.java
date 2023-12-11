@@ -305,6 +305,8 @@ public class WebElementWrapper {
 
             Select comboBox = new Select(elemento);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            By opcion = By.xpath("//option[(text() = '" + label + "' or . = '" + label + "')]");
+            this.esperarHastaQueElementoPadreContengaHijo(elemento, opcion);
             if (elemento.isEnabled()) {
                comboBox.selectByVisibleText(label);
                conseguido = true;
@@ -1235,6 +1237,27 @@ public class WebElementWrapper {
          }
          catch (TimeoutException | StaleElementReferenceException e) {
             String mensaje = "Error al esperar que el objeto " + testObject.toString() + " sea clickable";
+            this.warning(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
+      }
+      return exito;
+   }
+
+   private WebElement esperarHastaQueElementoPadreContengaHijo(WebElement elementoPadre, By hijo) throws PruebaAceptacionExcepcion {
+      this.trace("esperarHastaQueElementoPadreContengaHijo->" + elementoPadre.getAttribute("id"));
+      WebElement exito = null;
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
+               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
+               Duration.ofMillis(100));
+         try {
+            exito = wait.until(ExpectedConditions.presenceOfNestedElementLocatedBy(elementoPadre, hijo));
+            conseguido = true;
+         }
+         catch (TimeoutException | StaleElementReferenceException e) {
+            String mensaje = "Error al esperar que el objeto " + elementoPadre.toString() + " sea clickable";
             this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
