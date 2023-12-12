@@ -43,7 +43,6 @@ import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.service.DriverCommandExecutor;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
@@ -120,13 +119,6 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          // To add it in the extent report
          this.getLogger().addScreenCaptureFromPath(screenshotPath);
          this.getLogger().fail("Test Case Failed Snapshot is below " + screenshotPath);
-         if ("SI".equalsIgnoreCase(VariablesGlobalesTest.getPropiedad(PropiedadesTest.ENVIAR_CORREO_FALLO))) {
-            ITestNGMethod metodo = result.getMethod();
-            String asunto = "PROA: Pruebas selenium. El test " + metodo.getInstance().getClass().getSimpleName() + "." + result.getName()
-                  + " (" + metodo.getDescription() + ") ha fallado";
-            // String cuerpo = "<h3>El test <b>" + result.getName() + " (" + result.getMethod().getDescription() + ")</b> ha fallado.</h3>";
-            this.enviarCorreo(asunto, asunto);
-         }
       }
       else if (result.getStatus() == ITestResult.SKIP) {
          this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(result.getName() + " - Test saltado", ExtentColor.ORANGE));
@@ -212,26 +204,22 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
    }
 
-   public void enviarCorreo(String asunto, String cuerpo) throws PruebaAceptacionExcepcion {
-      String destinatario = VariablesGlobalesTest.getPropiedad(PropiedadesTest.DESTINATARIO_CORREO);
+   protected void enviarCorreo(String asunto, String cuerpo, String destinatario) {
       assertNotNull(destinatario);
-      this.enviarEmail(asunto, destinatario, cuerpo, new Date());
-   }
-
-   private void enviarEmail(String asunto, String destinatarios, String cuerpo, Date fecha) {
       try {
          Session session = Session.getInstance(TestSeleniumAbstracto.props);
          MimeMessage msg = new MimeMessage(session);
          msg.setFrom(new InternetAddress(REMITENTE));
-         msg.setSentDate(fecha);
+         msg.setSentDate(new Date());
          msg.setSubject(asunto);
-         msg.setRecipients(Message.RecipientType.TO, destinatarios);
+         msg.setRecipients(Message.RecipientType.TO, destinatario);
          msg.setContent(cuerpo, "text/html; charset=utf-8");
          Transport.send(msg);
-         log.info("Correo de fallo enviado a " + destinatarios);
+         log.info("Correo de fallo enviado a " + destinatario);
       }
       catch (Exception e) {
          log.error(e.getLocalizedMessage());
       }
    }
+
 }
