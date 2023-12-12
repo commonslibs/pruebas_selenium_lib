@@ -267,6 +267,9 @@ public class WebElementWrapper {
 
             Select comboBox = new Select(elemento);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            // FIXME: Modificar para que pueda esperarHastaQueElementoPadreContengaHijo
+            // By opcion = By.xpath("(//option)[" + index + "]");
+            // this.esperarHastaQueElementoPadreContengaHijo(elemento, opcion);
             comboBox.selectByIndex(index);
             conseguido = true;
          }
@@ -281,6 +284,22 @@ public class WebElementWrapper {
             mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
             this.error(excepcion);
          }
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   public void selectOptionByIndex(By testObject, Integer index, boolean conRetraso) throws PruebaAceptacionExcepcion {
+      this.debug("selectOptionByIndex->" + testObject.toString() + ". Index=" + index + ". Con retraso=" + conRetraso);
+      try {
+         this.selectOptionByIndex(testObject, index);
+         if (conRetraso) {
+            this.esperaCorta();
+         }
+      }
+      catch (PruebaAceptacionExcepcion e) {
+         String mensaje = "Error en " + testObject.toString()
+               + " al hacer seleccionar el valor del combo por index con retraso. Motivo del error: " + this.mensajeDeError(e);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
