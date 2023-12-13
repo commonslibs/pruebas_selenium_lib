@@ -9,6 +9,7 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.JsonFormatter;
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.reports.InformeListener;
 import es.juntadeandalucia.agapa.pruebasSelenium.reports.ResumenListener;
@@ -23,14 +24,13 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,29 +38,25 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.manager.SeleniumManager;
-import org.openqa.selenium.remote.HttpCommandExecutor;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.remote.service.DriverCommandExecutor;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Listeners;
 
 
 /**
- * Añade por defecto listeners
+ * Test abstracto con funcionalidades comunes a los tests
  */
 @Listeners({ ResumenListener.class, InformeListener.class, UniversalVideoListener.class })
 @Slf4j
 public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests {
 
-   private static final String     REMITENTE = "noreply.agapa@juntadeandalucia.es";
-   private static final String     HOST      = "mtaprod.dap.es";
-   private static final String     PORT      = "25";
-   private static final Properties props     = new Properties();
+   private static final String     DIRECTORIO_TARGET_SUREFIRE_REPORTS = System.getProperty("user.dir") + "/target/surefire-reports/";
+   private static final String     REMITENTE                          = "noreply.agapa@juntadeandalucia.es";
+   private static final String     HOST                               = "mtaprod.dap.es";
+   private static final String     PORT                               = "25";
+   private static final Properties props                              = new Properties();
 
    static {
       props.put("mail.smtp.host", HOST);
@@ -81,26 +77,21 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       return WebDriverFactory.getLogger();
    }
 
-   @BeforeTest
-   public void startReport() {
-      // Create an object of Extent Reports
+   protected void beforeTest(String titulo, String nombre, String fichero) {
+      String ficheroLargo = DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero;
+      this.spark = new ExtentSparkReporter(ficheroLargo + ".html");
+      JsonFormatter json = new JsonFormatter(ficheroLargo + ".json");
       this.extent = new ExtentReports();
-
-      this.spark = new ExtentSparkReporter(System.getProperty("user.dir") + "/target/surefire-reports/STMExtentReport.html");
-      this.extent.attachReporter(this.spark);
-      // this.extent.setSystemInfo("Environment", "Production");
-      this.spark.config().setDocumentTitle("PROA");
-      // Name of the report
-      this.spark.config().setReportName("PROA");
+      this.extent.attachReporter(json, this.spark);
+      this.spark.config().setDocumentTitle(titulo);
+      this.spark.config().setReportName(nombre);
    }
 
-   // This method is to capture the screenshot and return the path of the screenshot.
-   public static String getScreenShot(WebDriver driver, String screenshotName) throws IOException {
+   private String getScreenShot(WebDriver driver, String screenshotName) throws IOException {
       String dateName = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date());
       TakesScreenshot ts = (TakesScreenshot) driver;
       File source = ts.getScreenshotAs(OutputType.FILE);
-      String destination =
-            System.getProperty("user.dir") + "/target/surefire-reports/pantallazos/" + screenshotName + "_" + dateName + ".png";
+      String destination = DIRECTORIO_TARGET_SUREFIRE_REPORTS + "/pantallazos/" + screenshotName + "_" + dateName + ".png";
       File finalDestination = new File(destination);
       FileUtils.copyFile(source, finalDestination);
       return destination;
@@ -109,16 +100,11 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    @AfterMethod
    public void getResult(ITestResult result) throws Exception {
       if (result.getStatus() == ITestResult.FAILURE) {
-         // MarkupHelper is used to display the output in different colors
          this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(result.getName() + " - Test falló", ExtentColor.RED));
          this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(result.getThrowable() + " - Test falló", ExtentColor.RED));
-         // To capture screenshot path and store the path of the screenshot in the string "screenshotPath"
-         // We do pass the path captured by this method in to the extent reports using "logger.addScreenCapture" method.
-         // String Scrnshot=TakeScreenshot.captuerScreenshot(driver,"TestCaseFailed");
-         String screenshotPath = getScreenShot(this.getDriver(), result.getName());
-         // To add it in the extent report
+         String screenshotPath = this.getScreenShot(this.getDriver(), result.getName());
          this.getLogger().addScreenCaptureFromPath(screenshotPath);
-         this.getLogger().fail("Test Case Failed Snapshot is below " + screenshotPath);
+         this.getLogger().fail("Pantallazo del test que falló: " + screenshotPath);
       }
       else if (result.getStatus() == ITestResult.SKIP) {
          this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(result.getName() + " - Test saltado", ExtentColor.ORANGE));
@@ -132,32 +118,50 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    @AfterTest
    public void endReport() {
       this.extent.flush();
+      this.mergearReports();
+   }
+
+   private void mergearReports() {
+      ExtentSparkReporter sparkMergeado = new ExtentSparkReporter(DIRECTORIO_TARGET_SUREFIRE_REPORTS + "PPI.html");
+      ExtentReports reportMergeado = new ExtentReports();
+
+      File directorioJson = new File(DIRECTORIO_TARGET_SUREFIRE_REPORTS);
+      FilenameFilter filtroJson = (d, s) -> s.toLowerCase().endsWith(".json");
+      if (directorioJson.exists()) {
+         Arrays.stream(directorioJson.listFiles(filtroJson)).forEach(ficheroJson -> {
+            try {
+               reportMergeado.createDomainFromJsonArchive(ficheroJson.getPath());
+            }
+            catch (Exception e) {
+               log.error(e.getLocalizedMessage());
+            }
+         });
+      }
+      reportMergeado.attachReporter(sparkMergeado);
+      reportMergeado.flush();
    }
 
    /**
-    * Metodo que se ejecuta antes de los test.
+    * Metodo que se debe ejecutar antes de cualquier test.
     *
     * @throws PruebaAceptacionExcepcion
     */
-   protected void beforeMethod() throws PruebaAceptacionExcepcion {
-      Level nivelLog = Level.INFO;
-
-      Logger logger = Logger.getLogger("");
-      logger.setLevel(nivelLog);
-      Arrays.stream(logger.getHandlers()).forEach(handler -> {
-         // handler.setLevel(nivelLog);
-         // handler.setFormatter("%(asctime)s :%(levelname)s : %(name)s :%(message)s");
-      });
-      Logger.getLogger(HttpCommandExecutor.class.getName()).setLevel(Level.FINE);
-      Logger.getLogger(DriverCommandExecutor.class.getName()).setLevel(Level.FINE);
-      Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
-      Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
+   protected void beforeMethod(String contexto, String nombreTest) throws PruebaAceptacionExcepcion {
+      // Level nivelLog = Level.INFO;
+      //
+      // Logger logger = Logger.getLogger("");
+      // logger.setLevel(nivelLog);
+      // Arrays.stream(logger.getHandlers()).forEach(handler -> {
+      // // handler.setLevel(nivelLog);
+      // // handler.setFormatter("%(asctime)s :%(levelname)s : %(name)s :%(message)s");
+      // });
+      // Logger.getLogger(HttpCommandExecutor.class.getName()).setLevel(Level.FINE);
+      // Logger.getLogger(DriverCommandExecutor.class.getName()).setLevel(Level.FINE);
+      // Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
+      // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
 
       try {
-
-         // Indicara la carpeta donde se guardaran los videos.
-         System.setProperty("video.folder",
-               System.getProperty("user.dir") + "/target/surefire-reports/video/" + this.getClass().getSimpleName());
+         System.setProperty("video.folder", DIRECTORIO_TARGET_SUREFIRE_REPORTS + contexto);
 
          this.iniciar();
       }
@@ -182,9 +186,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       Traza.info(chrome.toString());
       assertNotNull(WebDriverFactory.getDriver(), "Error al instanciar el driver de " + navegador);
       chrome.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
-      // chrome.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
       chrome.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
-      // chrome.manage().logs().
       String propiedadMaximizar = null;
       try {
          propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
