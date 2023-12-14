@@ -754,7 +754,7 @@ public class WebElementWrapper {
          }
       }
       catch (Exception e) {
-         this.error(this.mensajeDeError(e));
+         this.warning(this.mensajeDeError(e));
       }
       return conseguido;
    }
@@ -1111,12 +1111,12 @@ public class WebElementWrapper {
                   }
                   catch (InterruptedException e) {
                      // Seguramente nunca se produzca esta excepción
-                     this.error("Error al parar el procesamiento del hilo de ejecución");
+                     this.warning("Error al parar el procesamiento del hilo de ejecución");
                   }
                   tiempo += 100;
                   if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000) {
                      String mensaje = "La ventana \"Procesando...\" no desaparece";
-                     this.error(mensaje);
+                     this.warning(mensaje);
                      throw new PruebaAceptacionExcepcion(mensaje);
                   }
                }
@@ -1424,7 +1424,7 @@ public class WebElementWrapper {
          Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO)) * 1000);
       }
       catch (Exception e) {
-         this.error(this.mensajeDeError(e));
+         this.warning(this.mensajeDeError(e));
       }
    }
 
@@ -2010,24 +2010,6 @@ public class WebElementWrapper {
          throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
-
-   // private void cambiarFoco() throws PruebaAceptacionExcepcion {
-   // try {
-   // Robot rb = new Robot();
-   // debug("Cambiar el foco a Autofirma");
-   // rb.keyPress(KeyEvent.VK_ALT);
-   // rb.keyPress(KeyEvent.VK_TAB);
-   // rb.delay(10);
-   // rb.keyRelease(KeyEvent.VK_ALT);
-   // rb.keyRelease(KeyEvent.VK_TAB);
-   // rb.delay(1000);
-   // }
-   // catch (AWTException e) {
-   // String mensaje = "Error al manejar el robot";
-   // error(mensaje);
-   // throw new PruebaAceptacionExcepcion(mensaje);
-   // }
-   // }
 
    /**
     * Se intenta pulsar sobre el primer elemento del listado. Si no se consigue se deja constancia de ello.
