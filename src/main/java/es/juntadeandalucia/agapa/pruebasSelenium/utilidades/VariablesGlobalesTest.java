@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class VariablesGlobalesTest {
 
+   public static final String     DIRECTORIO_TARGET_SUREFIRE_REPORTS = System.getProperty("user.dir") + "/target/surefire-reports/";
    private static Properties propiedades = null;
 
    /**

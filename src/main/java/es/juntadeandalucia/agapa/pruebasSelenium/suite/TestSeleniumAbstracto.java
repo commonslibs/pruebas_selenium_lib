@@ -24,11 +24,9 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +37,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
@@ -52,7 +51,6 @@ import org.testng.annotations.Listeners;
 @Slf4j
 public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests {
 
-   private static final String     DIRECTORIO_TARGET_SUREFIRE_REPORTS = System.getProperty("user.dir") + "/target/surefire-reports/";
    private static final String     REMITENTE                          = "noreply.agapa@juntadeandalucia.es";
    private static final String     HOST                               = "mtaprod.dap.es";
    private static final String     PORT                               = "25";
@@ -78,7 +76,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    protected void beforeTest(String titulo, String nombre, String fichero) {
-      String ficheroLargo = DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + "/" + fichero + "-Extendido";
+      String ficheroLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + "/" + fichero + "-Extendido";
       this.spark = new ExtentSparkReporter(ficheroLargo + ".html");
       JsonFormatter json = new JsonFormatter(ficheroLargo + ".json");
       this.extent = new ExtentReports();
@@ -91,7 +89,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       String dateName = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date());
       TakesScreenshot ts = (TakesScreenshot) driver;
       File source = ts.getScreenshotAs(OutputType.FILE);
-      String destination = DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + "/capturas/" + screenshotName + "_" + dateName + ".png";
+      String destination = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + "/capturas/" + screenshotName + "_" + dateName + ".png";
       File finalDestination = new File(destination);
       FileUtils.copyFile(source, finalDestination);
       return destination;
@@ -116,32 +114,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    @AfterTest
-   public void endReport() {
+   public void endReport(ITestContext contexto) {
       this.extent.flush();
-      this.mergearReports();
-   }
-
-   private void mergearReports() {
-      ExtentSparkReporter sparkMergeado = new ExtentSparkReporter(DIRECTORIO_TARGET_SUREFIRE_REPORTS + "PPI.html");
-      ExtentReports reportMergeado = new ExtentReports();
-
-      File directorioSurefire = new File(DIRECTORIO_TARGET_SUREFIRE_REPORTS);
-      FilenameFilter filtroDirectorios = (d, s) -> d.isDirectory() && s.toUpperCase().startsWith("CP");
-      FilenameFilter filtroJson = (d, s) -> s.toLowerCase().endsWith(".json");
-      if (directorioSurefire.exists()) {
-         Arrays.stream(directorioSurefire.listFiles(filtroDirectorios)).forEach(directorio -> {
-            Arrays.stream(directorio.listFiles(filtroJson)).forEach(ficheroJson -> {
-               try {
-                  reportMergeado.createDomainFromJsonArchive(ficheroJson.getPath());
-               }
-               catch (Exception e) {
-                  log.error(e.getLocalizedMessage());
-               }
-            });
-         });
-      }
-      reportMergeado.attachReporter(sparkMergeado);
-      reportMergeado.flush();
    }
 
    /**
@@ -164,7 +138,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
 
       try {
-         System.setProperty("video.folder", DIRECTORIO_TARGET_SUREFIRE_REPORTS + contexto);
+         System.setProperty("video.folder", VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + contexto);
 
          this.iniciar();
       }
