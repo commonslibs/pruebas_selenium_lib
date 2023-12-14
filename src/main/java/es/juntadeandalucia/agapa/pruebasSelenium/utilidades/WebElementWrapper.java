@@ -996,7 +996,7 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por índice";
+         String mensaje = "Error en " + testObject.toString() + " al esperar listado con " + numeroFilasEsperadas + " filas";
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
             this.error(excepcion);

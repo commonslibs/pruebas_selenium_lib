@@ -78,7 +78,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    protected void beforeTest(String titulo, String nombre, String fichero) {
-      String ficheroLargo = DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero;
+      String ficheroLargo = DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + "/" + fichero + "-Extendido";
       this.spark = new ExtentSparkReporter(ficheroLargo + ".html");
       JsonFormatter json = new JsonFormatter(ficheroLargo + ".json");
       this.extent = new ExtentReports();
@@ -87,30 +87,30 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       this.spark.config().setReportName(nombre);
    }
 
-   private String getScreenShot(WebDriver driver, String screenshotName) throws IOException {
+   private String getScreenShot(WebDriver driver, String directorio, String screenshotName) throws IOException {
       String dateName = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date());
       TakesScreenshot ts = (TakesScreenshot) driver;
       File source = ts.getScreenshotAs(OutputType.FILE);
-      String destination = DIRECTORIO_TARGET_SUREFIRE_REPORTS + "/pantallazos/" + screenshotName + "_" + dateName + ".png";
+      String destination = DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + "/capturas/" + screenshotName + "_" + dateName + ".png";
       File finalDestination = new File(destination);
       FileUtils.copyFile(source, finalDestination);
       return destination;
    }
 
    @AfterMethod
-   public void getResult(ITestResult result) throws Exception {
-      if (result.getStatus() == ITestResult.FAILURE) {
-         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(result.getName() + " - Test falló", ExtentColor.RED));
-         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(result.getThrowable() + " - Test falló", ExtentColor.RED));
-         String screenshotPath = this.getScreenShot(this.getDriver(), result.getName());
+   public void getResult(ITestResult resultado) throws Exception {
+      if (resultado.getStatus() == ITestResult.FAILURE) {
+         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
+         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getThrowable() + " - Test falló", ExtentColor.RED));
+         String screenshotPath = this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
          this.getLogger().addScreenCaptureFromPath(screenshotPath);
-         this.getLogger().fail("Pantallazo del test que falló: " + screenshotPath);
+         this.getLogger().fail("Captura de pantalla del test que falló: " + screenshotPath);
       }
-      else if (result.getStatus() == ITestResult.SKIP) {
-         this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(result.getName() + " - Test saltado", ExtentColor.ORANGE));
+      else if (resultado.getStatus() == ITestResult.SKIP) {
+         this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(resultado.getName() + " - Test saltado", ExtentColor.ORANGE));
       }
-      else if (result.getStatus() == ITestResult.SUCCESS) {
-         this.getLogger().log(Status.PASS, MarkupHelper.createLabel(result.getName() + " Test CORRECTO", ExtentColor.GREEN));
+      else if (resultado.getStatus() == ITestResult.SUCCESS) {
+         this.getLogger().log(Status.PASS, MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
       }
       this.cerrarNavegador();
    }
@@ -125,16 +125,19 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       ExtentSparkReporter sparkMergeado = new ExtentSparkReporter(DIRECTORIO_TARGET_SUREFIRE_REPORTS + "PPI.html");
       ExtentReports reportMergeado = new ExtentReports();
 
-      File directorioJson = new File(DIRECTORIO_TARGET_SUREFIRE_REPORTS);
+      File directorioSurefire = new File(DIRECTORIO_TARGET_SUREFIRE_REPORTS);
+      FilenameFilter filtroDirectorios = (d, s) -> d.isDirectory() && s.toUpperCase().startsWith("CP");
       FilenameFilter filtroJson = (d, s) -> s.toLowerCase().endsWith(".json");
-      if (directorioJson.exists()) {
-         Arrays.stream(directorioJson.listFiles(filtroJson)).forEach(ficheroJson -> {
-            try {
-               reportMergeado.createDomainFromJsonArchive(ficheroJson.getPath());
-            }
-            catch (Exception e) {
-               log.error(e.getLocalizedMessage());
-            }
+      if (directorioSurefire.exists()) {
+         Arrays.stream(directorioSurefire.listFiles(filtroDirectorios)).forEach(directorio -> {
+            Arrays.stream(directorio.listFiles(filtroJson)).forEach(ficheroJson -> {
+               try {
+                  reportMergeado.createDomainFromJsonArchive(ficheroJson.getPath());
+               }
+               catch (Exception e) {
+                  log.error(e.getLocalizedMessage());
+               }
+            });
          });
       }
       reportMergeado.attachReporter(sparkMergeado);
