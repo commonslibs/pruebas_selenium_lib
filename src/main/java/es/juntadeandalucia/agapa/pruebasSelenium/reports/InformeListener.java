@@ -19,6 +19,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.IReporter;
@@ -51,9 +52,15 @@ public class InformeListener implements IReporter {
       ExtentReports reportMergeado = new ExtentReports();
       for (ISuite suite : suites) {
          try {
-            String ficheroJson =
-                  VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + suite.getName() + "/" + suite.getName() + "-Extendido.json";
+            String directorioOrigenJson = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + suite.getName() + "/";
+            String ficheroJson = directorioOrigenJson + "/" + suite.getName() + "-Extendido.json";
             reportMergeado.createDomainFromJsonArchive(ficheroJson);
+
+            // Copiar las capturas de pantallas de error
+            File sourceDirectory = new File(directorioOrigenJson + VariablesGlobalesTest.DIRECTORIO_CAPTURAS);
+            File destinationDirectory =
+                  new File(VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + VariablesGlobalesTest.DIRECTORIO_CAPTURAS);
+            FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
          }
          catch (Exception e) {
             log.error(e.getLocalizedMessage());

@@ -17,8 +17,10 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class VariablesGlobalesTest {
 
-   public static final String     DIRECTORIO_TARGET_SUREFIRE_REPORTS = System.getProperty("user.dir") + "/target/surefire-reports/";
-   private static Properties propiedades = null;
+   public static final String DIRECTORIO_TARGET_SUREFIRE_REPORTS = System.getProperty("user.dir") + "/target/surefire-reports/";
+   public static final String DIRECTORIO_CAPTURAS                = "capturas/";
+
+   private static Properties  propiedades                        = null;
 
    /**
     * Contiene el nombre de la variable del property por el que busca

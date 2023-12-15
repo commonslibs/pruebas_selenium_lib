@@ -51,10 +51,10 @@ import org.testng.annotations.Listeners;
 @Slf4j
 public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests {
 
-   private static final String     REMITENTE                          = "noreply.agapa@juntadeandalucia.es";
-   private static final String     HOST                               = "mtaprod.dap.es";
-   private static final String     PORT                               = "25";
-   private static final Properties props                              = new Properties();
+   private static final String     REMITENTE = "noreply.agapa@juntadeandalucia.es";
+   private static final String     HOST      = "mtaprod.dap.es";
+   private static final String     PORT      = "25";
+   private static final Properties props     = new Properties();
 
    static {
       props.put("mail.smtp.host", HOST);
@@ -89,10 +89,11 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       String dateName = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date());
       TakesScreenshot ts = (TakesScreenshot) driver;
       File source = ts.getScreenshotAs(OutputType.FILE);
-      String destination = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + "/capturas/" + screenshotName + "_" + dateName + ".png";
-      File finalDestination = new File(destination);
+      String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + "/";
+      String rutaRelativa = VariablesGlobalesTest.DIRECTORIO_CAPTURAS + screenshotName + "_" + dateName + ".png";
+      File finalDestination = new File(directorioLargo + rutaRelativa);
       FileUtils.copyFile(source, finalDestination);
-      return destination;
+      return rutaRelativa;
    }
 
    @AfterMethod
@@ -100,9 +101,9 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       if (resultado.getStatus() == ITestResult.FAILURE) {
          this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
          this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getThrowable() + " - Test falló", ExtentColor.RED));
-         String screenshotPath = this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
-         this.getLogger().addScreenCaptureFromPath(screenshotPath);
-         this.getLogger().fail("Captura de pantalla del test que falló: " + screenshotPath);
+         String rutaRelativa = this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
+         this.getLogger().addScreenCaptureFromPath(rutaRelativa);
+         this.getLogger().fail("Captura de pantalla del test que falló: " + rutaRelativa);
       }
       else if (resultado.getStatus() == ITestResult.SKIP) {
          this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(resultado.getName() + " - Test saltado", ExtentColor.ORANGE));
