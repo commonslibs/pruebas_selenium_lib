@@ -58,9 +58,11 @@ public class InformeListener implements IReporter {
 
             // Copiar las capturas de pantallas de error
             File sourceDirectory = new File(directorioOrigenJson + VariablesGlobalesTest.DIRECTORIO_CAPTURAS);
-            File destinationDirectory =
-                  new File(VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + VariablesGlobalesTest.DIRECTORIO_CAPTURAS);
-            FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
+            if (sourceDirectory.exists()) {
+               File destinationDirectory =
+                     new File(VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + VariablesGlobalesTest.DIRECTORIO_CAPTURAS);
+               FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
+            }
          }
          catch (Exception e) {
             log.error(e.getLocalizedMessage());
