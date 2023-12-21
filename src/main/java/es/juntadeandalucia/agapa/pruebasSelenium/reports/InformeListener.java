@@ -96,13 +96,22 @@ public class InformeListener implements IReporter {
    }
 
    private Function<ITestResult, String> testResultToResultRow(String testName, String suiteName) {
-      return testResult -> (switch (testResult.getStatus()) {
-         case ITestResult.FAILURE -> String.format(ROW_TEMPLATE, "danger", suiteName, testName, testResult.getName(), "FAILED", "NA");
-         case ITestResult.SUCCESS -> String.format(ROW_TEMPLATE, "success", suiteName, testName, testResult.getName(), "PASSED",
-               String.valueOf(testResult.getEndMillis() - testResult.getStartMillis()));
-         case ITestResult.SKIP -> String.format(ROW_TEMPLATE, "warning", suiteName, testName, testResult.getName(), "SKIPPED", "NA");
-         default -> "";
-      });
+      return testResult -> {
+         switch (testResult.getStatus()) {
+            case ITestResult.FAILURE:
+               return String.format(ROW_TEMPLATE, "danger", suiteName, testName, testResult.getName(), "FAILED", "NA");
+
+            case ITestResult.SUCCESS:
+               return String.format(ROW_TEMPLATE, "success", suiteName, testName, testResult.getName(), "PASSED",
+                     String.valueOf(testResult.getEndMillis() - testResult.getStartMillis()));
+
+            case ITestResult.SKIP:
+               return String.format(ROW_TEMPLATE, "warning", suiteName, testName, testResult.getName(), "SKIPPED", "NA");
+
+            default:
+               return "";
+         }
+      };
    }
 
    private String initReportTemplate() {
