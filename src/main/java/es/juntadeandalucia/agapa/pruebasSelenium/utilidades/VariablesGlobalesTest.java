@@ -29,7 +29,7 @@ public class VariablesGlobalesTest {
     */
    public enum PropiedadesTest implements PropiedadGenerica {
       NAVEGADOR, MAXIMIZAR, TIEMPO_RETRASO_CORTO, TIEMPO_RETRASO_MEDIO, TIEMPO_RETRASO_LARGO, TIEMPO_RETRASO_AUTOFIRMA,
-      ID_ELEMENTO_PROCESANDO, POSICION_CERTIFICADO
+      ID_ELEMENTO_PROCESANDO, POSICION_CERTIFICADO, HTTPS_PROXY
    }
 
    /**
@@ -39,7 +39,7 @@ public class VariablesGlobalesTest {
     * @return Valor de las propiedades del property
     * @throws PruebaAceptacionExcepcion
     */
-   public static String getPropiedad(PropiedadGenerica propiedad) throws PruebaAceptacionExcepcion {
+   public static String getPropiedad(PropiedadGenerica propiedad) throws IllegalArgumentException {
       if (propiedades == null) {
          String entorno = System.getProperty("entorno");
 
@@ -50,11 +50,11 @@ public class VariablesGlobalesTest {
 
       String nombrePropiedad = propiedad.toString();
       if (!propiedades.containsKey(nombrePropiedad)) {
-         throw new PruebaAceptacionExcepcion("Parámetro " + propiedad + " no se ha encontrado en el fichero de configuración");
+         throw new IllegalArgumentException("Parámetro " + propiedad + " no se ha encontrado en el fichero de configuración");
       }
 
       if (StringUtils.isBlank(propiedades.get(nombrePropiedad).toString())) {
-         throw new PruebaAceptacionExcepcion("Parámetro " + propiedad + " de configuración inválido");
+         throw new IllegalArgumentException("Parámetro " + propiedad + " de configuración inválido");
       }
       return propiedades.get(nombrePropiedad).toString();
    }

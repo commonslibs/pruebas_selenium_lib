@@ -1096,7 +1096,7 @@ public class WebElementWrapper {
       try {
          idElementoProcesando = VariablesGlobalesTest.getPropiedad(PropiedadesTest.ID_ELEMENTO_PROCESANDO);
       }
-      catch (PruebaAceptacionExcepcion e) {
+      catch (IllegalArgumentException e) {
          this.warning("ID_ELEMENTO_PROCESANDO no definido en fichero properties");
       }
       if (idElementoProcesando != null) {
@@ -1284,26 +1284,29 @@ public class WebElementWrapper {
       return exito;
    }
 
-   public WebElement esperarHastaQueElementoClickable(By testObject) throws PruebaAceptacionExcepcion {
+   public void esperarHastaQueElementoClickable(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoClickable->" + testObject);
-      WebElement exito = null;
+      Exception excepcion = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
                Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
                Duration.ofMillis(100));
          try {
-            exito = wait.until(ExpectedConditions.elementToBeClickable(testObject));
+            wait.until(ExpectedConditions.elementToBeClickable(testObject));
             conseguido = true;
          }
-         catch (TimeoutException | StaleElementReferenceException e) {
-            String mensaje = "Error al esperar que el objeto " + testObject.toString() + " sea clickable";
-            this.error(e);
-            this.error(mensaje);
-            throw new PruebaAceptacionExcepcion(mensaje);
+         catch (Exception e) {
+            this.warning(this.mensajeDeError(e));
+            excepcion = e;
          }
       }
-      return exito;
+      if (!conseguido) {
+         String mensaje = "Error al esperar que el objeto " + testObject.toString() + " sea clickable";
+         this.error(excepcion);
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
    }
 
    private boolean esperarHastaQueElementoTengaTexto(By testObject, String texto) throws PruebaAceptacionExcepcion {
@@ -1957,8 +1960,6 @@ public class WebElementWrapper {
       boolean conseguido = false;
       WebElement elemento = null;
       Exception excepcion = null;
-      // String window = WebDriverFactory.getDriver().getWindowHandle();
-      this.ejecutaAccionesUrlAfirmaProtocol();
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             elemento = this.esperaCompleta(testObject);
@@ -1966,12 +1967,12 @@ public class WebElementWrapper {
             WebElement elementoClickable = this.esperarHastaQueElementoClickable(elemento);
             if (elementoClickable != null) {
                elementoClickable.click();
+               this.ejecutaAccionesUrlAfirmaProtocol();
                conseguido = true;
             }
          }
          catch (Exception e) {
             this.warning(this.mensajeDeError(e));
-            this.ejecutaAccionesUrlAfirmaProtocol();
             excepcion = e;
          }
       }
@@ -1991,7 +1992,9 @@ public class WebElementWrapper {
       try {
          Robot rb = new Robot();
 
+         log.info("Espera media...");
          this.esperaMedia();
+         log.info("Espera adicional...");
          this.esperaAdicionalAutofirma();
 
          this.debug("Pulsar <DERECHA>");
@@ -2111,7 +2114,7 @@ public class WebElementWrapper {
          String mensaje = "El objeto " + testObject.toString() + " no es clickable";
          this.warning(mensaje);
       }
-      catch (PruebaAceptacionExcepcion e) {
+      catch (Exception e) {
          this.error(e);
          this.error(this.mensajeDeError(e));
          throw e;
