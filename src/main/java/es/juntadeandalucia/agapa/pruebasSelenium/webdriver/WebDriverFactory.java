@@ -178,11 +178,6 @@ public class WebDriverFactory {
                                                                                        options.addArguments(
                                                                                              "disable-features=DownloadBubble,DownloadBubbleV2");
 
-                                                                                       // Para no mostrar el dialogo para guardar las
-                                                                                       // contraseñas
-                                                                                       options.addArguments(
-                                                                                             "--disable-save-password-bubble");
-
                                                                                        // Experimental OPTIONS
                                                                                        HashMap<String, Object> prefs = new HashMap<>();
                                                                                        // Para descargar archivos XML
