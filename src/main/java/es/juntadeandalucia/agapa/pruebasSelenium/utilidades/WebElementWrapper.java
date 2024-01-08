@@ -1960,6 +1960,7 @@ public class WebElementWrapper {
       boolean conseguido = false;
       WebElement elemento = null;
       Exception excepcion = null;
+      this.ejecutaAccionesUrlAfirmaProtocol();
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             elemento = this.esperaCompleta(testObject);
@@ -1967,12 +1968,12 @@ public class WebElementWrapper {
             WebElement elementoClickable = this.esperarHastaQueElementoClickable(elemento);
             if (elementoClickable != null) {
                elementoClickable.click();
-               this.ejecutaAccionesUrlAfirmaProtocol();
                conseguido = true;
             }
          }
          catch (Exception e) {
             this.warning(this.mensajeDeError(e));
+            this.ejecutaAccionesUrlAfirmaProtocol();
             excepcion = e;
          }
       }
