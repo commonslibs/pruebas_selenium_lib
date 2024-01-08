@@ -52,7 +52,7 @@ public class WebDriverFactory {
          Boolean.parseBoolean(System.getProperty("java.awt.headless", WebDriverFactory.TX_FALSE).toLowerCase());
 
    public static final boolean                              IS_MODO_INCOGNITO       =
-         Boolean.parseBoolean(System.getProperty("modoIncognito", WebDriverFactory.TX_FALSE).toLowerCase());
+         Boolean.parseBoolean(System.getProperty("modoIncognito", WebDriverFactory.TX_TRUE).toLowerCase());
 
    public static final boolean                              IS_VIDEO_ENABLED        =
          Boolean.parseBoolean(System.getProperty("video.enabled", WebDriverFactory.TX_TRUE).toLowerCase());
