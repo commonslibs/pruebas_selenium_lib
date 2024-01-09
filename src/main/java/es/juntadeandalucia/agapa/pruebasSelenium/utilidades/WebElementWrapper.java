@@ -45,7 +45,7 @@ public class WebElementWrapper {
 
    private final static int    NUMERO_MINIMO_INTENTOS = 2;
 
-   private void debug(String mensaje) {
+   public void debug(String mensaje) {
       log.debug(mensaje);
       WebDriverFactory.getLogger().log(Status.INFO, mensaje);
    }
@@ -62,17 +62,17 @@ public class WebElementWrapper {
       WebDriverFactory.getLogger().warning(mensaje);
    }
 
-   private void error(String mensaje) {
+   public void error(String mensaje) {
       log.error(mensaje);
       WebDriverFactory.getLogger().fail(mensaje);
    }
 
-   private void error(Throwable t) {
+   public void error(Throwable t) {
       log.error(t.getLocalizedMessage());
       WebDriverFactory.getLogger().log(Status.FAIL, t);
    }
 
-   private String mensajeDeError(Exception e) {
+   public String mensajeDeError(Exception e) {
       if (e instanceof WebDriverException) {
          return ((WebDriverException) e).getRawMessage();
       }
@@ -937,13 +937,8 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
 
-            // Localizar el body de la tabla
-            // FIXME : No hay forma de esperar después del evento filtrado, debido al evento
-            // onKeyUp que mete un retraso aleatorio en la carga del listado.
-            // Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
             WebElement table = this.esperaCompleta(By.id(idBodyTabla));
             List<WebElement> rows = table.findElements(By.xpath("//table[@id='" + idBodyTabla + "']/tbody/tr"));
-            // +"//tr[contains(@class, 'rich-table-row')]"));
             numeroDeFilas = rows.size();
             conseguido = true;
          }
@@ -954,7 +949,7 @@ public class WebElementWrapper {
       }
 
       if (!conseguido) {
-         String mensaje = "Error al hacer seleccionar el valor del combo por índice";
+         String mensaje = "Error al obtener el número de fila de la tabla con ID=" + idBodyTabla;
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
             this.error(excepcion);
@@ -1429,37 +1424,6 @@ public class WebElementWrapper {
       catch (Exception e) {
          this.warning(this.mensajeDeError(e));
       }
-   }
-
-   // FIXME: Mover al proyecto cliente de Selenium
-   public int obtieneNumeroResultadosIndicadoEnListado(String clase) throws PruebaAceptacionExcepcion {
-      this.debug("obtieneNumeroResultadosIndicadoEnListado->" + clase);
-      boolean conseguido = false;
-      int num = 0;
-      try {
-         By objetoBuscado = By.xpath("//*[@class = '" + clase + "']");
-         String texto = this.getText(objetoBuscado);
-         if (texto.contains("Resultados: ")) {
-
-            int indice = texto.indexOf(":");
-            String subcadena = texto.substring(indice + 1).trim();
-            num = Integer.parseInt(subcadena);
-            conseguido = true;
-         }
-         if (!conseguido) {
-            String mensaje =
-                  "No existe un tal elemento 'paragraph' con clase: " + clase + "que contenga el numero de resultados del listado";
-            this.error(mensaje);
-            throw new PruebaAceptacionExcepcion(mensaje);
-         }
-      }
-      catch (Exception e) {
-         String mensaje = this.mensajeDeError(e);
-         this.error(e);
-         this.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
-      }
-      return num;
    }
 
    /**

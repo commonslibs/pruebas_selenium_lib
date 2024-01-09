@@ -86,66 +86,60 @@ public class WebDriverFactory {
                                                                                        // siguiente propiedad?
                                                                                        options.addArguments("--enable-npapi");
 
-                                                                                       // Incompatibilidad de selenium y
-                                                                                       // chrome 111 al utilizar
-                                                                                       // direcciones sin https
+                                                                                       // Incompatibilidad de selenium y chrome 111 al
+                                                                                       // utilizar direcciones sin https
                                                                                        // https://stackoverflow.com/questions/75678572/java-io-ioexception-invalid-status-code-403-text-forbidden
                                                                                        options.addArguments("--remote-allow-origins=*");
 
-                                                                                       // Para ignorar las advertencias
-                                                                                       // al no utilizar https
+                                                                                       // Para ignorar las advertencias al no utilizar https
                                                                                        options.addArguments("ignore-certificate-errors");
 
-                                                                                       // Habilitar la opción "Ejecutar
-                                                                                       // contenido Java"
+                                                                                       // Habilitar la opción "Ejecutar contenido Java"
                                                                                        options.addArguments("--enable-internal-ehb");
 
-                                                                                       // se aconseja incluirla cuando
-                                                                                       // se ejecuta
-                                                                                       // chrome en un entorno docker
-                                                                                       // como es el caso
+                                                                                       // Se aconseja incluirla cuando se ejecuta chrome en
+                                                                                       // un entorno docker
                                                                                        options.addArguments("--disable-dev-shm-usage");
 
-                                                                                       // Para habilitar el registro
-                                                                                       // detallado
+                                                                                       // https://stackoverflow.com/a/49123152/1689770
+                                                                                       options.addArguments(
+                                                                                             "--disable-browser-side-navigation");
+
+                                                                                       // https://stackoverflow.com/questions/51959986/how-to-solve-selenium-chromedriver-timed-out-receiving-message-from-renderer-exc
+                                                                                       options.addArguments("--disable-gpu");
+
+                                                                                       // Para habilitar el registro detallado
                                                                                        options.addArguments("--verbose");
 
-                                                                                       // Se deshabilitan las
-                                                                                       // extensiones
+                                                                                       // Se deshabilitan las extensiones
                                                                                        options.addArguments("--disable-extensions");
 
-                                                                                       // Se deshabiitan el sonido
-                                                                                       // Aconsejado en entorno docker
-                                                                                       // de tests como es el caso
+                                                                                       // Se deshabiitan el sonido. Aconsejado en entorno
+                                                                                       // docker
                                                                                        options.addArguments("--mute-audio");
 
-                                                                                       // Desactiva la traducción de
-                                                                                       // Chrome, tanto la opción manual
-                                                                                       // como el mensaje emergente
-                                                                                       // cuando se detecta una página
-                                                                                       // con un idioma diferente.
+                                                                                       // Desactiva la traducción de Chrome, tanto la opción
+                                                                                       // manual como el mensaje emergente cuando se detecta
+                                                                                       // una página con un idioma diferente.
                                                                                        options.addArguments("--disable-features=Translate");
 
-                                                                                       // Desactive la verificación del
-                                                                                       // navegador predeterminado, no
-                                                                                       // solicite configurarlo como tal
+                                                                                       // Desactive la verificación del navegador
+                                                                                       // predeterminado, no solicite configurarlo como tal
                                                                                        options.addArguments("--no-default-browser-check");
 
-                                                                                       // No actualice los 'componentes'
-                                                                                       // del navegador enumerados en
-                                                                                       // chrome://components/
+                                                                                       // No actualice los 'componentes' del navegador
+                                                                                       // enumerados en chrome://components/
                                                                                        options.addArguments("--disable-component-update");
 
-                                                                                       // Desactiva la comunicación del
-                                                                                       // servidor de autocompletar.
-                                                                                       // Esta función no se desactiva
-                                                                                       // mediante otras banderas
-                                                                                       // "principales".
+                                                                                       // Desactiva la comunicación del servidor de
+                                                                                       // autocompletar.
+                                                                                       // Esta función no se desactiva mediante otras
+                                                                                       // banderas "principales".
                                                                                        options.addArguments(
                                                                                              "--disable-features=AutofillServerCommunication");
 
-                                                                                       // Desactivar la sincronización
-                                                                                       // con una cuenta de Google
+                                                                                       // Desactivar la sincronización con una cuenta de
+                                                                                       // Google
                                                                                        options.addArguments("--disable-sync");
 
                                                                                        // Para lanzar en modo incognito
@@ -153,28 +147,23 @@ public class WebDriverFactory {
                                                                                           options.addArguments("--incognito");
                                                                                        }
 
-                                                                                       // Parámetro para no abrir el
-                                                                                       // modo gráfico del navegador.
+                                                                                       // Parámetro para no abrir el modo gráfico del
+                                                                                       // navegador.
                                                                                        if (WebDriverFactory.IS_HEADLESS) {
                                                                                           options.addArguments("--headless=new");
                                                                                        }
                                                                                        else {
-                                                                                          // Deshabilitamos el mensaje
-                                                                                          // del
-                                                                                          // navegador: "Un Software
-                                                                                          // automatizado de pruebas
-                                                                                          // está
+                                                                                          // Deshabilitamos el mensaje delnavegador: "Un
+                                                                                          // Software automatizado de pruebas está
                                                                                           // controlando Chrome."
                                                                                           options.setExperimentalOption("excludeSwitches",
                                                                                                 Collections.singletonList(
                                                                                                       "--enable-automation"));
                                                                                        }
 
-                                                                                       // Para no mostrar el dialogo de
-                                                                                       // "donde guardar archivos".
-                                                                                       // Bandera especial para el modo
-                                                                                       // incognito a partir de chrome
-                                                                                       // 119
+                                                                                       // Para no mostrar el dialogo de "donde guardar
+                                                                                       // archivos". Bandera especial para el modo incognito
+                                                                                       // a partir de chrome 119
                                                                                        options.addArguments(
                                                                                              "disable-features=DownloadBubble,DownloadBubbleV2");
 
@@ -183,8 +172,8 @@ public class WebDriverFactory {
                                                                                        // Para descargar archivos XML
                                                                                        prefs.put("download.extensions_to_open",
                                                                                              "application/xml");
-                                                                                       // Para no mostrar el dialogo de
-                                                                                       // "donde guardar archivos"
+                                                                                       // Para no mostrar el dialogo de "donde guardar
+                                                                                       // archivos"
                                                                                        prefs.put("safebrowsing.enabled", false);
                                                                                        prefs.put("download.prompt_for_download", false);
                                                                                        prefs.put("download.directory_upgrade", true);
@@ -194,8 +183,8 @@ public class WebDriverFactory {
                                                                                              "profile.default_content_setting_values.automatic_downloads",
                                                                                              1);
 
-                                                                                       // Boolean that specifies if file
-                                                                                       // selection dialogs are shown.
+                                                                                       // Boolean that specifies if file selection dialogs
+                                                                                       // are shown.
                                                                                        prefs.put("select_file_dialogs.allowed", false);
 
                                                                                        options.setExperimentalOption("prefs", prefs);
