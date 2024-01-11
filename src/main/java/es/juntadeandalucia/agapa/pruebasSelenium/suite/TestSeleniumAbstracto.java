@@ -163,8 +163,11 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       ChromeDriver chrome = (ChromeDriver) WebDriverFactory.getDriver();
       Traza.info(chrome.toString());
       assertNotNull(WebDriverFactory.getDriver(), "Error al instanciar el driver de " + navegador);
-      chrome.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
-      chrome.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+      //log.debug(chrome.manage().timeouts().getPageLoadTimeout().toString());
+      //log.debug(chrome.manage().timeouts().getImplicitWaitTimeout().toString());
+      //log.debug(chrome.manage().timeouts().getScriptTimeout().toString());
+      // chrome.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
+      // chrome.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
       String propiedadMaximizar = null;
       try {
          propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
