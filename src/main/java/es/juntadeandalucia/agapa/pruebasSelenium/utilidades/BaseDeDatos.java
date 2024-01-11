@@ -13,7 +13,7 @@ import org.testng.Assert;
 /**
  * Clase que contiene las conexiones a base de datos.
  *
- * @author ISOTROL
+ * @author AGAPA
  */
 @Slf4j
 public class BaseDeDatos {

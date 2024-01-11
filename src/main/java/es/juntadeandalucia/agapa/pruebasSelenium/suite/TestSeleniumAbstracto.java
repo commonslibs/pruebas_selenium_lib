@@ -21,7 +21,6 @@ import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Nave
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
 import java.util.Properties;
 import javax.mail.Message;
@@ -163,9 +162,9 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       ChromeDriver chrome = (ChromeDriver) WebDriverFactory.getDriver();
       Traza.info(chrome.toString());
       assertNotNull(WebDriverFactory.getDriver(), "Error al instanciar el driver de " + navegador);
-      //log.debug(chrome.manage().timeouts().getPageLoadTimeout().toString());
-      //log.debug(chrome.manage().timeouts().getImplicitWaitTimeout().toString());
-      //log.debug(chrome.manage().timeouts().getScriptTimeout().toString());
+      // log.debug(chrome.manage().timeouts().getPageLoadTimeout().toString());
+      // log.debug(chrome.manage().timeouts().getImplicitWaitTimeout().toString());
+      // log.debug(chrome.manage().timeouts().getScriptTimeout().toString());
       // chrome.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
       // chrome.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
       String propiedadMaximizar = null;

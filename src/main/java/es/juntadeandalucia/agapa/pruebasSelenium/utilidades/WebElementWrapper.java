@@ -19,11 +19,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -32,7 +31,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 /**
  * Clase que contiene las funcionalidades de selenium encapsulada, para usarlo de manera mas sencilla
  *
- * @author ISOTROL
+ * @author AGAPA
  */
 @Slf4j
 public class WebElementWrapper {
@@ -635,8 +634,6 @@ public class WebElementWrapper {
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          if (this.esperarHastaQueElementoNoPresente(testObject)) {
-            // this.esperaCorta();
-            // if (this.isObjetoNoPresente(testObject)) {
             conseguido = true;
          }
       }
@@ -1015,7 +1012,7 @@ public class WebElementWrapper {
    /**
     * Posicionar en porsición más alta de la página
     */
-   public void scrollTopPagina() {
+   public void scrollTopPagina() { // FIXME: Borrar si no se utiliza
       this.debug("scrollTopPagina");
       ((JavascriptExecutor) WebDriverFactory.getDriver()).executeScript("window.scrollTo(0, -document.body.scrollHeight)");
    }
@@ -1023,18 +1020,62 @@ public class WebElementWrapper {
    private boolean esperarHastaQueElementoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
       this.debug("esperarHastaQueElementoNoPresente->" + testObject.toString());
       boolean conseguido = false;
-      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO))),
-            Duration.ofMillis(100));
       try {
-         conseguido = wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
+         conseguido = this.esperaConCondicionLarga(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
       }
-      catch (TimeoutException | StaleElementReferenceException e) {
+      catch (WebDriverException e) {
          String mensaje = "Error al esperar que el objeto " + testObject.toString() + " NO esté presente";
-         this.warning(mensaje);
+         this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
       return conseguido;
+   }
+
+   private boolean esperaConCondicionLarga(ExpectedCondition<Boolean> condicion) throws WebDriverException {
+      return this.esperaConCondicion(condicion, PropiedadesTest.TIEMPO_RETRASO_LARGO);
+   }
+
+   private boolean esperaConCondicionMedia(ExpectedCondition<Boolean> condicion) throws WebDriverException {
+      return this.esperaConCondicion(condicion, PropiedadesTest.TIEMPO_RETRASO_MEDIO);
+   }
+
+   private WebElement esperaElementoConCondicionMedia(ExpectedCondition<WebElement> condicion) throws WebDriverException {
+      return this.esperaElementoConCondicion(condicion, PropiedadesTest.TIEMPO_RETRASO_MEDIO);
+   }
+
+   private WebElement esperaElementoConCondicionCorta(ExpectedCondition<WebElement> condicion) throws WebDriverException {
+      return this.esperaElementoConCondicion(condicion, PropiedadesTest.TIEMPO_RETRASO_CORTO);
+   }
+
+   private boolean esperaConCondicion(ExpectedCondition<Boolean> condicion, PropiedadesTest tiempo) throws WebDriverException {
+      boolean conseguido = false;
+      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(tiempo))), Duration.ofMillis(100));
+      try {
+         conseguido = wait.until(condicion);
+      }
+      catch (WebDriverException e) {
+         String mensaje = this.mensajeDeError(e);
+         this.warning(mensaje);
+         throw e;
+      }
+      return conseguido;
+   }
+
+   private WebElement esperaElementoConCondicion(ExpectedCondition<WebElement> condicion, PropiedadesTest tiempo)
+         throws WebDriverException {
+      WebElement elemento;
+      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(tiempo))), Duration.ofMillis(100));
+      try {
+         elemento = wait.until(condicion);
+      }
+      catch (WebDriverException e) {
+         String mensaje = this.mensajeDeError(e);
+         this.warning(mensaje);
+         throw e;
+      }
+      return elemento;
    }
 
    public boolean isElementChecked(By testObject) throws PruebaAceptacionExcepcion {
@@ -1141,13 +1182,10 @@ public class WebElementWrapper {
    private WebElement esperarHastaQueElementoVisibleBreve(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoVisibleBreve->" + testObject.toString());
       WebElement elemento = null;
-      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
-            Duration.ofMillis(100));
       try {
-         elemento = wait.until(ExpectedConditions.visibilityOfElementLocated(testObject));
+         elemento = this.esperaElementoConCondicionMedia(ExpectedConditions.visibilityOfElementLocated(testObject));
       }
-      catch (TimeoutException | StaleElementReferenceException e) {
+      catch (WebDriverException e) {
          String mensaje = "Error al esperar brevemente que el objeto " + testObject.toString() + " sea visible";
          this.warning(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -1157,23 +1195,20 @@ public class WebElementWrapper {
 
    private WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoVisible->" + testObject.toString());
-      WebElement exito = null;
+      WebElement elemento = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
-               Duration.ofMillis(100));
          try {
-            exito = wait.until(ExpectedConditions.visibilityOfElementLocated(testObject));
+            elemento = this.esperaElementoConCondicionMedia(ExpectedConditions.visibilityOfElementLocated(testObject));
             conseguido = true;
          }
-         catch (TimeoutException | StaleElementReferenceException e) {
+         catch (WebDriverException e) {
             String mensaje = "Error al esperar que el objeto " + testObject.toString() + " sea visible";
             this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
-      return exito;
+      return elemento;
    }
 
    /**
@@ -1186,14 +1221,11 @@ public class WebElementWrapper {
       this.trace("esperarHastaQueElementoNoSeaVisible->" + testObject.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
-               Duration.ofMillis(100));
          try {
-            wait.until(ExpectedConditions.invisibilityOf(WebDriverFactory.getDriver().findElement(testObject)));
+            this.esperaConCondicionMedia(ExpectedConditions.invisibilityOf(WebDriverFactory.getDriver().findElement(testObject)));
             conseguido = true;
          }
-         catch (TimeoutException | StaleElementReferenceException e) {
+         catch (WebDriverException e) {
             String mensaje = "Error al esperar que el objeto " + testObject.toString() + " dejara de ser visible";
             this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
@@ -1203,13 +1235,10 @@ public class WebElementWrapper {
 
    private void esperarHastaQueElementoPresenteBreve(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoPresenteBreve->" + testObject.toString());
-      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO))),
-            Duration.ofMillis(100));
       try {
-         wait.until(ExpectedConditions.presenceOfElementLocated(testObject));
+         this.esperaElementoConCondicionCorta(ExpectedConditions.presenceOfElementLocated(testObject));
       }
-      catch (TimeoutException | StaleElementReferenceException e) {
+      catch (WebDriverException e) {
          String mensaje = "Error al esperar brevemente que el objeto " + testObject.toString() + " esté presente";
          this.warning(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
@@ -1218,65 +1247,56 @@ public class WebElementWrapper {
 
    private WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoPresente->" + testObject.toString());
-      WebElement exito = null;
+      WebElement elemento = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
-               Duration.ofMillis(100));
          try {
-            exito = wait.until(ExpectedConditions.presenceOfElementLocated(testObject));
+            elemento = this.esperaElementoConCondicionMedia(ExpectedConditions.presenceOfElementLocated(testObject));
             conseguido = true;
          }
-         catch (TimeoutException | StaleElementReferenceException e) {
+         catch (WebDriverException e) {
             String mensaje = "Error al esperar que el objeto " + testObject.toString() + " esté presente";
             this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
-      return exito;
+      return elemento;
    }
 
    private WebElement esperarHastaQueElementoClickable(WebElement testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoClickable->" + testObject.getAttribute("id"));
-      WebElement exito = null;
+      WebElement elemento = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
-               Duration.ofMillis(100));
          try {
-            exito = wait.until(ExpectedConditions.elementToBeClickable(testObject));
+            elemento = this.esperaElementoConCondicionMedia(ExpectedConditions.elementToBeClickable(testObject));
             conseguido = true;
          }
-         catch (TimeoutException | StaleElementReferenceException e) {
+         catch (WebDriverException e) {
             String mensaje = "Error al esperar que el objeto " + testObject.toString() + " sea clickable";
             this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
-      return exito;
+      return elemento;
    }
 
    private WebElement esperarHastaQueElementoPadreContengaHijo(WebElement elementoPadre, By hijo) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoPadreContengaHijo->" + elementoPadre.getAttribute("id"));
-      WebElement exito = null;
+      WebElement elemento = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
-               Duration.ofMillis(100));
          try {
-            exito = wait.until(ExpectedConditions.presenceOfNestedElementLocatedBy(elementoPadre, hijo));
+            elemento = this.esperaElementoConCondicionMedia(ExpectedConditions.presenceOfNestedElementLocatedBy(elementoPadre, hijo));
             conseguido = true;
          }
-         catch (TimeoutException | StaleElementReferenceException e) {
+         catch (WebDriverException e) {
             String mensaje = "Error al esperar que el objeto " + elementoPadre.toString() + " sea clickable";
             this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
          }
       }
-      return exito;
+      return elemento;
    }
 
    public void esperarHastaQueElementoClickable(By testObject) throws PruebaAceptacionExcepcion {
@@ -1284,14 +1304,11 @@ public class WebElementWrapper {
       Exception excepcion = null;
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
-               Duration.ofMillis(100));
          try {
-            wait.until(ExpectedConditions.elementToBeClickable(testObject));
+            this.esperaElementoConCondicionMedia(ExpectedConditions.elementToBeClickable(testObject));
             conseguido = true;
          }
-         catch (Exception e) {
+         catch (WebDriverException e) {
             this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
@@ -1308,13 +1325,10 @@ public class WebElementWrapper {
       this.trace("esperarHastaQueElementoContengaTexto->" + testObject);
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
-               Duration.ofMillis(100));
          try {
-            conseguido = wait.until(ExpectedConditions.textToBe(testObject, texto));
+            conseguido = this.esperaConCondicionMedia(ExpectedConditions.textToBe(testObject, texto));
          }
-         catch (TimeoutException | StaleElementReferenceException e) {
+         catch (WebDriverException e) {
             String mensaje = "Error al esperar que el objeto " + testObject.toString() + " contenga el texto";
             this.warning(mensaje);
             throw new PruebaAceptacionExcepcion(mensaje);
@@ -1387,39 +1401,25 @@ public class WebElementWrapper {
    }
 
    private void esperaCorta() {
-      try {
-         this.esperarDesaparezcaProcesando();
-         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO)) * 1000);
-      }
-      catch (Exception e) {
-         this.warning(this.mensajeDeError(e));
-      }
+      this.esperaConcreta(PropiedadesTest.TIEMPO_RETRASO_CORTO);
    }
 
    private void esperaMedia() {
-      try {
-         this.esperarDesaparezcaProcesando();
-         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000);
-      }
-      catch (Exception e) {
-         this.warning(this.mensajeDeError(e));
-      }
-   }
-
-   private void esperaAdicionalAutofirma() {
-      try {
-         this.esperarDesaparezcaProcesando();
-         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_AUTOFIRMA)) * 1000);
-      }
-      catch (Exception e) {
-         this.warning(this.mensajeDeError(e));
-      }
+      this.esperaConcreta(PropiedadesTest.TIEMPO_RETRASO_MEDIO);
    }
 
    public void retrasoLargo() {
+      this.esperaConcreta(PropiedadesTest.TIEMPO_RETRASO_LARGO);
+   }
+
+   private void esperaAdicionalAutofirma() {
+      this.esperaConcreta(PropiedadesTest.TIEMPO_RETRASO_AUTOFIRMA);
+   }
+
+   private void esperaConcreta(PropiedadesTest tiempo) {
       try {
          this.esperarDesaparezcaProcesando();
-         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_LARGO)) * 1000);
+         Thread.sleep(Integer.parseInt(VariablesGlobalesTest.getPropiedad(tiempo)) * 1000);
       }
       catch (Exception e) {
          this.warning(this.mensajeDeError(e));
@@ -2070,12 +2070,9 @@ public class WebElementWrapper {
       this.debug("isElementoClickable->" + testObject);
       WebElement elemento = null;
       try {
-         WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-               Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_CORTO))),
-               Duration.ofMillis(100));
-         elemento = wait.until(ExpectedConditions.elementToBeClickable(testObject));
+         elemento = this.esperaElementoConCondicionCorta(ExpectedConditions.elementToBeClickable(testObject));
       }
-      catch (TimeoutException | StaleElementReferenceException e) {
+      catch (WebDriverException e) {
          String mensaje = "El objeto " + testObject.toString() + " no es clickable";
          this.warning(mensaje);
       }

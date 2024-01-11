@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Clase que reocge el valor de las varaible del property
  *
- * @author ISOTROL
+ * @author AGAPA
  */
 @Data
 @Slf4j
@@ -24,8 +24,6 @@ public class VariablesGlobalesTest {
 
    /**
     * Contiene el nombre de la variable del property por el que busca
-    *
-    * @author ISOTROL
     */
    public enum PropiedadesTest implements PropiedadGenerica {
       NAVEGADOR, MAXIMIZAR, TIEMPO_RETRASO_CORTO, TIEMPO_RETRASO_MEDIO, TIEMPO_RETRASO_LARGO, TIEMPO_RETRASO_AUTOFIRMA,
