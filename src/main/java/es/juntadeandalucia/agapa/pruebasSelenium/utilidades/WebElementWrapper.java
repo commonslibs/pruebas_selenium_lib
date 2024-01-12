@@ -1393,106 +1393,24 @@ public class WebElementWrapper {
    }
 
    /**
-    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su id el parametro {@code id}. Ademas ese elemento debe
-    * ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los iconos de los listados y tener en un lugar
-    * centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de
-    * tener sentido los nombres de los parametros.
-    *
-    * @param genericObjectPath
-    *           path hacia el objeto generico a utilizar.
-    * @param id
-    *           a considerar para el id.
-    * @throws PruebaAceptacionExcepcion
+    * Pulsa sobre el unico elemento que debe existir.
     */
-   public void pulsaUnicoElementoParaIdTitulo(String id, String titulo) throws PruebaAceptacionExcepcion {
-      this.debug("pulsaUnicoElementoParaIdTitulo->" + id + ". Título->" + titulo);
+   public void pulsaUnicoElemento(By objetoBuscado) throws PruebaAceptacionExcepcion {
+      this.debug("pulsaUnicoElemento->" + objetoBuscado.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento i-esimo
-         conseguido = this.pulsaUnicoElementoParaIdTituloAux(id, titulo);
+         conseguido = this.pulsaEnElUnico(objetoBuscado);
       }
       if (!conseguido) {
-         String mensaje = "No se ha podido pulsar el elemento con id que contiene la cadena " + id + " y el titulo " + titulo;
+         String mensaje = "No se ha podido pulsar el único objeto " + objetoBuscado.toString();
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
 
    /**
-    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su id el parametro {@code id}. Ademas ese elemento debe
-    * ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los iconos de los listados y tener en un lugar
-    * centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de
-    * tener sentido los nombres de los parametros.
-    *
-    * @param genericObjectPath
-    *           path hacia el objeto generico a utilizar.
-    * @param id
-    *           a considerar para el id.
-    * @return devuelve true si consigue pulsar sobre ese unico elemento; en caso contrario, devuelve false.
-    */
-   private boolean pulsaUnicoElementoParaIdTituloAux(String id, String titulo) {
-      this.trace("pulsaUnicoElementoParaIdTituloAux->" + id + ". Título->" + titulo);
-      try {
-         By objetoBuscado = By.xpath("//input[contains(@id, '" + id + "') and contains(@title, '" + titulo + "')]");
-         return this.pulsaEnElUnico(objetoBuscado);
-      }
-      catch (Exception e) {
-         this.warning(this.mensajeDeError(e));
-      }
-      return false;
-   }
-
-   /**
-    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su id el parametro {@code id}. Ademas ese elemento debe
-    * ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los iconos de los listados y tener en un lugar
-    * centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de
-    * tener sentido los nombres de los parametros.
-    *
-    * @param genericObjectPath
-    *           path hacia el objeto generico a utilizar.
-    * @param id
-    *           a considerar para el id.
-    */
-   public void pulsaUnicoElementoParaId(String id) throws PruebaAceptacionExcepcion {
-      this.debug("pulsaUnicoElementoParaId->" + id);
-      boolean conseguido = false;
-      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         // Intento i-esimo
-         conseguido = this.pulsaUnicoElementoParaIdAux(id);
-      }
-      if (!conseguido) {
-         String mensaje = "No se ha podido pulsar el elemento con id que contiene la cadena " + id;
-         this.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
-      }
-   }
-
-   /**
-    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su id el parametro {@code id}. Ademas ese elemento debe
-    * ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los iconos de los listados y tener en un lugar
-    * centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de
-    * tener sentido los nombres de los parametros.
-    *
-    * @param genericObjectPath
-    *           path hacia el objeto generico a utilizar.
-    * @param id
-    *           a considerar para el id.
-    * @return devuelve true si consigue pulsar sobre ese unico elemento; en caso contrario, devuelve false.
-    */
-   private boolean pulsaUnicoElementoParaIdAux(String id) {
-      this.trace("pulsaUnicoElementoParaIdAux->" + id);
-      try {
-         By objetoBuscado = By.xpath("//input[contains(@id, '" + id + "')]");
-         return this.pulsaEnElUnico(objetoBuscado);
-      }
-      catch (Exception e) {
-         this.warning(this.mensajeDeError(e));
-      }
-      return false;
-   }
-
-   /**
-    * Busca el objeto {@code genericObject} y si solo existe él, le hace clic y hace una espera mínima.
+    * Busca el objeto {@code objetoBuscado} y si solo existe él y le hace clic.
     *
     * @param genericObject
     * @return true si localizó el objeto, era único y le hizo clic, false en caso contrario
@@ -1559,23 +1477,13 @@ public class WebElementWrapper {
 
    /**
     * Se intenta pulsar sobre el elemento i-esimo del listado. Si no se consigue se deja constancia de ello.
-    *
-    * @param genericObjectPath
-    *           path a objeto generico utilizado para lleInformeListener a cabo esta funcionalidad.
-    * @param pos
-    *           posicion i-esima cuyo elemento se pretende pulsar, comenzando en 1, 2, 3, ... tam del listado.
-    * @param titulo
-    *           a considerar para el title.
-    * @param clase
-    *           a considerar para la clase CSS.
-    * @throws PruebaAceptacionExcepcion
     */
-   public void pulsaElementoIesimoPara(int pos, String titulo, String clase) throws PruebaAceptacionExcepcion {
-      this.debug("pulsaElementoIesimoPara->" + pos + "-" + titulo + "-" + clase);
+   public void pulsaElementoIesimo(int pos, By objetoBuscado) throws PruebaAceptacionExcepcion {
+      this.debug("pulsaElementoIesimoPara->" + objetoBuscado.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          // Intento siguiente
-         conseguido = this.pulsaElementoIesimoParaAux(pos, titulo, clase);
+         conseguido = this.pulsaElementoIesimoParaAux(pos, objetoBuscado);
       }
       if (!conseguido) {
          String mensaje = "No ha sido posible cliquear en elemento del listado de la posicion: " + pos;
@@ -1597,12 +1505,10 @@ public class WebElementWrapper {
     *           a considerar para la clase CSS.
     * @return si se consigue pulsar sobre este elemento i-esimo o no.
     */
-   private boolean pulsaElementoIesimoParaAux(int pos, String titulo, String clase) {
-      this.trace("pulsaElementoIesimoParaAux->" + pos + "-" + titulo + "-" + clase);
+   private boolean pulsaElementoIesimoParaAux(int pos, By objetoBuscado) {
+      this.trace("pulsaElementoIesimoParaAux->" + pos + "-" + objetoBuscado.toString());
       boolean pulsado = false;
       try {
-         By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
-
          this.esperaCorta();
 
          // List<WebElement> webElements = WebUiCommonHelper.findWebElements(genericObject, GlobalVariable.tiempoRetrasoCorto)
