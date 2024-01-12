@@ -15,7 +15,6 @@ import java.awt.event.KeyEvent;
 import java.time.Duration;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -578,39 +577,6 @@ public class WebElementWrapper {
          }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
-      }
-   }
-
-   /**
-    * Realiza una espera activa mientras exista el @param testObject con el @textoAComprobar. Puede provocar un bloqueo, así que usarlo con
-    * cuidado
-    *
-    * @param testObject
-    * @param text
-    * @throws PruebaAceptacionExcepcion
-    */
-   public void waitUntilElementTextChangedOrDisapeared(By testObject, String text) throws PruebaAceptacionExcepcion {
-      this.debug("waitUntilElementTextChangedOrDisapeared->" + testObject.toString() + ". Text=" + text);
-      boolean conseguido = false;
-      WebElement elemento = this.esperaCompleta(testObject);
-      this.resaltaObjeto(elemento, COLOR_AZUL);
-
-      while (!conseguido) {
-         try {
-            elemento = this.esperaCompleta(testObject);
-
-            if ((elemento == null) || StringUtils.isBlank(elemento.getText()) || !text.equals(elemento.getText())) {
-               // Ha desaparecido --> ok
-               conseguido = true;
-            }
-
-            if (conseguido) {
-               this.resaltaObjeto(elemento, COLOR_AZUL);
-            }
-         }
-         catch (Exception e) {
-            this.error(this.mensajeDeError(e));
-         }
       }
    }
 
@@ -1427,63 +1393,6 @@ public class WebElementWrapper {
    }
 
    /**
-    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su titulo el parametro {@code titulo} y en su class el
-    * parametro {@code clase}. Ademas ese elemento debe ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los
-    * iconos de los listados y tener en un lugar centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este
-    * metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
-    *
-    * @param genericObjectPath
-    *           path hacia el objeto generico a utilizar.
-    * @param titulo
-    *           a considerar para el title.
-    * @param clase
-    *           a considerar para la clase CSS.
-    * @throws PruebaAceptacionExcepcion
-    */
-   public void pulsaUnicoElementoPara(String titulo, String clase) throws PruebaAceptacionExcepcion {
-      this.debug("pulsaUnicoElementoPara->" + titulo + "-" + clase);
-      boolean conseguido = false;
-      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
-         // Intento i-esimo
-         conseguido = this.pulsaUnicoElementoParaAux(titulo, clase);
-      }
-      if (!conseguido) {
-         String mensaje = "No existe un único elemento a cliquear en el listado";
-         this.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
-      }
-   }
-
-   /**
-    * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su titulo el parametro {@code titulo} y en su class el
-    * parametro {@code clase}. Ademas ese elemento debe ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los
-    * iconos de los listados y tener en un lugar centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este
-    * metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
-    *
-    * @param genericObjectPath
-    *           path hacia el objeto generico a utilizar.
-    * @param titulo
-    *           a considerar para el title.
-    * @param clase
-    *           a considerar para la clase CSS.
-    * @return devuelve true si consigue pulsar sobre ese unico elemento; en caso contrario, devuelve false.
-    */
-   private boolean pulsaUnicoElementoParaAux(String titulo, String clase) {
-      this.trace("pulsaUnicoElementoParaAux->" + titulo + "-" + clase);
-      try {
-         By objetoBuscado = By.xpath("//input[contains(@class, '" + clase + "') and contains(@title, '" + titulo + "')]");
-         WebElement objetoEncontrado = this.esperaCompleta(objetoBuscado);
-         this.resaltaObjeto(objetoEncontrado, COLOR_AMARILLO);
-         objetoEncontrado.click();
-         return true;
-      }
-      catch (Exception e) {
-         this.warning(this.mensajeDeError(e));
-      }
-      return false;
-   }
-
-   /**
     * Pulsa sobre el unico elemento que debe existir en el listado que contenga en su id el parametro {@code id}. Ademas ese elemento debe
     * ser un 'tag = input' y de 'type = submit'. NOTA - esto es para pulsar sobre los iconos de los listados y tener en un lugar
     * centralizado lo que se debe hacer con lo que si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de
@@ -2032,32 +1941,6 @@ public class WebElementWrapper {
          this.warning(this.mensajeDeError(e));
       }
       return false;
-   }
-
-   /**
-    * Hace click sobre el objeto que contenga el id pasado por parámetro. Para ello, crea un objeto genérico con el id como propiedad
-    */
-   public void clickGenerico(String id) throws PruebaAceptacionExcepcion {
-      this.debug("clickGenerico->" + id);
-      TestObject genericObject = new TestObject();
-      genericObject.addProperty("id", ConditionType.CONTAINS, id);
-      this.click(this.convertirXpath(genericObject));
-   }
-
-   public void clickMensajePorTexto(String texto) throws PruebaAceptacionExcepcion {
-      this.debug("clickMensajePorTexto->" + texto);
-      TestObject genericObject = new TestObject();
-      genericObject.addProperty("tag", ConditionType.EQUALS, "p");
-      genericObject.addProperty("text", ConditionType.CONTAINS, texto);
-      this.click(this.convertirXpath(genericObject));
-   }
-
-   public void clickNodoArbol(String id) throws PruebaAceptacionExcepcion {
-      this.debug("clickNodoArbol->" + id);
-      TestObject genericObject = new TestObject();
-      genericObject.addProperty("id", ConditionType.CONTAINS, id);
-      genericObject.addProperty("class", ConditionType.CONTAINS, "icon-collapsed");
-      this.click(this.convertirXpath(genericObject));
    }
 
    public By convertirXpath(TestObject genericObject) {
