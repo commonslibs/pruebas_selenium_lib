@@ -1071,49 +1071,33 @@ public class WebElementWrapper {
          this.warning("ID_ELEMENTO_PROCESANDO no definido en fichero properties");
       }
       if (idElementoProcesando != null) {
-         By elementoProcesando = By.id(idElementoProcesando);
-         if (!this.esperarHastaQueElementoNoPresente(elementoProcesando)) {
-            String mensaje = "La ventana \"Procesando...\" no desaparece";
-            this.warning(mensaje);
-            throw new PruebaAceptacionExcepcion(mensaje);
+         By by = By.id(idElementoProcesando);
+         List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
+         try {
+            if ((elementos.size() > 0) && elementos.get(0).isDisplayed()) {
+               int tiempo = 0;
+               while (elementos.get(0).isDisplayed()) {
+                  try {
+                     Thread.sleep(100);
+                  }
+                  catch (InterruptedException e) {
+                     // Seguramente nunca se produzca esta excepción
+                     this.warning("Error al parar el procesamiento del hilo de ejecución");
+                  }
+                  tiempo += 100;
+                  if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000) {
+                     String mensaje = "La ventana \"Procesando...\" no desaparece";
+                     this.warning(mensaje);
+                     throw new PruebaAceptacionExcepcion(mensaje);
+                  }
+               }
+            }
+         }
+         catch (Exception e) {
+            this.warning(this.mensajeDeError(e));
+            this.trace("La ventana procesando ya no está visible");
          }
       }
-
-      // String idElementoProcesando = null;
-      // try {
-      // idElementoProcesando = VariablesGlobalesTest.getPropiedad(PropiedadesTest.ID_ELEMENTO_PROCESANDO);
-      // }
-      // catch (IllegalArgumentException e) {
-      // this.warning("ID_ELEMENTO_PROCESANDO no definido en fichero properties");
-      // }
-      // if (idElementoProcesando != null) {
-      // By by = By.id(idElementoProcesando);
-      // List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
-      // try {
-      // if ((elementos.size() > 0) && elementos.get(0).isDisplayed()) {
-      // int tiempo = 0;
-      // while (elementos.get(0).isDisplayed()) {
-      // try {
-      // Thread.sleep(100);
-      // }
-      // catch (InterruptedException e) {
-      // // Seguramente nunca se produzca esta excepción
-      // this.warning("Error al parar el procesamiento del hilo de ejecución");
-      // }
-      // tiempo += 100;
-      // if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000) {
-      // String mensaje = "La ventana \"Procesando...\" no desaparece";
-      // this.warning(mensaje);
-      // throw new PruebaAceptacionExcepcion(mensaje);
-      // }
-      // }
-      // }
-      // }
-      // catch (Exception e) {
-      // this.warning(this.mensajeDeError(e));
-      // this.trace("La ventana procesando ya no está visible");
-      // }
-      // }
    }
 
    private WebElement esperaBreve(By testObject) throws PruebaAceptacionExcepcion {
