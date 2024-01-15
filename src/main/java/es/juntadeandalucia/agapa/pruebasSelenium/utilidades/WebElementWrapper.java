@@ -1074,8 +1074,8 @@ public class WebElementWrapper {
          By by = By.id(idElementoProcesando);
          this.trace("Buscar " + idElementoProcesando);
          List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
+         this.trace("Fin de la búsqueda");
          try {
-            this.trace("Fin de la búsqueda");
             if ((elementos.size() > 0) && elementos.get(0).isDisplayed()) {
                this.trace("Procesando encontrados: " + elementos.size());
                int tiempo = 0;
@@ -1096,6 +1096,9 @@ public class WebElementWrapper {
                      throw new PruebaAceptacionExcepcion(mensaje);
                   }
                }
+            }
+            else {
+               this.trace("Procesando no estaba");
             }
          }
          catch (Exception e) {
