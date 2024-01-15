@@ -943,16 +943,16 @@ public class WebElementWrapper {
       ((JavascriptExecutor) WebDriverFactory.getDriver()).executeScript("window.scrollTo(0, -document.body.scrollHeight)");
    }
 
-   private boolean esperarHastaQueElementoNoPresente(By testObject) throws PruebaAceptacionExcepcion {
+   private boolean esperarHastaQueElementoNoPresente(By testObject) throws WebDriverException {
       this.trace("esperarHastaQueElementoNoPresente->" + testObject.toString());
       boolean conseguido = false;
       try {
          conseguido = this.esperaConCondicionLarga(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
       }
       catch (WebDriverException e) {
-         String mensaje = "Error al esperar que el objeto " + testObject.toString() + " NO esté presente";
-         this.error(mensaje);
-         throw new PruebaAceptacionExcepcion(mensaje);
+         String mensaje = this.mensajeDeError(e);
+         this.warning(mensaje);
+         throw e;
       }
       return conseguido;
    }
@@ -974,6 +974,7 @@ public class WebElementWrapper {
    }
 
    private boolean esperaConCondicion(ExpectedCondition<Boolean> condicion, PropiedadesTest tiempo) throws WebDriverException {
+      this.trace("esperaConCondicion->condición=" + condicion.toString() + ", tiempo=" + tiempo);
       boolean conseguido = false;
       WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(tiempo))), Duration.ofMillis(100));
@@ -1071,7 +1072,11 @@ public class WebElementWrapper {
       }
       if (idElementoProcesando != null) {
          By elementoProcesando = By.id(idElementoProcesando);
-         this.esperarHastaQueElementoNoPresente(elementoProcesando);
+         if (!this.esperarHastaQueElementoNoPresente(elementoProcesando)) {
+            String mensaje = "La ventana \"Procesando...\" no desaparece";
+            this.warning(mensaje);
+            throw new PruebaAceptacionExcepcion(mensaje);
+         }
       }
 
       // String idElementoProcesando = null;
