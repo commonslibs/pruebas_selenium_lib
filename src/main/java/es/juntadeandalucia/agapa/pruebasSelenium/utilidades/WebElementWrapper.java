@@ -640,6 +640,7 @@ public class WebElementWrapper {
          try {
             WebElement elemento = this.esperaCompleta(testObject);
             valorAtributo = elemento.getAttribute(atributo);
+            this.trace("Valor del atributo=" + valorAtributo);
             this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
@@ -1033,7 +1034,7 @@ public class WebElementWrapper {
    }
 
    /**
-    * Comprueba el valor del atributo: objeto presente.
+    * Devuelve si un elemento está presente, con una espera breve
     *
     * @param testObject
     *           valor para: test object
@@ -1042,7 +1043,7 @@ public class WebElementWrapper {
     *            la prueba aceptacion excepcion
     */
    public boolean isElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
-      this.debug("isObjetoPresente->" + testObject.toString());
+      this.debug("isElementoPresente->" + testObject.toString());
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= NUMERO_MINIMO_INTENTOS; i++) {
          try {
@@ -1061,6 +1062,42 @@ public class WebElementWrapper {
       return conseguido;
    }
 
+   /**
+    * Devuelve si un elemento está presente, sin espera ninguna
+    *
+    * @param testObject
+    *           valor para: test object
+    * @return true, si se cumple que el valor del atributo: objeto presente es cierto.
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   public boolean existeElemento(By testObject) throws PruebaAceptacionExcepcion {
+      this.debug("existeElemento->" + testObject.toString());
+      boolean existe = false;
+      boolean conseguido = false;
+      Exception excepcion = null;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            existe = WebDriverFactory.getDriver().findElements(testObject).size() > 0;
+            conseguido = true;
+         }
+         catch (Exception e) {
+            this.warning(this.mensajeDeError(e));
+            excepcion = e;
+         }
+      }
+      if (!conseguido) {
+         String mensaje = "Error al comprobar si existe " + testObject.toString();
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+      return existe;
+   }
+
    private void esperarDesaparezcaProcesando() throws PruebaAceptacionExcepcion {
       this.trace("esperarDesaparezcaProcesando");
       String idElementoProcesando = null;
@@ -1077,10 +1114,10 @@ public class WebElementWrapper {
          this.trace("Fin de la búsqueda");
          try {
             if ((elementos.size() > 0) && elementos.get(0).isDisplayed()) {
-               this.trace("Procesando encontrados: " + elementos.size());
+               this.trace(idElementoProcesando + " encontrados: " + elementos.size());
                int tiempo = 0;
                while (elementos.get(0).isDisplayed()) {
-                  this.trace("Procesando visible");
+                  this.trace(idElementoProcesando + " visible");
                   try {
                      this.trace("Espera 100 ms");
                      Thread.sleep(100);
