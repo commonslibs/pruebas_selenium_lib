@@ -1270,16 +1270,16 @@ public class WebElementWrapper {
     * @throws PruebaAceptacionExcepcion
     */
    private void resaltaObjeto(WebElement element, String color) {
-      // this.trace("resaltaObjeto->" + element.toString() + ". Color=" + color);
-      // try {
-      // JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
-      // js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element,
-      // "background: " + color + "; color: black; border: 3px solid black;");
-      // }
-      // catch (Exception e) {
-      // String mensaje = "El elemento " + element + " no puede ser resaltado con color " + color;
-      // this.warning(mensaje);
-      // }
+      this.trace("resaltaObjeto->" + element.toString() + ". Color=" + color);
+      try {
+         JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
+         js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element,
+               "background: " + color + "; color: black; border: 3px solid black;");
+      }
+      catch (Exception e) {
+         String mensaje = "El elemento " + element + " no puede ser resaltado con color " + color;
+         this.warning(mensaje);
+      }
    }
 
    public boolean isTextPresent(String texto) {
