@@ -43,6 +43,8 @@ public class WebElementWrapper {
 
    private final static int    NUMERO_MINIMO_INTENTOS = 2;
 
+   private String              idElementoProcesando   = null;
+
    public void debug(String mensaje) {
       log.debug(mensaje);
       WebDriverFactory.getLogger().log(Status.INFO, mensaje);
@@ -1100,24 +1102,18 @@ public class WebElementWrapper {
 
    private void esperarDesaparezcaProcesando() throws PruebaAceptacionExcepcion {
       this.trace("esperarDesaparezcaProcesando");
-      String idElementoProcesando = null;
-      try {
-         idElementoProcesando = VariablesGlobalesTest.getPropiedad(PropiedadesTest.ID_ELEMENTO_PROCESANDO);
-      }
-      catch (IllegalArgumentException e) {
-         this.warning("ID_ELEMENTO_PROCESANDO no definido en fichero properties");
-      }
-      if (idElementoProcesando != null) {
-         By by = By.id(idElementoProcesando);
-         this.trace("Buscar " + idElementoProcesando);
+      this.obtenerIdElementoProcesando();
+      if (this.idElementoProcesando != null) {
+         By by = By.id(this.idElementoProcesando);
+         this.trace("Buscar " + this.idElementoProcesando);
          List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
          this.trace("Fin de la búsqueda");
          try {
-            if ((elementos.size() > 0) && elementos.get(0).isDisplayed()) {
-               this.trace(idElementoProcesando + " encontrados: " + elementos.size());
+            if (elementos.size() > 0 && elementos.get(0).isDisplayed()) {
+               this.trace(this.idElementoProcesando + " encontrados: " + elementos.size());
                int tiempo = 0;
                while (elementos.get(0).isDisplayed()) {
-                  this.trace(idElementoProcesando + " visible");
+                  this.trace(this.idElementoProcesando + " visible");
                   try {
                      this.trace("Espera 100 ms");
                      Thread.sleep(100);
@@ -1142,6 +1138,15 @@ public class WebElementWrapper {
             this.warning(this.mensajeDeError(e));
             this.trace("La ventana procesando ya no está visible");
          }
+      }
+   }
+
+   private void obtenerIdElementoProcesando() {
+      try {
+         this.idElementoProcesando = VariablesGlobalesTest.getPropiedad(PropiedadesTest.ID_ELEMENTO_PROCESANDO);
+      }
+      catch (IllegalArgumentException e) {
+         this.warning("ID_ELEMENTO_PROCESANDO no definido en fichero properties");
       }
    }
 
@@ -1489,28 +1494,9 @@ public class WebElementWrapper {
       return false;
    }
 
-   /**
-    * Se hace click cambiando el foco inmediatamente, para no dar tiempo a elemento alguno a suceder posteriormente.
-    *
-    * @param testObject
-    *           elmento sobre el que se hace clic.
-    * @return no se devuelve nada.
-    * @throws PruebaAceptacionExcepcion
-    */
-   public void clickCambiandoFoco(By testObject) throws PruebaAceptacionExcepcion {
-      this.debug("clickCambiandoFoco->" + testObject.toString());
-      try {
-         this.click(testObject);
-      }
-      catch (PruebaAceptacionExcepcion e) {
-         this.error(e);
-         this.error(this.mensajeDeError(e));
-         throw e;
-      }
-   }
-
-   public WebElement clickConUrlAfirmaProtocol(By testObject) throws PruebaAceptacionExcepcion {
-      this.debug("clickConUrlAfirmaProtocol->" + testObject.toString());
+   public WebElement seleccionarCertificadoAutofirma(By testObject) throws PruebaAceptacionExcepcion {
+      this.debug("seleccionarCertificadoAutofirma->" + testObject.toString());
+      this.obtenerIdElementoProcesando();
       boolean conseguido = false;
       WebElement elemento = null;
       Exception excepcion = null;
@@ -1519,20 +1505,37 @@ public class WebElementWrapper {
          try {
             elemento = this.esperaCompleta(testObject);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
-            WebElement elementoClickable = this.esperarHastaQueElementoClickable(elemento);
-            if (elementoClickable != null) {
-               elementoClickable.click();
-               conseguido = true;
-            }
+            // WebElement elementoClickable = this.esperarHastaQueElementoClickable(elemento);
+            // if (elementoClickable != null) {
+            // elementoClickable.click();
+            conseguido = true;
+            // }
          }
          catch (Exception e) {
             this.warning(this.mensajeDeError(e));
-            this.ejecutaAccionesUrlAfirmaProtocol();
+            boolean existeProcesando = false;
+            if (this.idElementoProcesando != null) {
+               By by = By.id(this.idElementoProcesando);
+               this.trace("Buscar " + this.idElementoProcesando);
+               List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
+               this.trace("Fin de la búsqueda");
+               if (elementos.size() > 0 && elementos.get(0).isDisplayed()) {
+                  this.trace(this.idElementoProcesando + " encontrados: " + elementos.size());
+                  existeProcesando = true;
+                  // Si ya ha aparecido la ventana "Procesando..." es que ya se ha seleccionado el certificado en Autofirma
+               }
+               else {
+                  this.trace("Procesando no estaba");
+               }
+            }
+            if (!existeProcesando) {
+               this.ejecutaAccionesUrlAfirmaProtocol();
+            }
             excepcion = e;
          }
       }
       if (!conseguido) {
-         String mensaje = "No se puede hacer click tras esperar el URL Afirma Protocol";
+         String mensaje = "No se puede seleccionar el certificado con Autofirma";
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
             this.error(excepcion);
