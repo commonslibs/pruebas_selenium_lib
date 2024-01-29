@@ -42,7 +42,6 @@ public class WebDriverFactory {
       CHROME, FIREFOX, MSEDGE
    }
 
-   private static final String                              TX_TRUE                 = "true";
    private static final String                              TX_FALSE                = "false";
 
    public static final boolean                              IS_REMOTE_SELENIUM_GRID =
@@ -52,10 +51,7 @@ public class WebDriverFactory {
          Boolean.parseBoolean(System.getProperty("java.awt.headless", WebDriverFactory.TX_FALSE).toLowerCase());
 
    public static final boolean                              IS_MODO_INCOGNITO       =
-         Boolean.parseBoolean(System.getProperty("modoIncognito", WebDriverFactory.TX_TRUE).toLowerCase());
-
-   public static final boolean                              IS_VIDEO_ENABLED        =
-         Boolean.parseBoolean(System.getProperty("video.enabled", WebDriverFactory.TX_TRUE).toLowerCase());
+         Boolean.parseBoolean(System.getProperty("modoIncognito", WebDriverFactory.TX_FALSE).toLowerCase());
 
    private static final Map<Navegador, Supplier<WebDriver>> navegadores;
 
@@ -65,6 +61,7 @@ public class WebDriverFactory {
    // FUENTES:
    // https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md
    // https://source.chromium.org/chromium/chromium/src/+/main:chrome/common/pref_names.h
+   // https://peter.sh/experiments/chromium-command-line-switches/
    private static final Supplier<WebDriver>                 chromeDriverSupplier    = () -> {
                                                                                        WebDriverManager.chromedriver()
                                                                                              .proxy(WebDriverFactory.HTTPS_PROXY).setup();
@@ -72,6 +69,9 @@ public class WebDriverFactory {
                                                                                              "");
 
                                                                                        ChromeOptions options = new ChromeOptions();
+
+                                                                                       options.addArguments("enable-automation");
+
                                                                                        // Parametros para evitar errores
                                                                                        // al ejecutar Google Chrome con
                                                                                        // usuario
