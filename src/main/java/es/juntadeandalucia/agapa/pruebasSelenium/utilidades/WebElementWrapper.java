@@ -1496,22 +1496,20 @@ public class WebElementWrapper {
       return false;
    }
 
-   public WebElement seleccionarCertificadoAutofirma(By testObject) throws PruebaAceptacionExcepcion {
-      this.debug("seleccionarCertificadoAutofirma->" + testObject.toString());
+   public WebElement clickMasAutofirma(By boton, By etiqueta) throws PruebaAceptacionExcepcion {
+      this.debug("clickMasAutofirma->" + etiqueta.toString());
       this.obtenerIdElementoProcesando();
       boolean conseguido = false;
       WebElement elemento = null;
       Exception excepcion = null;
+      WebElement objetoBoton = this.click(boton);
+      objetoBoton.sendKeys(Keys.TAB.toString());
       this.ejecutaAccionesUrlAfirmaProtocol();
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaCompleta(testObject);
+            elemento = this.esperaCompleta(etiqueta);
             this.resaltaObjeto(elemento, COLOR_AMARILLO);
-            // WebElement elementoClickable = this.esperarHastaQueElementoClickable(elemento);
-            // if (elementoClickable != null) {
-            // elementoClickable.click();
             conseguido = true;
-            // }
          }
          catch (Exception e) {
             this.warning(this.mensajeDeError(e));
