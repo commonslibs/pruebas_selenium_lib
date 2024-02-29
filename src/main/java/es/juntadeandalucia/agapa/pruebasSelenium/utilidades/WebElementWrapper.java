@@ -59,7 +59,7 @@ public class WebElementWrapper {
 
    private void warning(String mensaje) {
       log.warn(mensaje);
-      if (!mensaje.equals("stale element reference: stale element not found")) {
+      if (!mensaje.startsWith("stale element reference: stale element not found")) {
          WebDriverFactory.getLogger().warning(mensaje);
       }
    }
