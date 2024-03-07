@@ -1503,7 +1503,14 @@ public class WebElementWrapper {
       WebElement elemento = null;
       Exception excepcion = null;
       WebElement objetoBoton = this.click(boton);
-      objetoBoton.sendKeys(Keys.TAB.toString());
+      try {
+         // Intentar que el botón pierda el foco
+         objetoBoton.sendKeys(Keys.TAB);
+      }
+      catch (Exception e) {
+         // Es posible que el objeto no admita la pulsación de ninguna tecla, que no sea interaccionable
+         this.warning(this.mensajeDeError(e));
+      }
       this.ejecutaAccionesUrlAfirmaProtocol();
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
