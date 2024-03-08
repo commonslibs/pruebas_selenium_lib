@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +51,8 @@ public class InformeListener implements IReporter {
    private void mergearReports(List<ISuite> suites) {
       ExtentSparkReporter sparkMergeado = new ExtentSparkReporter(VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + "PPI.html");
       ExtentReports reportMergeado = new ExtentReports();
+
+      Collections.sort(suites, new ComparadorISuite());
       for (ISuite suite : suites) {
          try {
             String directorioOrigenJson = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + suite.getName() + "/";
@@ -70,6 +73,13 @@ public class InformeListener implements IReporter {
       }
       reportMergeado.attachReporter(sparkMergeado);
       reportMergeado.flush();
+   }
+
+   private class ComparadorISuite implements java.util.Comparator<ISuite> {
+      @Override
+      public int compare(ISuite a, ISuite b) {
+         return a.getName().compareTo(b.getName());
+      }
    }
 
    private Function<ISuite, Stream<? extends String>> suiteToResults() {
