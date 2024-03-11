@@ -1127,7 +1127,7 @@ public class WebElementWrapper {
                   tiempo += 100;
                   if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000) {
                      String mensaje = "La ventana \"Procesando...\" no desaparece";
-                     this.warning(mensaje);
+                     this.trace(mensaje);
                      throw new PruebaAceptacionExcepcion(mensaje);
                   }
                }
@@ -1318,7 +1318,7 @@ public class WebElementWrapper {
    }
 
    private void esperaAdicionalAutofirma() {
-      this.esperaConcreta(PropiedadesTest.TIEMPO_RETRASO_AUTOFIRMA);
+      this.esperaIncondicional(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_AUTOFIRMA)));
    }
 
    private void esperaConcreta(PropiedadesTest tiempo) {
@@ -1502,15 +1502,11 @@ public class WebElementWrapper {
       boolean conseguido = false;
       WebElement elemento = null;
       Exception excepcion = null;
-      WebElement objetoBoton = this.click(boton);
-      try {
-         // Intentar que el botón pierda el foco
-         objetoBoton.sendKeys(Keys.TAB);
-      }
-      catch (Exception e) {
-         // Es posible que el objeto no admita la pulsación de ninguna tecla, que no sea interaccionable
-         this.warning(this.mensajeDeError(e));
-      }
+      this.click(boton);
+      log.info("Espera media...");
+      this.esperaMedia();
+      log.info("Espera adicional...");
+      this.esperaAdicionalAutofirma();
       this.ejecutaAccionesUrlAfirmaProtocol();
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
@@ -1519,25 +1515,9 @@ public class WebElementWrapper {
             conseguido = true;
          }
          catch (Exception e) {
-            this.warning(this.mensajeDeError(e));
-            boolean existeProcesando = false;
-            if (this.idElementoProcesando != null) {
-               By by = By.id(this.idElementoProcesando);
-               this.trace("Buscar " + this.idElementoProcesando);
-               List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
-               this.trace("Fin de la búsqueda");
-               if (elementos.size() > 0 && elementos.get(0).isDisplayed()) {
-                  this.trace(this.idElementoProcesando + " encontrados: " + elementos.size());
-                  existeProcesando = true;
-                  // Si ya ha aparecido la ventana "Procesando..." es que ya se ha seleccionado el certificado en Autofirma
-               }
-               else {
-                  this.trace("Procesando no estaba");
-               }
-            }
-            if (!existeProcesando) {
-               this.ejecutaAccionesUrlAfirmaProtocol();
-            }
+            log.debug("Todavía no se ha firmado");
+            this.trace(this.mensajeDeError(e));
+            this.ejecutaAccionesUrlAfirmaProtocol();
             excepcion = e;
          }
       }
@@ -1557,15 +1537,6 @@ public class WebElementWrapper {
       try {
          Robot rb = new Robot();
 
-         log.info("Espera media...");
-         this.esperaMedia();
-         log.info("Espera adicional...");
-         this.esperaAdicionalAutofirma();
-
-         this.debug("Pulsar <DERECHA>");
-         rb.keyPress(KeyEvent.VK_RIGHT);
-         rb.keyRelease(KeyEvent.VK_RIGHT);
-         this.debug("Soltar <DERECHA>");
          this.debug("Pulsar <INTRO>");
          rb.keyPress(KeyEvent.VK_ENTER);
          rb.keyRelease(KeyEvent.VK_ENTER);
