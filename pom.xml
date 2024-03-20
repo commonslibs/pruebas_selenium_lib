@@ -26,7 +26,7 @@
 		<testng.version>7.5.1</testng.version>
 		<jacoco.version>0.8.6</jacoco.version>
 		<selenium.version>4.13.0</selenium.version>
-		<bonigarcia-webdrivermanager.version>5.6.2</bonigarcia-webdrivermanager.version>
+		<bonigarcia-webdrivermanager.version>5.7.0</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.0.5</extentreports.version>
 		<httpclient5.version>5.3</httpclient5.version>
 	</properties>
