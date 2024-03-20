@@ -31,7 +31,7 @@ public class VariablesGlobalesTest {
    }
 
    /**
-    * Recoge el valor del porperty filtrando por el entorno de desarollo, por defecto recoge IC
+    * Recoge el valor del porperty filtrando por el entorno en el que se ejecuta
     *
     * @param propiedad
     * @return Valor de las propiedades del property
@@ -55,6 +55,25 @@ public class VariablesGlobalesTest {
          throw new IllegalArgumentException("Parámetro " + propiedad + " de configuración inválido");
       }
       return propiedades.get(nombrePropiedad).toString();
+   }
+
+   /**
+    * Recoge el valor del porperty filtrando por el entorno en el que se ejecuta
+    *
+    * @param propiedad
+    * @return Valor de las propiedades del property
+    * @throws PruebaAceptacionExcepcion
+    */
+   public static String getPropiedadOpcional(PropiedadGenerica propiedad, String valorPorDefecto) throws IllegalArgumentException {
+      String valorPropiedad = null;
+      try {
+         valorPropiedad = getPropiedad(propiedad);
+      }
+      catch (IllegalArgumentException e) {
+         valorPropiedad = valorPorDefecto;
+         log.info("Propiedad " + propiedad.toString() + " no existe. Se usa el valor por defecto=" + valorPorDefecto);
+      }
+      return valorPropiedad;
    }
 
    /**
