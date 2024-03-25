@@ -1078,14 +1078,15 @@ public class WebElementWrapper {
    public boolean existeElemento(By testObject) throws PruebaAceptacionExcepcion {
       this.debug("existeElemento->" + testObject.toString());
       boolean existe = false;
-      boolean conseguido = false;
+      boolean conseguido = true;
       Exception excepcion = null;
-      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
+      this.esperarDesaparezcaProcesando();
+      for (int i = 1; !existe && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             existe = WebDriverFactory.getDriver().findElements(testObject).size() > 0;
-            conseguido = true;
          }
          catch (Exception e) {
+            conseguido = false;
             this.warning(this.mensajeDeError(e));
             excepcion = e;
          }
@@ -1198,16 +1199,18 @@ public class WebElementWrapper {
       return elemento;
    }
 
-   private void esperarHastaQueElementoPresenteBreve(By testObject) throws PruebaAceptacionExcepcion {
+   private WebElement esperarHastaQueElementoPresenteBreve(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoPresenteBreve->" + testObject.toString());
+      WebElement elemento = null;
       try {
-         this.esperaElementoConCondicionCorta(ExpectedConditions.presenceOfElementLocated(testObject));
+         elemento = this.esperaElementoConCondicionCorta(ExpectedConditions.presenceOfElementLocated(testObject));
       }
       catch (WebDriverException e) {
          String mensaje = "Error al esperar brevemente que el objeto " + testObject.toString() + " esté presente";
          this.warning(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
+      return elemento;
    }
 
    private WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
