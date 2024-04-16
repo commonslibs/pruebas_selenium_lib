@@ -108,4 +108,25 @@ public class BaseDeDatos {
       }
       return result;
    }
+
+   public static ResultSet executeUpdate(Connection conexion, String queryString) throws PruebaAceptacionExcepcion {
+      Assert.assertNotNull(conexion);
+
+      Statement stm = null;
+
+      ResultSet rs = null;
+      try {
+         stm = conexion.createStatement();
+
+         stm.executeUpdate(queryString, Statement.RETURN_GENERATED_KEYS);
+         rs = stm.getGeneratedKeys();
+
+         stm.closeOnCompletion();
+      }
+      catch (SQLException e) {
+         log.error("Error al ejecutar consulta." + queryString + ". Error SQL: " + e.getErrorCode() + "-" + e.getLocalizedMessage(), e);
+         throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
+      }
+      return rs;
+   }
 }
