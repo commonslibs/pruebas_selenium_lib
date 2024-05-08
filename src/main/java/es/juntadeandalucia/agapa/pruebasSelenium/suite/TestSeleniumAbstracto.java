@@ -19,6 +19,7 @@ import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTes
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +32,7 @@ import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -74,7 +76,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       return WebDriverFactory.getLogger();
    }
 
-   protected void beforeTest(String titulo, String nombre, String fichero) {
+   protected void beforeTest(String titulo, String nombre, String fichero) throws PruebaAceptacionExcepcion {
       String ficheroLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + "/" + fichero + "-Extendido";
       this.spark = new ExtentSparkReporter(ficheroLargo + ".html");
       JsonFormatter json = new JsonFormatter(ficheroLargo + ".json");
@@ -201,6 +203,51 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
       catch (Exception e) {
          log.error(e.getLocalizedMessage());
+      }
+   }
+
+   protected void configurarCertificado(String patron, String filtro) throws PruebaAceptacionExcepcion {
+      if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_UNIX) {
+         Navegador navegador = Navegador.valueOf(VariablesGlobalesTest.getPropiedad(PropiedadesTest.NAVEGADOR));
+         switch (navegador) {
+            case CHROME:
+               this.crearFicheroAutoSelectCertificateForUrls(patron, filtro);
+               break;
+            case FIREFOX:
+               // TODO
+               break;
+            case MSEDGE:
+               // TODO
+               break;
+         }
+      }
+   }
+
+   private void crearFicheroAutoSelectCertificateForUrls(String patron, String filtro) throws PruebaAceptacionExcepcion {
+      FileWriter writer = null;
+      try {
+         File json = new File("/etc/opt/chrome/policies/managed/auto_seleccionar_certificado.json");
+         FileUtils.touch(json);
+         writer = new FileWriter(json);
+         String contenido = "{\"AutoSelectCertificateForUrls\": [\"{\\\"pattern\\\":\\\"" + patron + "\\\",\\\"filter\\\":"
+               + filtro.replace("\"", "\\\"") + "}\"]}";
+         log.info(contenido);
+         writer.write(contenido);
+      }
+      catch (IOException e) {
+         log.error(e.getLocalizedMessage());
+         throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
+      }
+      finally {
+         if (writer != null) {
+            try {
+               writer.close();
+            }
+            catch (IOException e) {
+               log.error(e.getLocalizedMessage());
+               throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
+            }
+         }
       }
    }
 
