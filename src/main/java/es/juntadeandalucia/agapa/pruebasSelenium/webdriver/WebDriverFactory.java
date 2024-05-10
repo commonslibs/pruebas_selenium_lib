@@ -1,12 +1,13 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.webdriver;
 
 import com.aventstack.extentreports.ExtentTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WebElementWrapper;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +52,6 @@ public class WebDriverFactory {
 
    public static final boolean IS_MODO_INCOGNITO       =
          Boolean.parseBoolean(System.getProperty("modoIncognito", WebDriverFactory.TX_FALSE).toLowerCase());
-
-   private static final String HTTPS_PROXY             = VariablesGlobalesTest.getPropiedadOpcional(PropiedadesTest.HTTPS_PROXY, "");
 
    /**
     * No se implementa como singleton debido a una posible ejecución en paralelo.
@@ -259,8 +258,15 @@ public class WebDriverFactory {
    }
 
    private static WebDriverManager asignarProxy(WebDriverManager webDriver) {
-      if (StringUtils.isNotEmpty(WebDriverFactory.HTTPS_PROXY)) {
-         return webDriver.proxy(WebDriverFactory.HTTPS_PROXY);
+      String proxy = null;
+      try (FileReader fileReader = new FileReader("proxy.txt"); BufferedReader reader = new BufferedReader(fileReader)) {
+         proxy = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+      }
+      catch (Exception e) {
+         log.warn(e.getLocalizedMessage());
+      }
+      if (StringUtils.isNotEmpty(proxy)) {
+         return webDriver.proxy(proxy);
       }
       else {
          return webDriver;
