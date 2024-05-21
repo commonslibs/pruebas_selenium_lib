@@ -1499,8 +1499,8 @@ public class WebElementWrapper {
       return false;
    }
 
-   public WebElement clickMasAutofirma(By boton, By etiqueta) throws PruebaAceptacionExcepcion {
-      this.debug("clickMasAutofirma->" + etiqueta.toString());
+   public WebElement clickMasAutofirma(By boton, By etiquetaFirmaCorrecta, By etiquetaFirmaErronea) throws PruebaAceptacionExcepcion {
+      this.debug("clickMasAutofirma->" + etiquetaFirmaCorrecta.toString());
       this.obtenerIdElementoProcesando();
       boolean conseguido = false;
       WebElement elemento = null;
@@ -1513,11 +1513,14 @@ public class WebElementWrapper {
       this.ejecutaAccionesUrlAfirmaProtocol();
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
-            elemento = this.esperaCompleta(etiqueta);
-            this.resaltaObjeto(elemento, COLOR_AMARILLO);
+            elemento = this.esperaCompleta(etiquetaFirmaCorrecta);
+            this.resaltaObjeto(elemento, COLOR_AZUL);
             conseguido = true;
          }
          catch (Exception e) {
+            if (etiquetaFirmaErronea != null && this.isElementoPresente(etiquetaFirmaErronea)) {
+               break;
+            }
             log.debug("Todavía no se ha firmado");
             this.trace(this.mensajeDeError(e));
             this.ejecutaAccionesUrlAfirmaProtocol();
