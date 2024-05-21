@@ -16,12 +16,15 @@ import es.juntadeandalucia.agapa.pruebasSelenium.reports.ResumenListener;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WindowsRegistry;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Date;
 import java.util.Properties;
 import javax.mail.Message;
@@ -33,10 +36,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
@@ -206,12 +213,13 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
    }
 
-   protected void configurarCertificado(String patron, String filtro) throws PruebaAceptacionExcepcion {
+   protected boolean configurarCertificado(String patron, String filtro) throws PruebaAceptacionExcepcion {
+      boolean postConfiguracionCertificado = false;
+      Navegador navegador = Navegador.valueOf(VariablesGlobalesTest.getPropiedad(PropiedadesTest.NAVEGADOR));
       if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_UNIX) {
-         Navegador navegador = Navegador.valueOf(VariablesGlobalesTest.getPropiedad(PropiedadesTest.NAVEGADOR));
          switch (navegador) {
             case CHROME:
-               this.crearFicheroAutoSelectCertificateForUrls(patron, filtro);
+               this.configurarCertificadoLinuxChrome(patron, filtro);
                break;
             case FIREFOX:
                // TODO
@@ -221,9 +229,23 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
                break;
          }
       }
+      else if (SystemUtils.IS_OS_WINDOWS) {
+         switch (navegador) {
+            case CHROME:
+               postConfiguracionCertificado = this.configurarCertificadoWindowsChrome(patron, filtro);
+               break;
+            case FIREFOX:
+               // TODO
+               break;
+            case MSEDGE:
+               // TODO
+               break;
+         }
+      }
+      return postConfiguracionCertificado;
    }
 
-   private void crearFicheroAutoSelectCertificateForUrls(String patron, String filtro) throws PruebaAceptacionExcepcion {
+   private void configurarCertificadoLinuxChrome(String patron, String filtro) throws PruebaAceptacionExcepcion {
       FileWriter writer = null;
       try {
          File json = new File("/etc/opt/chrome/policies/managed/auto_seleccionar_certificado.json");
@@ -248,6 +270,54 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
                throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
             }
          }
+      }
+   }
+
+   /**
+    * Solo funcionará si se ha logado como administrador. Desde Eclipse probablemente no funcionará porque no es habitual iniciar Eclipse
+    * como administrador.
+    */
+   private boolean configurarCertificadoWindowsChrome(String patron, String filtro) throws PruebaAceptacionExcepcion {
+      boolean exito = false;
+      String key = "SOFTWARE\\Policies\\Google\\Chrome\\AutoSelectCertificateForUrls";
+      String valueName = "1";
+      String value = "{\"pattern\":\"" + patron + "\",\"filter\":" + filtro + "}";
+      try {
+         log.info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
+         WindowsRegistry.writeStringValue(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName, value);
+         log.info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
+         exito = true;
+      }
+      catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+         log.error(e.getLocalizedMessage());
+      }
+      return exito;
+   }
+
+   protected void refrescarPoliticasChrome() throws PruebaAceptacionExcepcion {
+      WebDriverFactory.getDriver().get("chrome://policy");
+      WebDriverFactory.getWebElementWrapper().click(By.id("reload-policies"));
+
+      By mensajesEmergentes = By.id("toast-container");
+
+      int tiempo = Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO));
+
+      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(), Duration.ofSeconds(tiempo), Duration.ofMillis(100));
+      try {
+         wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(mensajesEmergentes, 0));
+      }
+      catch (WebDriverException e) {
+         String mensaje = "No se pueden refrescar las políticas de Chrome";
+         log.error(mensaje);
+         throw e;
+      }
+      try {
+         wait.until(ExpectedConditions.numberOfElementsToBeLessThan(mensajesEmergentes, 2));
+      }
+      catch (WebDriverException e) {
+         String mensaje = "No se pueden refrescar las políticas de Chrome";
+         log.error(mensaje);
+         throw e;
       }
    }
 
