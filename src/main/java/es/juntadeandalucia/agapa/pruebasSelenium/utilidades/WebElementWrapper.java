@@ -14,6 +14,7 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
 import java.util.List;
+import java.util.function.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -1312,16 +1313,8 @@ public class WebElementWrapper {
       this.esperaConcreta(PropiedadesTest.TIEMPO_RETRASO_CORTO);
    }
 
-   private void esperaMedia() {
-      this.esperaConcreta(PropiedadesTest.TIEMPO_RETRASO_MEDIO);
-   }
-
    public void retrasoLargo() {
       this.esperaConcreta(PropiedadesTest.TIEMPO_RETRASO_LARGO);
-   }
-
-   private void esperaAdicionalAutofirma() {
-      this.esperaIncondicional(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_AUTOFIRMA)));
    }
 
    private void esperaConcreta(PropiedadesTest tiempo) {
@@ -1506,10 +1499,7 @@ public class WebElementWrapper {
       WebElement elemento = null;
       Exception excepcion = null;
       this.click(boton);
-      log.info("Espera media...");
-      this.esperaMedia();
-      log.info("Espera adicional...");
-      this.esperaAdicionalAutofirma();
+      this.esperarProcesoAutofirma();
       this.ejecutaAccionesUrlAfirmaProtocol();
       for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS; i++) {
          try {
@@ -1535,6 +1525,7 @@ public class WebElementWrapper {
          }
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
+
       }
       return elemento;
    }
@@ -1554,6 +1545,33 @@ public class WebElementWrapper {
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
+   }
+
+   private void esperarProcesoAutofirma() throws PruebaAceptacionExcepcion {
+      log.debug("Esperando al proceso de Autofirma");
+      boolean conseguido = false;
+      for (int i = 1; !conseguido && i <= NUMERO_MAXIMO_INTENTOS * 2; i++) {
+         this.esperaCorta();
+         conseguido = ProcessHandle.allProcesses().anyMatch(this.filtroAutofirma());
+      }
+      if (conseguido) {
+         ProcessHandle.allProcesses().filter(this.filtroAutofirma()).forEach(proceso -> log.debug(this.descripcionProceso(proceso)));
+         log.debug("Se ha encontrado el proceso de Autofirma");
+         this.esperaCorta();
+      }
+      else {
+         String mensaje = "No se puede detectar el proceso de Autofirma";
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+   }
+
+   private Predicate<? super ProcessHandle> filtroAutofirma() {
+      return proceso -> this.descripcionProceso(proceso).toLowerCase().contains("autofirma");
+   }
+
+   private String descripcionProceso(ProcessHandle proceso) {
+      return proceso.info().command().map(Object::toString).orElse("") + proceso.info().commandLine().map(Object::toString).orElse("");
    }
 
    public By convertirXpath(TestObject genericObject) {
