@@ -6,7 +6,7 @@
 
 	<groupId>es.juntadeandalucia.agapa.comun</groupId>
 	<artifactId>pruebas_selenium_lib</artifactId>
-	<version>0.6.0.4</version>
+	<version>0.7.0.0</version>
 
 	<name>Librería para pruebas con Selenium</name>
 	<description>Proyecto con las funcionalidades comunes de todos los proyectos que vayan a usar Selenium como framework de pruebas funcionales</description>
@@ -14,21 +14,20 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.18</version>
+		<version>3.2.5</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 		<ojdbc7.version>12.1.0.2</ojdbc7.version>
 		<testng.version>7.10.2</testng.version>
 		<selenium.version>4.21.0</selenium.version>
 		<bonigarcia-webdrivermanager.version>5.8.0</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.1.1</extentreports.version>
-		<httpclient5.version>5.3.1</httpclient5.version>
 	</properties>
 
 	<dependencies>
@@ -62,6 +61,12 @@
 			<groupId>com.automation-remarks</groupId>
 			<artifactId>video-recorder-testng</artifactId>
 			<version>2.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -92,7 +97,7 @@
 		    <artifactId>jakarta.mail-api</artifactId>
 		</dependency>
 		<dependency>
-    		<groupId>com.sun.mail</groupId>
+    		<groupId>org.eclipse.angus</groupId>
     		<artifactId>jakarta.mail</artifactId>
 		</dependency>
 
