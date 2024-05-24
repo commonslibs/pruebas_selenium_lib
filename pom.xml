@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.5</version>
+		<version>3.3.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -22,12 +22,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<java.version>17</java.version>
-		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 		<ojdbc7.version>12.1.0.2</ojdbc7.version>
 		<testng.version>7.10.2</testng.version>
-		<selenium.version>4.21.0</selenium.version>
 		<bonigarcia-webdrivermanager.version>5.8.0</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.1.1</extentreports.version>
+		<video-recorder-testng.version>2.0</video-recorder-testng.version>
 	</properties>
 
 	<dependencies>
@@ -60,7 +59,7 @@
 		<dependency>
 			<groupId>com.automation-remarks</groupId>
 			<artifactId>video-recorder-testng</artifactId>
-			<version>2.0</version>
+			<version>${video-recorder-testng.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -77,6 +76,14 @@
 					<groupId>com.vaadin.external.google</groupId>
 					<artifactId>android-json</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.mockito</groupId>
+					<artifactId>mockito-junit-jupiter</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.mockito</groupId>
+					<artifactId>mockito-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -87,11 +94,6 @@
 			<version>${testng.version}</version>
 		</dependency>
 
-		<dependency>
-		    <groupId>jakarta.inject</groupId>
-		    <artifactId>jakarta.inject-api</artifactId>
-		    <version>2.0.1</version>
-		</dependency>
 		<dependency>
 		    <groupId>jakarta.mail</groupId>
 		    <artifactId>jakarta.mail-api</artifactId>
@@ -115,7 +117,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version><!--$NO-MVN-MAN-VER$-->
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
