@@ -24,6 +24,9 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -176,6 +179,9 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // log.debug(chrome.manage().timeouts().getScriptTimeout().toString());
       // chrome.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
       // chrome.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+
+      this.borrarCache();
+
       String propiedadMaximizar = null;
       try {
          propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
@@ -192,6 +198,22 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
       if (maximizar) {
          WebDriverFactory.getDriver().manage().window().maximize();
+      }
+   }
+
+   private void borrarCache() throws PruebaAceptacionExcepcion {
+      WebDriverFactory.getDriver().get("chrome://settings/clearBrowserData");
+      WebDriverFactory.getWebElementWrapper().esperaIncondicional(1);
+      try {
+         Robot rb = new Robot();
+         rb.keyPress(KeyEvent.VK_TAB);
+         rb.keyRelease(KeyEvent.VK_TAB);
+         rb.keyPress(KeyEvent.VK_ENTER);
+         rb.keyRelease(KeyEvent.VK_ENTER);
+      }
+      catch (AWTException e) {
+         log.error(e.getLocalizedMessage());
+         throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
       }
    }
 
