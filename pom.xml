@@ -27,6 +27,7 @@
 		<bonigarcia-webdrivermanager.version>5.8.0</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.1.1</extentreports.version>
 		<video-recorder-testng.version>2.0</video-recorder-testng.version>
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -115,8 +116,9 @@
 		<plugins>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
+				    <groupId>org.apache.maven.plugins</groupId>
+    				<artifactId>maven-compiler-plugin</artifactId>
+    				<version>${maven-compiler-plugin.version}</version><!--$NO-MVN-MAN-VER$-->
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>

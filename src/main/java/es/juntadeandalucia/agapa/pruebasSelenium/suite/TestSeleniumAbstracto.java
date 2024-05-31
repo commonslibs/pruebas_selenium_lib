@@ -24,9 +24,6 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,10 +37,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -180,8 +180,6 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // chrome.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
       // chrome.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
-      this.borrarCache();
-
       String propiedadMaximizar = null;
       try {
          propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
@@ -199,22 +197,32 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       if (maximizar) {
          WebDriverFactory.getDriver().manage().window().maximize();
       }
+
+      this.borrarCache();
    }
 
    private void borrarCache() throws PruebaAceptacionExcepcion {
       WebDriverFactory.getDriver().get("chrome://settings/clearBrowserData");
-      WebDriverFactory.getWebElementWrapper().esperaIncondicional(1);
-      try {
-         Robot rb = new Robot();
-         rb.keyPress(KeyEvent.VK_TAB);
-         rb.keyRelease(KeyEvent.VK_TAB);
-         rb.keyPress(KeyEvent.VK_ENTER);
-         rb.keyRelease(KeyEvent.VK_ENTER);
-      }
-      catch (AWTException e) {
-         log.error(e.getLocalizedMessage());
-         throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
-      }
+      WebElement shadowHostL1 = WebDriverFactory.getDriver().findElement(By.cssSelector("settings-ui"));
+      WebElement shadowElementL1 = this.getShadowElement(shadowHostL1, "settings-main");
+      WebElement shadowElementL2 = this.getShadowElement(shadowElementL1, "settings-basic-page");
+      WebElement shadowElementL3 = this.getShadowElement(shadowElementL2, "settings-section > settings-privacy-page");
+      WebElement shadowElementL4 = this.getShadowElement(shadowElementL3, "settings-clear-browsing-data-dialog");
+      WebElement shadowElementL5 = this.getShadowElement(shadowElementL4, "#clearBrowsingDataDialog");
+      WebElement borrarCache = shadowElementL5.findElement(By.cssSelector("#clearBrowsingDataConfirm"));
+
+      JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
+      js.executeScript("arguments[0].setAttribute('style', arguments[1]);", borrarCache, "background: yellow; border: 3px solid black;");
+      borrarCache.click();
+      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
+            Duration.ofMillis(100));
+      wait.until(ExpectedConditions.invisibilityOf(borrarCache));
+   }
+
+   private WebElement getShadowElement(WebElement shadowHost, String cssOfShadowElement) {
+      SearchContext shadowRoot = shadowHost.getShadowRoot();
+      return shadowRoot.findElement(By.cssSelector(cssOfShadowElement));
    }
 
    protected void enviarCorreo(String asunto, String cuerpo, String destinatario) {

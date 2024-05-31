@@ -1534,10 +1534,10 @@ public class WebElementWrapper {
       try {
          Robot rb = new Robot();
 
-         this.debug("Pulsar <INTRO>");
+         this.debug("Pulsar =INTRO=");
          rb.keyPress(KeyEvent.VK_ENTER);
          rb.keyRelease(KeyEvent.VK_ENTER);
-         this.debug("Soltar <INTRO>");
+         this.debug("Soltar =INTRO=");
       }
       catch (AWTException e) {
          String mensaje = "Error al manejar el robot";
