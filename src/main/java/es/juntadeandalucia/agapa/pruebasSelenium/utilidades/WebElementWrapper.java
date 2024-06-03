@@ -1,7 +1,5 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
@@ -103,6 +101,10 @@ public class WebElementWrapper {
    }
 
    public WebElement click(By testObject) throws PruebaAceptacionExcepcion {
+      return this.click(testObject, true);
+   }
+
+   public WebElement click(By testObject, boolean colorear) throws PruebaAceptacionExcepcion {
       this.debug("click->" + testObject.toString());
       boolean conseguido = false;
       WebElement elemento = null;
@@ -110,7 +112,9 @@ public class WebElementWrapper {
       for (int i = 1; !conseguido && i <= WebElementWrapper.NUMERO_MAXIMO_INTENTOS; i++) {
          try {
             WebElement elementoEsperado = this.esperaCompleta(testObject);
-            this.resaltaObjeto(elementoEsperado, WebElementWrapper.COLOR_AMARILLO);
+            if (colorear) {
+               this.resaltaObjeto(elementoEsperado, WebElementWrapper.COLOR_AMARILLO);
+            }
             elemento = this.esperarHastaQueElementoClickable(elementoEsperado);
             elemento.click();
             conseguido = true;
@@ -957,6 +961,17 @@ public class WebElementWrapper {
       }
    }
 
+   public void esperaIncondicionalMilisegundos(int milisegundos) {
+      this.debug("esperaIncondicionalMilisegundos-> " + milisegundos + " milisegundos");
+      try {
+         Thread.sleep(milisegundos);
+      }
+      catch (InterruptedException e) {
+         // Seguramente nunca se produzca esta excepción
+         this.error("Error en espera incondicional milisegundos");
+      }
+   }
+
    /**
     * Posicionar en porsición más alta de la página
     */
@@ -1125,7 +1140,7 @@ public class WebElementWrapper {
       return existe;
    }
 
-   protected void esperarDesaparezcaProcesando() throws PruebaAceptacionExcepcion {
+   public void esperarDesaparezcaProcesando() throws PruebaAceptacionExcepcion {
       this.trace("esperarDesaparezcaProcesando");
       this.obtenerIdElementoProcesando();
       if (this.idElementoProcesando != null) {
@@ -1584,7 +1599,7 @@ public class WebElementWrapper {
       }
       if (conseguido) {
          ProcessHandle.allProcesses().filter(this.filtroAutofirma())
-               .forEach(proceso -> log.debug(this.descripcionProceso(proceso)));
+               .forEach(proceso -> WebElementWrapper.log.debug(this.descripcionProceso(proceso)));
          WebElementWrapper.log.debug("Se ha encontrado el proceso de Autofirma");
          this.esperaCorta();
       }
@@ -1683,5 +1698,4 @@ public class WebElementWrapper {
       genericObject.addProperty("type", ConditionType.EQUALS, tipo);
       return this.pulsaEnElUnico(this.convertirXpath(genericObject));
    }
-
 }
