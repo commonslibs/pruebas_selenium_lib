@@ -116,9 +116,9 @@
 		<plugins>
 
 			<plugin>
-				    <groupId>org.apache.maven.plugins</groupId>
-    				<artifactId>maven-compiler-plugin</artifactId>
-    				<version>${maven-compiler-plugin.version}</version><!--$NO-MVN-MAN-VER$-->
+				<groupId>org.apache.maven.plugins</groupId>
+    			<artifactId>maven-compiler-plugin</artifactId>
+    			<version>${maven-compiler-plugin.version}</version><!--$NO-MVN-MAN-VER$-->
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -127,5 +127,29 @@
 
 		</plugins>
 	</build>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+      <id>RepositorioJunta</id>
+      <name>Repositorio Junta de Andalucia</name>
+      <url>https://ws024.juntadeandalucia.es/maven/repository/internal/</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+  </repositories>
 
 </project>
