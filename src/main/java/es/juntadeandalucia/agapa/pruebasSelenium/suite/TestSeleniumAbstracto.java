@@ -1,29 +1,5 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.suite;
 
-import static org.testng.Assert.assertNotNull;
-
-import com.automation.remarks.testng.UniversalVideoListener;
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.markuputils.ExtentColor;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.aventstack.extentreports.reporter.JsonFormatter;
-import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
-import es.juntadeandalucia.agapa.pruebasSelenium.reports.InformeListener;
-import es.juntadeandalucia.agapa.pruebasSelenium.reports.ResumenListener;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WindowsRegistry;
-import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
-import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
-import jakarta.mail.Message;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Properties;
-import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -50,11 +26,37 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Listeners;
+
+import com.automation.remarks.testng.UniversalVideoListener;
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.markuputils.ExtentColor;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.JsonFormatter;
+
+import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
+import es.juntadeandalucia.agapa.pruebasSelenium.reports.InformeListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.reports.ResumenListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WindowsRegistry;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -70,11 +72,11 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    private static final Properties props     = new Properties();
 
    static {
-      props.put("mail.smtp.host", HOST);
-      props.put("mail.smtp.starttls.enable", "false");
-      props.put("mail.smtp.port", PORT);
-      props.put("mail.smtp.mail.sender", REMITENTE);
-      props.put("mail.smtp.auth", "false");
+      TestSeleniumAbstracto.props.put("mail.smtp.host", TestSeleniumAbstracto.HOST);
+      TestSeleniumAbstracto.props.put("mail.smtp.starttls.enable", "false");
+      TestSeleniumAbstracto.props.put("mail.smtp.port", TestSeleniumAbstracto.PORT);
+      TestSeleniumAbstracto.props.put("mail.smtp.mail.sender", TestSeleniumAbstracto.REMITENTE);
+      TestSeleniumAbstracto.props.put("mail.smtp.auth", "false");
    }
 
    protected ExtentReports     extent;
@@ -89,7 +91,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    protected void beforeTest(String titulo, String nombre, String fichero) throws PruebaAceptacionExcepcion {
-      String ficheroLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + "/" + fichero + "-Extendido";
+      String ficheroLargo =
+            VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + "/" + fichero + "-Extendido";
       this.spark = new ExtentSparkReporter(ficheroLargo + ".html");
       JsonFormatter json = new JsonFormatter(ficheroLargo + ".json");
       this.extent = new ExtentReports();
@@ -112,21 +115,26 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    @AfterMethod
    public void getResult(ITestResult resultado) throws Exception {
       if (resultado.getStatus() == ITestResult.FAILURE) {
-         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
-         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getThrowable() + " - Test falló", ExtentColor.RED));
-         String rutaRelativa = this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
+         this.getLogger().log(Status.FAIL,
+               MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
+         this.getLogger().log(Status.FAIL,
+               MarkupHelper.createLabel(resultado.getThrowable() + " - Test falló", ExtentColor.RED));
+         String rutaRelativa =
+               this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
          this.getLogger().addScreenCaptureFromPath(rutaRelativa);
          this.getLogger().fail("Captura de pantalla del test que falló: " + rutaRelativa);
       }
       else if (resultado.getStatus() == ITestResult.SKIP) {
-         this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(resultado.getName() + " - Test saltado", ExtentColor.ORANGE));
+         this.getLogger().log(Status.SKIP,
+               MarkupHelper.createLabel(resultado.getName() + " - Test saltado", ExtentColor.ORANGE));
       }
       else if (resultado.getStatus() == ITestResult.SUCCESS) {
-         this.getLogger().log(Status.PASS, MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
+         this.getLogger().log(Status.PASS,
+               MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
       }
       this.cerrarNavegador();
 
-      this.logearMemoria("-----------MEMORIA DESPUES-----------"));
+      this.logearMemoria("-----------MEMORIA DESPUES-----------");
    }
 
    @AfterTest
@@ -169,14 +177,14 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    private void logearMemoria(String mensaje) {
       int mb = 1024 * 1024;
       MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
-      log.info(mensaje);
-      log.info("Memoria heap inicial=" + memoryBean.getHeapMemoryUsage().getInit() / mb);
-      log.info("Memoria heap usada=" + memoryBean.getHeapMemoryUsage().getUsed() / mb);
-      log.info("Memoria heap máxima=" + memoryBean.getHeapMemoryUsage().getMax() / mb);
-      log.info("Memoria no heap inicial=" + memoryBean.getNonHeapMemoryUsage().getInit() / mb);
-      log.info("Memoria no heap usada=" + memoryBean.getNonHeapMemoryUsage().getUsed() / mb);
-      log.info("Memoria no heap máxima=" + memoryBean.getNonHeapMemoryUsage().getMax() / mb);
-      log.info(mensaje);
+      TestSeleniumAbstracto.log.info(mensaje);
+      TestSeleniumAbstracto.log.info("Memoria heap inicial=" + memoryBean.getHeapMemoryUsage().getInit() / mb);
+      TestSeleniumAbstracto.log.info("Memoria heap usada=" + memoryBean.getHeapMemoryUsage().getUsed() / mb);
+      TestSeleniumAbstracto.log.info("Memoria heap máxima=" + memoryBean.getHeapMemoryUsage().getMax() / mb);
+      TestSeleniumAbstracto.log.info("Memoria no heap inicial=" + memoryBean.getNonHeapMemoryUsage().getInit() / mb);
+      TestSeleniumAbstracto.log.info("Memoria no heap usada=" + memoryBean.getNonHeapMemoryUsage().getUsed() / mb);
+      TestSeleniumAbstracto.log.info("Memoria no heap máxima=" + memoryBean.getNonHeapMemoryUsage().getMax() / mb);
+      TestSeleniumAbstracto.log.info(mensaje);
    }
 
    private void cerrarNavegador() throws PruebaAceptacionExcepcion {
@@ -192,7 +200,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       WebDriverFactory.setDriver(WebDriverFactory.obtenerInstancia(navegador));
       ChromeDriver chrome = (ChromeDriver) WebDriverFactory.getDriver();
       Traza.info(chrome.toString());
-      assertNotNull(WebDriverFactory.getDriver(), "Error al instanciar el driver de " + navegador);
+      Assert.assertNotNull(WebDriverFactory.getDriver(), "Error al instanciar el driver de " + navegador);
       // log.debug(chrome.manage().timeouts().getPageLoadTimeout().toString());
       // log.debug(chrome.manage().timeouts().getImplicitWaitTimeout().toString());
       // log.debug(chrome.manage().timeouts().getScriptTimeout().toString());
@@ -231,10 +239,12 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       WebElement borrarCache = shadowElementL5.findElement(By.cssSelector("#clearBrowsingDataConfirm"));
 
       JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
-      js.executeScript("arguments[0].setAttribute('style', arguments[1]);", borrarCache, "background: yellow; border: 3px solid black;");
+      js.executeScript("arguments[0].setAttribute('style', arguments[1]);", borrarCache,
+            "background: yellow; border: 3px solid black;");
       borrarCache.click();
       WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
+            Duration.ofSeconds(
+                  Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
             Duration.ofMillis(100));
       wait.until(ExpectedConditions.invisibilityOf(borrarCache));
    }
@@ -245,20 +255,20 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    protected void enviarCorreo(String asunto, String cuerpo, String destinatario) {
-      assertNotNull(destinatario);
+      Assert.assertNotNull(destinatario);
       try {
          Session session = Session.getInstance(TestSeleniumAbstracto.props);
          MimeMessage msg = new MimeMessage(session);
-         msg.setFrom(new InternetAddress(REMITENTE));
+         msg.setFrom(new InternetAddress(TestSeleniumAbstracto.REMITENTE));
          msg.setSentDate(new Date());
          msg.setSubject(asunto);
          msg.setRecipients(Message.RecipientType.TO, destinatario);
          msg.setContent(cuerpo, "text/html; charset=utf-8");
          Transport.send(msg);
-         log.info("Correo de fallo enviado a " + destinatario);
+         TestSeleniumAbstracto.log.info("Correo de fallo enviado a " + destinatario);
       }
       catch (Exception e) {
-         log.error(e.getLocalizedMessage());
+         TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
       }
    }
 
@@ -300,13 +310,13 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          File json = new File("/etc/opt/chrome/policies/managed/auto_seleccionar_certificado.json");
          FileUtils.touch(json);
          writer = new FileWriter(json);
-         String contenido = "{\"AutoSelectCertificateForUrls\": [\"{\\\"pattern\\\":\\\"" + patron + "\\\",\\\"filter\\\":"
-               + filtro.replace("\"", "\\\"") + "}\"]}";
-         log.info(contenido);
+         String contenido = "{\"AutoSelectCertificateForUrls\": [\"{\\\"pattern\\\":\\\"" + patron
+               + "\\\",\\\"filter\\\":" + filtro.replace("\"", "\\\"") + "}\"]}";
+         TestSeleniumAbstracto.log.info(contenido);
          writer.write(contenido);
       }
       catch (IOException e) {
-         log.error(e.getLocalizedMessage());
+         TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
          throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
       }
       finally {
@@ -315,7 +325,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
                writer.close();
             }
             catch (IOException e) {
-               log.error(e.getLocalizedMessage());
+               TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
                throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
             }
          }
@@ -323,8 +333,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    /**
-    * Solo funcionará si se ha logado como administrador. Desde Eclipse probablemente no funcionará porque no es habitual iniciar Eclipse
-    * como administrador.
+    * Solo funcionará si se ha logado como administrador. Desde Eclipse probablemente no funcionará porque no es
+    * habitual iniciar Eclipse como administrador.
     */
    private boolean configurarCertificadoWindowsChrome(String patron, String filtro) throws PruebaAceptacionExcepcion {
       boolean exito = false;
@@ -332,13 +342,15 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       String valueName = "1";
       String value = "{\"pattern\":\"" + patron + "\",\"filter\":" + filtro + "}";
       try {
-         log.info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
+         TestSeleniumAbstracto.log
+               .info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
          WindowsRegistry.writeStringValue(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName, value);
-         log.info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
+         TestSeleniumAbstracto.log
+               .info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
          exito = true;
       }
       catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-         log.error(e.getLocalizedMessage());
+         TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
       }
       return exito;
    }
@@ -351,13 +363,14 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
 
       int tiempo = Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO));
 
-      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(), Duration.ofSeconds(tiempo), Duration.ofMillis(100));
+      WebDriverWait wait =
+            new WebDriverWait(WebDriverFactory.getDriver(), Duration.ofSeconds(tiempo), Duration.ofMillis(100));
       try {
          wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(mensajesEmergentes, 0));
       }
       catch (WebDriverException e) {
          String mensaje = "No se pueden refrescar las políticas de Chrome";
-         log.error(mensaje);
+         TestSeleniumAbstracto.log.error(mensaje);
          throw e;
       }
       try {
@@ -365,7 +378,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
       catch (WebDriverException e) {
          String mensaje = "No se pueden refrescar las políticas de Chrome";
-         log.error(mensaje);
+         TestSeleniumAbstracto.log.error(mensaje);
          throw e;
       }
    }

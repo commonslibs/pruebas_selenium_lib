@@ -1,16 +1,11 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.webdriver;
 
-import com.aventstack.extentreports.ExtentTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WebElementWrapper;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -21,6 +16,14 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.aventstack.extentreports.ExtentTest;
+
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WebElementWrapper;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * Factoria de Web drivers. Devuelve el driver del navegador especificado mediante obtenerInstancia().
@@ -29,28 +32,29 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 public class WebDriverFactory {
 
    @Getter
-   static @Setter private ExtentTest logger;
+   @Setter
+   private static ExtentTest          logger;
 
    // Almacén del WebDriver compartido por todos los servicios y clases de test del proyecto.
    @Getter
    @Setter
-   private static WebDriver          driver;
+   private static WebDriver           driver;
 
-   private static WebElementWrapper  webElementWrapper;
+   protected static WebElementWrapper webElementWrapper;
 
    public enum Navegador {
       CHROME, FIREFOX, MSEDGE
    }
 
-   private static final String TX_FALSE                = "false";
+   protected static final String TX_FALSE                = "false";
 
-   public static final boolean IS_REMOTE_SELENIUM_GRID =
+   public static final boolean   IS_REMOTE_SELENIUM_GRID =
          Boolean.parseBoolean(System.getProperty("remoteSG", WebDriverFactory.TX_FALSE).toLowerCase());
 
-   public static final boolean IS_HEADLESS             =
+   public static final boolean   IS_HEADLESS             =
          Boolean.parseBoolean(System.getProperty("java.awt.headless", WebDriverFactory.TX_FALSE).toLowerCase());
 
-   public static final boolean IS_MODO_INCOGNITO       =
+   public static final boolean   IS_MODO_INCOGNITO       =
          Boolean.parseBoolean(System.getProperty("modoIncognito", WebDriverFactory.TX_FALSE).toLowerCase());
 
    /**
@@ -65,13 +69,13 @@ public class WebDriverFactory {
       WebDriver wd = null;
       switch (navegador) {
          case CHROME:
-            wd = chrome();
+            wd = WebDriverFactory.chrome();
             break;
          case FIREFOX:
-            wd = firefox();
+            wd = WebDriverFactory.firefox();
             break;
          case MSEDGE:
-            wd = edge();
+            wd = WebDriverFactory.edge();
             break;
       }
       WebDriverFactory.log.info("Instancia obtenida: " + wd.toString());
@@ -79,19 +83,19 @@ public class WebDriverFactory {
    }
 
    public static WebElementWrapper getWebElementWrapper() {
-      if (webElementWrapper == null) {
-         webElementWrapper = new WebElementWrapper();
+      if (WebDriverFactory.webElementWrapper == null) {
+         WebDriverFactory.webElementWrapper = new WebElementWrapper();
       }
-      return webElementWrapper;
+      return WebDriverFactory.webElementWrapper;
    }
 
    // FUENTES:
    // https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md
    // https://source.chromium.org/chromium/chromium/src/+/main:chrome/common/pref_names.h
    // https://peter.sh/experiments/chromium-command-line-switches/
-   private static WebDriver chrome() {
+   protected static WebDriver chrome() {
       WebDriverManager webDriver = WebDriverManager.chromedriver();
-      WebDriverManager webDriverConProxy = asignarProxy(webDriver);
+      WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
       webDriverConProxy.setup();
 
       System.setProperty("webdriver.chrome.whitelistedIps", "");
@@ -100,7 +104,8 @@ public class WebDriverFactory {
 
       options.addArguments("enable-automation");
 
-      // Parametros para evitar errores al ejecutar Google Chrome con usuario root en linux (se aconseja incluirla cuando se ejecuta chrome
+      // Parametros para evitar errores al ejecutar Google Chrome con usuario root en linux (se aconseja incluirla
+      // cuando se ejecuta chrome
       // en un entorno docker como es el caso
       options.addArguments("--no-sandbox");
 
@@ -135,7 +140,8 @@ public class WebDriverFactory {
       // Se deshabiitan el sonido. Aconsejado en entorno docker
       options.addArguments("--mute-audio");
 
-      // Desactiva la traducción de Chrome, tanto la opción manual como el mensaje emergente cuando se detecta una página con un idioma
+      // Desactiva la traducción de Chrome, tanto la opción manual como el mensaje emergente cuando se detecta una
+      // página con un idioma
       // diferente.
       options.addArguments("--disable-features=Translate");
 
@@ -145,7 +151,8 @@ public class WebDriverFactory {
       // No actualice los 'componentes' del navegador enumerados en chrome://components/
       options.addArguments("--disable-component-update");
 
-      // Desactiva la comunicación del servidor de autocompletar. Esta función no se desactiva mediante otras banderas "principales".
+      // Desactiva la comunicación del servidor de autocompletar. Esta función no se desactiva mediante otras banderas
+      // "principales".
       options.addArguments("--disable-features=AutofillServerCommunication");
 
       // Desactivar la sincronización con una cuenta de Google
@@ -165,7 +172,8 @@ public class WebDriverFactory {
          options.setExperimentalOption("excludeSwitches", Collections.singletonList("--enable-automation"));
       }
 
-      // Para no mostrar el dialogo de "donde guardar archivos". Bandera especial para el modo incognito a partir de chrome 119
+      // Para no mostrar el dialogo de "donde guardar archivos". Bandera especial para el modo incognito a partir de
+      // chrome 119
       options.addArguments("disable-features=DownloadBubble,DownloadBubbleV2");
 
       // Experimental OPTIONS
@@ -197,9 +205,9 @@ public class WebDriverFactory {
       }
    }
 
-   private static WebDriver firefox() {
+   protected static WebDriver firefox() {
       WebDriverManager webDriver = WebDriverManager.firefoxdriver();
-      WebDriverManager webDriverConProxy = asignarProxy(webDriver);
+      WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
       webDriverConProxy.setup();
 
       FirefoxOptions options = new FirefoxOptions();
@@ -228,9 +236,9 @@ public class WebDriverFactory {
       }
    }
 
-   private static WebDriver edge() {
+   protected static WebDriver edge() {
       WebDriverManager webDriver = WebDriverManager.edgedriver();
-      WebDriverManager webDriverConProxy = asignarProxy(webDriver);
+      WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
       webDriverConProxy.setup();
 
       EdgeOptions options = new EdgeOptions();
@@ -257,13 +265,14 @@ public class WebDriverFactory {
       }
    }
 
-   private static WebDriverManager asignarProxy(WebDriverManager webDriver) {
+   protected static WebDriverManager asignarProxy(WebDriverManager webDriver) {
       String proxy = null;
-      try (FileReader fileReader = new FileReader("proxy.txt"); BufferedReader reader = new BufferedReader(fileReader)) {
+      try (FileReader fileReader = new FileReader("proxy.txt");
+            BufferedReader reader = new BufferedReader(fileReader)) {
          proxy = reader.lines().collect(Collectors.joining(System.lineSeparator()));
       }
       catch (Exception e) {
-         log.warn(e.getLocalizedMessage());
+         WebDriverFactory.log.warn(e.getLocalizedMessage());
       }
       if (StringUtils.isNotEmpty(proxy)) {
          return webDriver.proxy(proxy);
