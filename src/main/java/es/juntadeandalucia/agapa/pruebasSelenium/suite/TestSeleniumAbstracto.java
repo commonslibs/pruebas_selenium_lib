@@ -1,5 +1,7 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.suite;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -207,28 +210,55 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // chrome.manage().timeouts().implicitlyWait(Duration.ofMillis(1));
       // chrome.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
-      String propiedadMaximizar = null;
-      try {
-         propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
-      }
-      catch (Exception e) {
-         Traza.info("Propiedad MAXIMIZAR no definida. Se asume como TRUE");
-      }
-      boolean maximizar;
-      if (StringUtils.isEmpty(propiedadMaximizar)) {
-         maximizar = true;
-      }
-      else {
-         maximizar = Boolean.parseBoolean(propiedadMaximizar);
-      }
-      if (maximizar) {
-         WebDriverFactory.getDriver().manage().window().maximize();
+      // ------------------------------
+      // Si estamos en modo GRAFICO:
+      // Podemos mover ventana al segundo monitor
+      // tambien podemos maximizar.
+      if (!WebDriverFactory.IS_HEADLESS) {
+         // Para ejecutar en segundo monitor
+         if (!WebDriverFactory.IS_VIDEO_ENABLED) {
+            GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+            int posicion = 0;
+            if (screens.length > 1) {
+               for (GraphicsDevice screen : screens) {
+                  int margen = screen.getDefaultConfiguration().getBounds().x;
+                  if (margen != 0) {
+                     posicion = margen;
+                  }
+               }
+               WebDriverFactory.getDriver().manage().window().setPosition(new Point(posicion, 0));
+            }
+         }
+
+         // Para MAXIMIZAR
+         String propiedadMaximizar = null;
+         try {
+            propiedadMaximizar = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MAXIMIZAR);
+         }
+         catch (Exception e) {
+            Traza.info("Propiedad MAXIMIZAR no definida. Se asume como TRUE");
+         }
+         boolean maximizar;
+         if (StringUtils.isEmpty(propiedadMaximizar)) {
+            maximizar = true;
+         }
+         else {
+            maximizar = Boolean.parseBoolean(propiedadMaximizar);
+         }
+         if (maximizar) {
+            WebDriverFactory.getDriver().manage().window().maximize();
+         }
       }
 
       this.borrarCache();
    }
 
    private void borrarCache() throws PruebaAceptacionExcepcion {
+      if (WebDriverFactory.IS_MODO_INCOGNITO) {
+         // Si el navegador está en modo incognito no es necesario limpiar la cache ya lo gestiona él.
+         return;
+      }
+      // OJO!!!, La siguiente instruccion, si el navegador está en modo incognito cierra la ventana.
       WebDriverFactory.getDriver().get("chrome://settings/clearBrowserData");
       WebElement shadowHostL1 = WebDriverFactory.getDriver().findElement(By.cssSelector("settings-ui"));
       WebElement shadowElementL1 = this.getShadowElement(shadowHostL1, "settings-main");
