@@ -190,11 +190,14 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       TestSeleniumAbstracto.log.info(mensaje);
    }
 
-   private void cerrarNavegador() throws PruebaAceptacionExcepcion {
-      // ChromeDriver chrome = (ChromeDriver) WebDriverFactory.getDriver();
-      // chrome.close();
-      WebDriverFactory.getDriver().close();
-      WebDriverFactory.getDriver().quit();
+   private void cerrarNavegador() {
+      try {
+         WebDriverFactory.getDriver().close();
+         WebDriverFactory.getDriver().quit();
+      }
+      catch (Exception e) {
+         TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
+      }
       WebDriverFactory.setDriver(null);
    }
 

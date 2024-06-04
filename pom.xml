@@ -6,7 +6,7 @@
 
 	<groupId>es.juntadeandalucia.agapa.comun</groupId>
 	<artifactId>pruebas_selenium_lib</artifactId>
-	<version>0.7.0.0</version>
+	<version>0.7.0.1</version>
 
 	<name>Librería para pruebas con Selenium</name>
 	<description>Proyecto con las funcionalidades comunes de todos los proyectos que vayan a usar Selenium como framework de pruebas funcionales</description>
@@ -27,7 +27,6 @@
 		<bonigarcia-webdrivermanager.version>5.8.0</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.1.1</extentreports.version>
 		<video-recorder-testng.version>2.0</video-recorder-testng.version>
-		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -118,7 +117,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
     			<artifactId>maven-compiler-plugin</artifactId>
-    			<version>${maven-compiler-plugin.version}</version><!--$NO-MVN-MAN-VER$-->
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
