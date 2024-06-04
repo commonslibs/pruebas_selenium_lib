@@ -1,11 +1,13 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
-import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.apache.commons.lang3.StringUtils;
+
+import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -17,7 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class VariablesGlobalesTest {
 
-   public static final String DIRECTORIO_TARGET_SUREFIRE_REPORTS = System.getProperty("user.dir") + "/target/surefire-reports/";
+   public static final String DIRECTORIO_TARGET_SUREFIRE_REPORTS =
+         System.getProperty("user.dir") + "/target/surefire-reports/";
    public static final String DIRECTORIO_CAPTURAS                = "capturas/";
 
    private static Properties  propiedades                        = null;
@@ -27,7 +30,7 @@ public class VariablesGlobalesTest {
     */
    public enum PropiedadesTest implements PropiedadGenerica {
       NAVEGADOR, MAXIMIZAR, TIEMPO_RETRASO_CORTO, TIEMPO_RETRASO_MEDIO, TIEMPO_RETRASO_LARGO, TIEMPO_RETRASO_AUTOFIRMA,
-      ID_ELEMENTO_PROCESANDO, POSICION_CERTIFICADO, HTTPS_PROXY
+      ID_ELEMENTO_PROCESANDO, POSICION_CERTIFICADO, HTTPS_PROXY, MILISEGUNDOS_ESPERA_OBLIGATORIA
    }
 
    /**
@@ -38,23 +41,25 @@ public class VariablesGlobalesTest {
     * @throws PruebaAceptacionExcepcion
     */
    public static String getPropiedad(PropiedadGenerica propiedad) throws IllegalArgumentException {
-      if (propiedades == null) {
+      if (VariablesGlobalesTest.propiedades == null) {
          String entorno = System.getProperty("entorno");
 
          if (entorno != null && !"".equals(entorno)) {
-            propiedades = getFilePathToSaveStatic("application-" + entorno + ".properties");
+            VariablesGlobalesTest.propiedades =
+                  VariablesGlobalesTest.getFilePathToSaveStatic("application-" + entorno + ".properties");
          }
       }
 
       String nombrePropiedad = propiedad.toString();
-      if (!propiedades.containsKey(nombrePropiedad)) {
-         throw new IllegalArgumentException("Parámetro " + propiedad + " no se ha encontrado en el fichero de configuración");
+      if (!VariablesGlobalesTest.propiedades.containsKey(nombrePropiedad)) {
+         throw new IllegalArgumentException(
+               "Parámetro " + propiedad + " no se ha encontrado en el fichero de configuración");
       }
 
-      if (StringUtils.isBlank(propiedades.get(nombrePropiedad).toString())) {
+      if (StringUtils.isBlank(VariablesGlobalesTest.propiedades.get(nombrePropiedad).toString())) {
          throw new IllegalArgumentException("Parámetro " + propiedad + " de configuración inválido");
       }
-      return propiedades.get(nombrePropiedad).toString();
+      return VariablesGlobalesTest.propiedades.get(nombrePropiedad).toString();
    }
 
    /**
@@ -64,14 +69,16 @@ public class VariablesGlobalesTest {
     * @return Valor de las propiedades del property
     * @throws PruebaAceptacionExcepcion
     */
-   public static String getPropiedadOpcional(PropiedadGenerica propiedad, String valorPorDefecto) throws IllegalArgumentException {
+   public static String getPropiedadOpcional(PropiedadGenerica propiedad, String valorPorDefecto)
+         throws IllegalArgumentException {
       String valorPropiedad = null;
       try {
-         valorPropiedad = getPropiedad(propiedad);
+         valorPropiedad = VariablesGlobalesTest.getPropiedad(propiedad);
       }
       catch (IllegalArgumentException e) {
          valorPropiedad = valorPorDefecto;
-         log.info("Propiedad " + propiedad.toString() + " no existe. Se usa el valor por defecto=" + valorPorDefecto);
+         VariablesGlobalesTest.log.info(
+               "Propiedad " + propiedad.toString() + " no existe. Se usa el valor por defecto=" + valorPorDefecto);
       }
       return valorPropiedad;
    }
@@ -89,7 +96,7 @@ public class VariablesGlobalesTest {
          prop.load(inputStream);
       }
       catch (Exception e) {
-         log.error(e.getLocalizedMessage());
+         VariablesGlobalesTest.log.error(e.getLocalizedMessage());
       }
 
       return prop;
