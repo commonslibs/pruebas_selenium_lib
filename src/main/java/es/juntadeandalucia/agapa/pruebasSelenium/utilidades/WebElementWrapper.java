@@ -1144,42 +1144,55 @@ public class WebElementWrapper {
       this.trace("esperarDesaparezcaProcesando");
       this.obtenerIdElementoProcesando();
       if (this.idElementoProcesando != null) {
-         By by = By.id(this.idElementoProcesando);
-         this.trace("Buscar " + this.idElementoProcesando);
-         List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
-         this.trace("Fin de la búsqueda");
-         try {
-            if (elementos.size() > 0 && elementos.get(0).isDisplayed()) {
-               this.trace(this.idElementoProcesando + " encontrados: " + elementos.size());
-               int tiempo = 0;
-               while (elementos.get(0).isDisplayed()) {
-                  this.trace(this.idElementoProcesando + " visible");
-                  try {
-                     this.trace("Espera 100 ms");
-                     Thread.sleep(100);
-                  }
-                  catch (InterruptedException e) {
-                     // Seguramente nunca se produzca esta excepción
-                     this.warning("Error al parar el procesamiento del hilo de ejecución");
-                  }
-                  tiempo += 100;
-                  if (tiempo > Integer
-                        .parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000) {
-                     String mensaje = "La ventana \"Procesando...\" no desaparece";
-                     this.trace(mensaje);
-                     throw new PruebaAceptacionExcepcion(mensaje);
-                  }
+         this.esperarDesaparezcaElemento(By.id(this.idElementoProcesando));
+      }
+   }
+
+   /**
+    * Se realiza una espera hasta que desaparezca el elemento identificado por @param elemento
+    *
+    * @param driver
+    *           driver de selenium
+    * @param elemento
+    *           elemento que se espera desaparezca
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   public void esperarDesaparezcaElemento(By by) throws PruebaAceptacionExcepcion {
+      this.trace("esperarDesaparezcaElemento " + by.toString());
+      List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
+      try {
+         if (!elementos.isEmpty() && elementos.get(0).isDisplayed()) {
+            this.trace(by.toString() + " encontrados: " + elementos.size());
+            int tiempo = 0;
+            while (elementos.get(0).isDisplayed()) {
+               this.trace(by.toString() + " visible");
+               try {
+                  this.trace("Espera 100 ms");
+                  Thread.sleep(100);
+               }
+               catch (InterruptedException e) {
+                  // Seguramente nunca se produzca esta excepción
+                  this.warning("Error al parar el procesamiento del hilo de ejecución");
+               }
+               tiempo += 100;
+               if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))
+                     * 1000) {
+                  String mensaje = by.toString() + " no desaparece";
+                  this.trace(mensaje);
+                  throw new PruebaAceptacionExcepcion(mensaje);
                }
             }
-            else {
-               this.trace("Procesando no estaba");
-            }
          }
-         catch (Exception e) {
-            this.warning(this.mensajeDeError(e));
-            this.trace("La ventana procesando ya no está visible");
+         else {
+            this.trace(by.toString() + " no estaba");
          }
       }
+      catch (Exception e) {
+         this.warning(this.mensajeDeError(e));
+         this.trace(by.toString() + " ya no está visible");
+      }
+
    }
 
    protected void obtenerIdElementoProcesando() {
