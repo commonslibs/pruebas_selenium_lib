@@ -5,6 +5,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +18,41 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class WebElementWrapperPrimeFace extends WebElementWrapper {
+
+   private long    milisegundosEsperaObligatoria        = 0;
+
+   private boolean esperarMilisegundosEsperaObligatoria = false;
+
+   private boolean variablesCargadas                    = false;
+
+   public boolean isEsperarMilisegundosEsperaObligatoria() {
+      if (!this.variablesCargadas) {
+         this.cargarVariables();
+      }
+      return this.esperarMilisegundosEsperaObligatoria;
+   }
+
+   public long getMilisegundosEsperaObligatoria() {
+      if (!this.variablesCargadas) {
+         this.cargarVariables();
+      }
+      return this.milisegundosEsperaObligatoria;
+   }
+
+   private void cargarVariables() {
+      String valorEsperaObligatoria;
+      try {
+         valorEsperaObligatoria =
+               VariablesGlobalesTest.getPropiedad(PropiedadesTest.MILISEGUNDOS_ESPERA_OBLIGATORIA).trim();
+      }
+      catch (Exception e) {
+         WebElementWrapperPrimeFace.log.error("Se establece el valor de MILISEGUNDOS_ESPERA_OBLIGATORIA a cero.", e);
+         valorEsperaObligatoria = "0";
+      }
+      this.milisegundosEsperaObligatoria = Long.parseLong(valorEsperaObligatoria);
+
+      this.variablesCargadas = true;
+   }
 
    public void mostrarElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
       WebElementWrapperPrimeFace.log.debug("mostrarElementoPresente->" + testObject.toString());
@@ -111,6 +147,16 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       return Integer.valueOf(res);
    }
 
+   /**
+    * Select one menu.
+    *
+    * @param id
+    *           valor para: id
+    * @param label
+    *           valor para: label
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
    public void selectOneMenu(String id, String label) throws PruebaAceptacionExcepcion {
       By selectOneMenu = By.id(id + "_label");
       By opcion = By.xpath("//*[@id='" + id + "_panel']/div/ul/li[text()='" + label + "']");
@@ -127,6 +173,47 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       }
       WebElementWrapperPrimeFace.log.info("... fin de selectOneMenu");
 
+   }
+
+   /**
+    * Modificación del atributo: esperar milisegundos espera obligatoria.
+    *
+    * @param esperar
+    *           valor para: esperar
+    */
+   public void setEsperarMilisegundosEsperaObligatoria(boolean esperar) {
+      this.esperarMilisegundosEsperaObligatoria = esperar;
+   }
+
+   /**
+    * SOBREESCRITA - PARA OBLIGAR UNA ESPERA FORZOSA. ES GENERICA A CUALQUIER ACCION Y SE CONFIGURA EN EL .properties
+    * (Por Defecto irá destactivada.)
+    *
+    * @param testObject
+    *           valor para: test object
+    * @return web element
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   @Override
+   public WebElement esperaCompleta(By testObject) throws PruebaAceptacionExcepcion {
+      this.esperarObligada();
+      return super.esperaCompleta(testObject);
+   }
+
+   /**
+    * Esperar obligada.
+    */
+   public void esperarObligada() {
+      try {
+         if (this.esperarMilisegundosEsperaObligatoria && this.milisegundosEsperaObligatoria > 0) {
+            Thread.sleep(this.milisegundosEsperaObligatoria);
+         }
+      }
+      catch (InterruptedException e) {
+         WebElementWrapperPrimeFace.log.error("Error en la esperaObligada", e);
+         Thread.currentThread().interrupt();
+      }
    }
 
 }
