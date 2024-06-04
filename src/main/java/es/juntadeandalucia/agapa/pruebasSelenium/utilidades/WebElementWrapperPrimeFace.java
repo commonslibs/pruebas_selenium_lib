@@ -80,28 +80,52 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       }
    }
 
-   public int obtenerNumeroRegistrosTabla(By tablaResultado) {
-      // TODO Auto-generated method stub
-      return 0;
+   public int obtenerNumeroRegistrosTabla(By tabla) throws PruebaAceptacionExcepcion {
+      WebElementWrapperPrimeFace.log.debug("obtenerNumeroRegistrosTabla->" + tabla.toString());
+      By spanPaginator = By.cssSelector("span.ui-paginator-current");
+      return this.obtenerNumeroRegistrosTabla(tabla, spanPaginator, 1);
    }
 
-   public void selectOneMenu(String string, String string2) {
-      // TODO Auto-generated method stub
-
+   /**
+    * Devuelve el número de elementos de la tabla tomándolo de currentPageReportTemplate
+    *
+    * @param tabla
+    *           valor para: tabla
+    * @param spanPaginator
+    *           valor para: elemento que muestra el texto de currentPageReportTemplate
+    * @param position
+    *           valor para: posición del número de elementos en el currentPageReportTemplate. Ej: Total {totalRecords}
+    *           elementos - Página {currentPage} de {totalPages}. En este caso el totalRecords está en la posición 1
+    *           (empieza por el 0).
+    * @return int Número de elementos en la tabla
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   public int obtenerNumeroRegistrosTabla(By tabla, By spanPaginator, int position) throws PruebaAceptacionExcepcion {
+      WebElementWrapperPrimeFace.log.debug("obtenerNumeroRegistrosTabla->" + tabla.toString());
+      WebElement t = this.esperaCompleta(tabla);
+      WebElement paginador = t.findElement(spanPaginator);
+      String cadena = paginador.getText();
+      String[] aux = cadena.split(" ");
+      String res = aux[position];
+      return Integer.valueOf(res);
    }
 
-   public void esperarDesaparezcaElemento(By barraProgreso) {
-      // TODO Auto-generated method stub
+   public void selectOneMenu(String id, String label) throws PruebaAceptacionExcepcion {
+      By selectOneMenu = By.id(id + "_label");
+      By opcion = By.xpath("//*[@id='" + id + "_panel']/div/ul/li[text()='" + label + "']");
+      WebElement weCombo = this.click(selectOneMenu);
+      WebElement weValue = this.click(opcion);
 
-   }
+      // weCombo.sendKeys(Keys.TAB.toString()); // Hay veces que si no se pulsa TAB, no funciona
 
-   public String obtenerTextoElemento(By resSwCsv) {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   public void setEsperarMilisegundosEsperaObligatoria(boolean b) {
-      // TODO Auto-generated method stub
+      this.esperaIncondicionalMilisegundos(300);
+      WebElementWrapperPrimeFace.log.info("Ver si está abierto...");
+      if (weValue.isDisplayed()) {
+         WebElementWrapperPrimeFace.log.info("...está 'displayed'... lo cierro...");
+         this.click(selectOneMenu); // Para cerrar y que no tape nada.
+      }
+      WebElementWrapperPrimeFace.log.info("... fin de selectOneMenu");
 
    }
 
