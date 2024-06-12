@@ -1,5 +1,27 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.suite;
 
+import com.automation.remarks.testng.UniversalVideoListener;
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.markuputils.ExtentColor;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.JsonFormatter;
+import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
+import es.juntadeandalucia.agapa.pruebasSelenium.listeners.InformeListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.listeners.ResumenListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WindowsRegistry;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -12,7 +34,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Properties;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -35,31 +57,6 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Listeners;
-
-import com.automation.remarks.testng.UniversalVideoListener;
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.markuputils.ExtentColor;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.aventstack.extentreports.reporter.JsonFormatter;
-
-import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
-import es.juntadeandalucia.agapa.pruebasSelenium.reports.InformeListener;
-import es.juntadeandalucia.agapa.pruebasSelenium.reports.ResumenListener;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WindowsRegistry;
-import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
-import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
-import jakarta.mail.Message;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -94,8 +91,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    protected void beforeTest(String titulo, String nombre, String fichero) throws PruebaAceptacionExcepcion {
-      String ficheroLargo =
-            VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + "/" + fichero + "-Extendido";
+      String ficheroLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + File.separator + fichero + "-Extendido";
       this.spark = new ExtentSparkReporter(ficheroLargo + ".html");
       JsonFormatter json = new JsonFormatter(ficheroLargo + ".json");
       this.extent = new ExtentReports();
@@ -108,7 +104,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       String dateName = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date());
       TakesScreenshot ts = (TakesScreenshot) driver;
       File source = ts.getScreenshotAs(OutputType.FILE);
-      String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + "/";
+      String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
       String rutaRelativa = VariablesGlobalesTest.DIRECTORIO_CAPTURAS + screenshotName + "_" + dateName + ".png";
       File finalDestination = new File(directorioLargo + rutaRelativa);
       FileUtils.copyFile(source, finalDestination);
@@ -118,22 +114,17 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    @AfterMethod
    public void getResult(ITestResult resultado) throws Exception {
       if (resultado.getStatus() == ITestResult.FAILURE) {
-         this.getLogger().log(Status.FAIL,
-               MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
-         this.getLogger().log(Status.FAIL,
-               MarkupHelper.createLabel(resultado.getThrowable() + " - Test falló", ExtentColor.RED));
-         String rutaRelativa =
-               this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
+         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
+         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getThrowable() + " - Test falló", ExtentColor.RED));
+         String rutaRelativa = this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
          this.getLogger().addScreenCaptureFromPath(rutaRelativa);
          this.getLogger().fail("Captura de pantalla del test que falló: " + rutaRelativa);
       }
       else if (resultado.getStatus() == ITestResult.SKIP) {
-         this.getLogger().log(Status.SKIP,
-               MarkupHelper.createLabel(resultado.getName() + " - Test saltado", ExtentColor.ORANGE));
+         this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(resultado.getName() + " - Test saltado", ExtentColor.ORANGE));
       }
       else if (resultado.getStatus() == ITestResult.SUCCESS) {
-         this.getLogger().log(Status.PASS,
-               MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
+         this.getLogger().log(Status.PASS, MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
       }
       this.cerrarNavegador();
 
@@ -272,12 +263,10 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       WebElement borrarCache = shadowElementL5.findElement(By.cssSelector("#clearBrowsingDataConfirm"));
 
       JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
-      js.executeScript("arguments[0].setAttribute('style', arguments[1]);", borrarCache,
-            "background: yellow; border: 3px solid black;");
+      js.executeScript("arguments[0].setAttribute('style', arguments[1]);", borrarCache, "background: yellow; border: 3px solid black;");
       borrarCache.click();
       WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
-            Duration.ofSeconds(
-                  Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
+            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
             Duration.ofMillis(100));
       wait.until(ExpectedConditions.invisibilityOf(borrarCache));
    }
@@ -343,8 +332,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          File json = new File("/etc/opt/chrome/policies/managed/auto_seleccionar_certificado.json");
          FileUtils.touch(json);
          writer = new FileWriter(json);
-         String contenido = "{\"AutoSelectCertificateForUrls\": [\"{\\\"pattern\\\":\\\"" + patron
-               + "\\\",\\\"filter\\\":" + filtro.replace("\"", "\\\"") + "}\"]}";
+         String contenido = "{\"AutoSelectCertificateForUrls\": [\"{\\\"pattern\\\":\\\"" + patron + "\\\",\\\"filter\\\":"
+               + filtro.replace("\"", "\\\"") + "}\"]}";
          TestSeleniumAbstracto.log.info(contenido);
          writer.write(contenido);
       }
@@ -366,8 +355,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    /**
-    * Solo funcionará si se ha logado como administrador. Desde Eclipse probablemente no funcionará porque no es
-    * habitual iniciar Eclipse como administrador.
+    * Solo funcionará si se ha logado como administrador. Desde Eclipse probablemente no funcionará porque no es habitual iniciar Eclipse
+    * como administrador.
     */
    private boolean configurarCertificadoWindowsChrome(String patron, String filtro) throws PruebaAceptacionExcepcion {
       boolean exito = false;
@@ -375,11 +364,9 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       String valueName = "1";
       String value = "{\"pattern\":\"" + patron + "\",\"filter\":" + filtro + "}";
       try {
-         TestSeleniumAbstracto.log
-               .info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
+         TestSeleniumAbstracto.log.info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
          WindowsRegistry.writeStringValue(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName, value);
-         TestSeleniumAbstracto.log
-               .info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
+         TestSeleniumAbstracto.log.info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
          exito = true;
       }
       catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
@@ -396,8 +383,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
 
       int tiempo = Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO));
 
-      WebDriverWait wait =
-            new WebDriverWait(WebDriverFactory.getDriver(), Duration.ofSeconds(tiempo), Duration.ofMillis(100));
+      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(), Duration.ofSeconds(tiempo), Duration.ofMillis(100));
       try {
          wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(mensajesEmergentes, 0));
       }

@@ -1,4 +1,4 @@
-package es.juntadeandalucia.agapa.pruebasSelenium.reports;
+package es.juntadeandalucia.agapa.pruebasSelenium.listeners;
 
 import static java.util.stream.Collectors.toList;
 
@@ -55,8 +55,8 @@ public class InformeListener implements IReporter {
       Collections.sort(suites, new ComparadorISuite());
       for (ISuite suite : suites) {
          try {
-            String directorioOrigenJson = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + suite.getName() + "/";
-            String ficheroJson = directorioOrigenJson + "/" + suite.getName() + "-Extendido.json";
+            String directorioOrigenJson = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + suite.getName() + File.separator;
+            String ficheroJson = directorioOrigenJson + File.separator + suite.getName() + "-Extendido.json";
             reportMergeado.createDomainFromJsonArchive(ficheroJson);
 
             // Copiar las capturas de pantallas de error
@@ -75,7 +75,7 @@ public class InformeListener implements IReporter {
       reportMergeado.flush();
    }
 
-   private class ComparadorISuite implements java.util.Comparator<ISuite> {
+   private static class ComparadorISuite implements java.util.Comparator<ISuite> {
       @Override
       public int compare(ISuite a, ISuite b) {
          return a.getName().compareTo(b.getName());
@@ -107,20 +107,13 @@ public class InformeListener implements IReporter {
 
    private Function<ITestResult, String> testResultToResultRow(String testName, String suiteName) {
       return testResult -> {
-         switch (testResult.getStatus()) {
-            case ITestResult.FAILURE:
-               return String.format(ROW_TEMPLATE, "danger", suiteName, testName, testResult.getName(), "FAILED", "NA");
-
-            case ITestResult.SUCCESS:
-               return String.format(ROW_TEMPLATE, "success", suiteName, testName, testResult.getName(), "PASSED",
-                     String.valueOf(testResult.getEndMillis() - testResult.getStartMillis()));
-
-            case ITestResult.SKIP:
-               return String.format(ROW_TEMPLATE, "warning", suiteName, testName, testResult.getName(), "SKIPPED", "NA");
-
-            default:
-               return "";
-         }
+         return switch (testResult.getStatus()) {
+            case ITestResult.FAILURE -> String.format(ROW_TEMPLATE, "danger", suiteName, testName, testResult.getName(), "FAILED", "NA");
+            case ITestResult.SUCCESS -> String.format(ROW_TEMPLATE, "success", suiteName, testName, testResult.getName(), "PASSED",
+                                 String.valueOf(testResult.getEndMillis() - testResult.getStartMillis()));
+            case ITestResult.SKIP -> String.format(ROW_TEMPLATE, "warning", suiteName, testName, testResult.getName(), "SKIPPED", "NA");
+            default -> "";
+         };
       };
    }
 

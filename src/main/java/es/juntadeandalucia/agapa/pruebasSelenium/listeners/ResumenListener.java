@@ -1,4 +1,4 @@
-package es.juntadeandalucia.agapa.pruebasSelenium.reports;
+package es.juntadeandalucia.agapa.pruebasSelenium.listeners;
 
 import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestContext;
