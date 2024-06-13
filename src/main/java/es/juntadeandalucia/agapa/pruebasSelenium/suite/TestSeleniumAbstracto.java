@@ -27,8 +27,6 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -127,8 +125,6 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          this.getLogger().log(Status.PASS, MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
       }
       this.cerrarNavegador();
-
-      this.logearMemoria("-----------MEMORIA DESPUES-----------");
    }
 
    @AfterTest
@@ -155,8 +151,6 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
       // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
 
-      this.logearMemoria("-----------MEMORIA ANTES-------------");
-
       try {
          System.setProperty("video.folder", VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + contexto);
 
@@ -166,19 +160,6 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          Traza.error(e.getLocalizedMessage());
          throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
       }
-   }
-
-   private void logearMemoria(String mensaje) {
-      int mb = 1024 * 1024;
-      MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
-      TestSeleniumAbstracto.log.info(mensaje);
-      TestSeleniumAbstracto.log.info("Memoria heap inicial=" + memoryBean.getHeapMemoryUsage().getInit() / mb);
-      TestSeleniumAbstracto.log.info("Memoria heap usada=" + memoryBean.getHeapMemoryUsage().getUsed() / mb);
-      TestSeleniumAbstracto.log.info("Memoria heap máxima=" + memoryBean.getHeapMemoryUsage().getMax() / mb);
-      TestSeleniumAbstracto.log.info("Memoria no heap inicial=" + memoryBean.getNonHeapMemoryUsage().getInit() / mb);
-      TestSeleniumAbstracto.log.info("Memoria no heap usada=" + memoryBean.getNonHeapMemoryUsage().getUsed() / mb);
-      TestSeleniumAbstracto.log.info("Memoria no heap máxima=" + memoryBean.getNonHeapMemoryUsage().getMax() / mb);
-      TestSeleniumAbstracto.log.info(mensaje);
    }
 
    private void cerrarNavegador() {
