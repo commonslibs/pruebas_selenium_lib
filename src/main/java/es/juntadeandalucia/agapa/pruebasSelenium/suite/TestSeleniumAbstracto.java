@@ -1,6 +1,7 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.suite;
 
-import com.automation.remarks.testng.UniversalVideoListener;
+import com.automation.remarks.testng.utils.MethodUtils;
+import com.automation.remarks.video.annotations.Video;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
@@ -11,6 +12,7 @@ import com.aventstack.extentreports.reporter.JsonFormatter;
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.listeners.InformeListener;
 import es.juntadeandalucia.agapa.pruebasSelenium.listeners.ResumenListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.listeners.VideoListener;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
@@ -28,9 +30,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -45,7 +49,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -60,7 +63,7 @@ import org.testng.annotations.Listeners;
 /**
  * Test abstracto con funcionalidades comunes a los tests
  */
-@Listeners({ ResumenListener.class, InformeListener.class, UniversalVideoListener.class })
+@Listeners({ ResumenListener.class, InformeListener.class, VideoListener.class })
 @Slf4j
 public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextTests {
 
@@ -101,11 +104,11 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    private String getScreenShot(WebDriver driver, String directorio, String screenshotName) throws IOException {
       String dateName = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date());
       TakesScreenshot ts = (TakesScreenshot) driver;
-      File source = ts.getScreenshotAs(OutputType.FILE);
+      File origen = ts.getScreenshotAs(OutputType.FILE);
       String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
       String rutaRelativa = VariablesGlobalesTest.DIRECTORIO_CAPTURAS + screenshotName + "_" + dateName + ".png";
-      File finalDestination = new File(directorioLargo + rutaRelativa);
-      FileUtils.copyFile(source, finalDestination);
+      File destinoFinal = new File(directorioLargo + rutaRelativa);
+      FileUtils.copyFile(origen, destinoFinal);
       return rutaRelativa;
    }
 
@@ -117,14 +120,22 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          String rutaRelativa = this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
          this.getLogger().addScreenCaptureFromPath(rutaRelativa);
          this.getLogger().fail("Captura de pantalla del test que falló: " + rutaRelativa);
+         this.cerrarNavegador();
+         if (VariablesGlobalesTest.IS_REMOTO) {
+            this.guardarVideo(resultado);
+         }
       }
       else if (resultado.getStatus() == ITestResult.SKIP) {
          this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(resultado.getName() + " - Test saltado", ExtentColor.ORANGE));
+         this.cerrarNavegador();
       }
       else if (resultado.getStatus() == ITestResult.SUCCESS) {
          this.getLogger().log(Status.PASS, MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
+         this.cerrarNavegador();
+         if (VariablesGlobalesTest.IS_REMOTO && VariablesGlobalesTest.IS_VIDEO_GRABAR_TODOS) {
+            this.guardarVideo(resultado);
+         }
       }
-      this.cerrarNavegador();
    }
 
    @AfterTest
@@ -151,21 +162,24 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
       // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
 
-      try {
+      if (VariablesGlobalesTest.IS_REMOTO) {
+         System.setProperty("video.enabled", Boolean.FALSE.toString());
+      }
+      else {
+         System.setProperty("video.enable", Boolean.toString(VariablesGlobalesTest.IS_VIDEO_GRABAR));
+         if (VariablesGlobalesTest.IS_VIDEO_GRABAR_TODOS) {
+            System.setProperty("video.save.mode", "ALL");
+         }
          System.setProperty("video.folder", VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + contexto);
+      }
+      this.iniciar();
 
-         this.iniciar();
-      }
-      catch (Exception e) {
-         Traza.error(e.getLocalizedMessage());
-         throw new PruebaAceptacionExcepcion(e.getLocalizedMessage());
-      }
    }
 
    private void cerrarNavegador() {
       try {
-         WebDriverFactory.getDriver().close();
-         WebDriverFactory.getDriver().quit();
+         this.getDriver().close();
+         this.getDriver().quit();
       }
       catch (Exception e) {
          TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
@@ -173,12 +187,11 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       WebDriverFactory.setDriver(null);
    }
 
-   private void iniciar() throws PruebaAceptacionExcepcion {
+   private void iniciar() {
       Navegador navegador = Navegador.valueOf(VariablesGlobalesTest.getPropiedad(PropiedadesTest.NAVEGADOR));
       WebDriverFactory.setDriver(WebDriverFactory.obtenerInstancia(navegador));
-      ChromeDriver chrome = (ChromeDriver) WebDriverFactory.getDriver();
-      Traza.info(chrome.toString());
-      Assert.assertNotNull(WebDriverFactory.getDriver(), "Error al instanciar el driver de " + navegador);
+      Assert.assertNotNull(this.getDriver(), "Error al instanciar el driver de " + navegador);
+      // WebDriver chrome = getDriver();
       // log.debug(chrome.manage().timeouts().getPageLoadTimeout().toString());
       // log.debug(chrome.manage().timeouts().getImplicitWaitTimeout().toString());
       // log.debug(chrome.manage().timeouts().getScriptTimeout().toString());
@@ -189,9 +202,9 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // Si estamos en modo GRAFICO:
       // Podemos mover ventana al segundo monitor
       // tambien podemos maximizar.
-      if (!WebDriverFactory.IS_HEADLESS) {
+      if (!VariablesGlobalesTest.IS_HEADLESS) {
          // Para ejecutar en segundo monitor
-         if (!WebDriverFactory.IS_VIDEO_ENABLED) {
+         if (!VariablesGlobalesTest.IS_VIDEO_GRABAR) {
             GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
             int posicion = 0;
             if (screens.length > 1) {
@@ -201,7 +214,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
                      posicion = margen;
                   }
                }
-               WebDriverFactory.getDriver().manage().window().setPosition(new Point(posicion, 0));
+               this.getDriver().manage().window().setPosition(new Point(posicion, 0));
             }
          }
 
@@ -221,21 +234,21 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
             maximizar = Boolean.parseBoolean(propiedadMaximizar);
          }
          if (maximizar) {
-            WebDriverFactory.getDriver().manage().window().maximize();
+            this.getDriver().manage().window().maximize();
          }
       }
 
       this.borrarCache();
    }
 
-   private void borrarCache() throws PruebaAceptacionExcepcion {
-      if (WebDriverFactory.IS_MODO_INCOGNITO) {
+   private void borrarCache() {
+      if (VariablesGlobalesTest.IS_MODO_INCOGNITO) {
          // Si el navegador está en modo incognito no es necesario limpiar la cache ya lo gestiona él.
          return;
       }
       // OJO!!!, La siguiente instruccion, si el navegador está en modo incognito cierra la ventana.
-      WebDriverFactory.getDriver().get("chrome://settings/clearBrowserData");
-      WebElement shadowHostL1 = WebDriverFactory.getDriver().findElement(By.cssSelector("settings-ui"));
+      this.getDriver().get("chrome://settings/clearBrowserData");
+      WebElement shadowHostL1 = this.getDriver().findElement(By.cssSelector("settings-ui"));
       WebElement shadowElementL1 = this.getShadowElement(shadowHostL1, "settings-main");
       WebElement shadowElementL2 = this.getShadowElement(shadowElementL1, "settings-basic-page");
       WebElement shadowElementL3 = this.getShadowElement(shadowElementL2, "settings-section > settings-privacy-page");
@@ -243,10 +256,10 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       WebElement shadowElementL5 = this.getShadowElement(shadowElementL4, "#clearBrowsingDataDialog");
       WebElement borrarCache = shadowElementL5.findElement(By.cssSelector("#clearBrowsingDataConfirm"));
 
-      JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
+      JavascriptExecutor js = (JavascriptExecutor) this.getDriver();
       js.executeScript("arguments[0].setAttribute('style', arguments[1]);", borrarCache, "background: yellow; border: 3px solid black;");
       borrarCache.click();
-      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
+      WebDriverWait wait = new WebDriverWait(this.getDriver(),
             Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
             Duration.ofMillis(100));
       wait.until(ExpectedConditions.invisibilityOf(borrarCache));
@@ -268,7 +281,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          msg.setRecipients(Message.RecipientType.TO, destinatario);
          msg.setContent(cuerpo, "text/html; charset=utf-8");
          Transport.send(msg);
-         TestSeleniumAbstracto.log.info("Correo de fallo enviado a " + destinatario);
+         TestSeleniumAbstracto.log.info("Correo enviado a " + destinatario);
       }
       catch (Exception e) {
          TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
@@ -357,14 +370,14 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    protected void refrescarPoliticasChrome() throws PruebaAceptacionExcepcion {
-      WebDriverFactory.getDriver().get("chrome://policy");
+      this.getDriver().get("chrome://policy");
       WebDriverFactory.getWebElementWrapper().click(By.id("reload-policies"));
 
       By mensajesEmergentes = By.id("toast-container");
 
       int tiempo = Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO));
 
-      WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(), Duration.ofSeconds(tiempo), Duration.ofMillis(100));
+      WebDriverWait wait = new WebDriverWait(this.getDriver(), Duration.ofSeconds(tiempo), Duration.ofMillis(100));
       try {
          wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(mensajesEmergentes, 0));
       }
@@ -380,6 +393,34 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          String mensaje = "No se pueden refrescar las políticas de Chrome";
          TestSeleniumAbstracto.log.error(mensaje);
          throw e;
+      }
+   }
+
+   private void guardarVideo(ITestResult resultado) {
+      // Solo se guarda si IS_REMOTO. Si no IS_REMOTO se guardará con video-recorder-testng.
+      Video anotacionVideo = MethodUtils.getVideoAnnotation(resultado);
+      if (VariablesGlobalesTest.IS_REMOTO && VariablesGlobalesTest.IS_VIDEO_GRABAR && anotacionVideo != null) {
+         String directorio = resultado.getTestContext().getName();
+         File origen = new File(VariablesGlobalesTest.NOMBRE_VIDEO);
+         String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
+         File destino = new File(directorioLargo + anotacionVideo.name() + ".mp4");
+         File video = null;
+         try {
+            destino.delete();
+            Iterator<File> it = FileUtils.iterateFiles(origen, new String[] { "mp4" }, false);
+            while (it.hasNext()) {
+               video = it.next();
+               FileUtils.moveFile(video, destino, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.COPY_ATTRIBUTES);
+               log.info("Mover video de " + video.getAbsolutePath() + " a " + destino.getAbsolutePath());
+            }
+         }
+         catch (IOException e) {
+            if (video != null) {
+               log.warn("No se puede mover el video (" + video.getAbsolutePath() + ") a su ubicación definitiva ("
+                     + destino.getAbsolutePath() + ")");
+            }
+            log.error(e.getLocalizedMessage());
+         }
       }
    }
 

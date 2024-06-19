@@ -16,11 +16,27 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class VariablesGlobalesTest {
 
-   public static final String DIRECTORIO_TARGET_SUREFIRE_REPORTS =
-         System.getProperty("user.dir") + File.separator + "target" + File.separator + "surefire-reports" + File.separator;
-   public static final String DIRECTORIO_CAPTURAS                = "capturas" + File.separator;
+   public static final boolean IS_REMOTO                          =
+         Boolean.parseBoolean(System.getProperty("remoto", Boolean.FALSE.toString()).toLowerCase());
+   public static final boolean IS_VIDEO_GRABAR                    =
+         Boolean.parseBoolean(System.getProperty("video.grabar", Boolean.FALSE.toString()).toLowerCase());
+   public static final boolean IS_VIDEO_GRABAR_TODOS              =
+         Boolean.parseBoolean(System.getProperty("video.grabar.todos", Boolean.FALSE.toString()).toLowerCase());
+   public static final boolean IS_MODO_INCOGNITO                  =
+         Boolean.parseBoolean(System.getProperty("modoIncognito", Boolean.FALSE.toString()).toLowerCase());
+   public static final boolean IS_HEADLESS                        =
+         Boolean.parseBoolean(System.getProperty("java.awt.headless", Boolean.FALSE.toString()).toLowerCase());
 
-   private static Properties  propiedades                        = null;
+   public static final String  HTTP_REMOTO                        = "http://localhost:4444";
+   public static final String  NOMBRE_VIDEO                       = System.getProperty("user.dir");                        // +
+                                                                                                                           // File.separator
+                                                                                                                           // + "*.mp4";//
+                                                                                                                           // "_video.mp4";
+   public static final String  DIRECTORIO_TARGET_SUREFIRE_REPORTS =
+         System.getProperty("user.dir") + File.separator + "target" + File.separator + "surefire-reports" + File.separator;
+   public static final String  DIRECTORIO_CAPTURAS                = "capturas" + File.separator;
+
+   private static Properties   propiedades                        = null;
 
    /**
     * Contiene el nombre de la variable del property por el que busca

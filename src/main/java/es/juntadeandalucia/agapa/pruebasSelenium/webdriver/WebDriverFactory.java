@@ -1,11 +1,18 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.webdriver;
 
+import com.aventstack.extentreports.ExtentTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WebElementWrapper;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.stream.Collectors;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -15,14 +22,6 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import com.aventstack.extentreports.ExtentTest;
-
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WebElementWrapper;
-import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -46,42 +45,22 @@ public class WebDriverFactory {
       CHROME, FIREFOX, MSEDGE
    }
 
-   protected static final String TX_FALSE                = "false";
-
-   public static final boolean   IS_REMOTE_SELENIUM_GRID =
-         Boolean.parseBoolean(System.getProperty("remoteSG", WebDriverFactory.TX_FALSE).toLowerCase());
-
-   public static final boolean   IS_HEADLESS             =
-         Boolean.parseBoolean(System.getProperty("java.awt.headless", WebDriverFactory.TX_FALSE).toLowerCase());
-
-   public static final boolean   IS_VIDEO_ENABLED        =
-         Boolean.parseBoolean(System.getProperty("video.enabled", WebDriverFactory.TX_FALSE).toLowerCase());
-
-   public static final boolean   IS_MODO_INCOGNITO       =
-         Boolean.parseBoolean(System.getProperty("modoIncognito", WebDriverFactory.TX_FALSE).toLowerCase());
-
    /**
     * No se implementa como singleton debido a una posible ejecución en paralelo.
     *
     * @param navegador
-    *           navegador web que se usara para la prueba
+    *           navegador web que se usara para la prueba nombreVideo Nombre que tendrá el vídeo guardado, si se ha ejecutado con Selenium
+    *           Hub
     * @return wd el webdriver
     */
    public static WebDriver obtenerInstancia(Navegador navegador) {
       WebDriverFactory.log.info("Obteniendo una nueva instancia del navegador " + navegador.toString());
-      WebDriver wd = null;
-      switch (navegador) {
-         case CHROME:
-            wd = WebDriverFactory.chrome();
-            break;
-         case FIREFOX:
-            wd = WebDriverFactory.firefox();
-            break;
-         case MSEDGE:
-            wd = WebDriverFactory.edge();
-            break;
-      }
-      WebDriverFactory.log.info("Instancia obtenida: " + wd.toString());
+      WebDriver wd = switch (navegador) {
+         case CHROME -> WebDriverFactory.chrome();
+         case FIREFOX -> WebDriverFactory.firefox();
+         case MSEDGE -> WebDriverFactory.edge();
+      };
+      Traza.info("Instancia obtenida: " + wd.toString());
       return wd;
    }
 
@@ -97,9 +76,6 @@ public class WebDriverFactory {
    // https://source.chromium.org/chromium/chromium/src/+/main:chrome/common/pref_names.h
    // https://peter.sh/experiments/chromium-command-line-switches/
    protected static WebDriver chrome() {
-      WebDriverManager webDriver = WebDriverManager.chromedriver();
-      WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
-      webDriverConProxy.setup();
 
       System.setProperty("webdriver.chrome.whitelistedIps", "");
 
@@ -162,12 +138,12 @@ public class WebDriverFactory {
       options.addArguments("--disable-sync");
 
       // Para lanzar en modo incognito
-      if (WebDriverFactory.IS_MODO_INCOGNITO) {
+      if (VariablesGlobalesTest.IS_MODO_INCOGNITO) {
          options.addArguments("--incognito");
       }
 
       // Parámetro para no abrir el modo gráfico del navegador.
-      if (WebDriverFactory.IS_HEADLESS) {
+      if (VariablesGlobalesTest.IS_HEADLESS) {
          options.addArguments("--headless=new");
       }
       else {
@@ -196,14 +172,19 @@ public class WebDriverFactory {
       options.setExperimentalOption("prefs", prefs);
 
       // Para lanzar en modo incognito
-      if (WebDriverFactory.IS_REMOTE_SELENIUM_GRID) {
+      if (VariablesGlobalesTest.IS_REMOTO) {
          DesiredCapabilities capabilities = new DesiredCapabilities();
+
+         capabilities.setCapability("se:recordVideo", Boolean.TRUE);
 
          capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 
-         return webDriver.capabilities(capabilities).create();
+         return WebDriverManager.chromedriver().capabilities(capabilities).remoteAddress(VariablesGlobalesTest.HTTP_REMOTO).create();
       }
       else {
+         WebDriverManager webDriver = WebDriverManager.chromedriver();
+         WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
+         webDriverConProxy.setup();
          return new ChromeDriver(options);
       }
    }
@@ -216,16 +197,16 @@ public class WebDriverFactory {
       FirefoxOptions options = new FirefoxOptions();
 
       // Parámetro para no abrir el modo gráfico del navegador.
-      if (WebDriverFactory.IS_HEADLESS) {
+      if (VariablesGlobalesTest.IS_HEADLESS) {
          options.addArguments("headless");
       }
 
       // Para lanzar en modo incognito
-      if (WebDriverFactory.IS_MODO_INCOGNITO) {
+      if (VariablesGlobalesTest.IS_MODO_INCOGNITO) {
          options.addArguments("-private");
       }
 
-      if (WebDriverFactory.IS_REMOTE_SELENIUM_GRID) {
+      if (VariablesGlobalesTest.IS_REMOTO) {
          DesiredCapabilities capabilities = new DesiredCapabilities();
 
          capabilities.setCapability(
@@ -247,16 +228,16 @@ public class WebDriverFactory {
       EdgeOptions options = new EdgeOptions();
 
       // Para lanzar en modo incognito
-      if (WebDriverFactory.IS_MODO_INCOGNITO) {
+      if (VariablesGlobalesTest.IS_MODO_INCOGNITO) {
          options.addArguments("incognito");
       }
 
       // Parámetro para no abrir el modo gráfico del navegador.
-      if (WebDriverFactory.IS_HEADLESS) {
+      if (VariablesGlobalesTest.IS_HEADLESS) {
          options.addArguments("headless");
       }
 
-      if (WebDriverFactory.IS_REMOTE_SELENIUM_GRID) {
+      if (VariablesGlobalesTest.IS_REMOTO) {
          DesiredCapabilities capabilities = new DesiredCapabilities();
 
          capabilities.setCapability(EdgeOptions.CAPABILITY, options);
@@ -270,8 +251,7 @@ public class WebDriverFactory {
 
    protected static WebDriverManager asignarProxy(WebDriverManager webDriver) {
       String proxy = null;
-      try (FileReader fileReader = new FileReader("proxy.txt");
-            BufferedReader reader = new BufferedReader(fileReader)) {
+      try (FileReader fileReader = new FileReader("proxy.txt"); BufferedReader reader = new BufferedReader(fileReader)) {
          proxy = reader.lines().collect(Collectors.joining(System.lineSeparator()));
       }
       catch (Exception e) {
