@@ -30,6 +30,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -394,6 +397,37 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          TestSeleniumAbstracto.log.error(mensaje);
          throw e;
       }
+   }
+
+   public static String formatearNombreFichero(String ruta) {
+      TestSeleniumAbstracto.log.info("Formateando el nombre");
+      if (StringUtils.isBlank(ruta)) {
+         return "";
+      }
+      ruta = ruta.replace(":", ""); // .replace(" ", "_");
+
+      // Si es muy largo, lo recortamos
+      if (ruta.length() > 180) {
+         ruta = ruta.substring(0, 180 - 1);
+      }
+
+      // Si termina con punto, lo quitamos!!
+      if (ruta.endsWith(".")) {
+         ruta = ruta.substring(0, ruta.length() - 1);
+      }
+
+      return ruta;
+   }
+
+   public static boolean validarFichero(String ruta) {
+      try {
+         Path path = Paths.get(ruta);
+         return (Files.exists(path));
+      }
+      catch (Exception e) {
+         return false;
+      }
+
    }
 
    private void guardarVideo(ITestResult resultado) {
