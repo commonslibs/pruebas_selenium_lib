@@ -425,7 +425,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    public static String formatearNombreFichero(String ruta) {
-      TestSeleniumAbstracto.log.info("Formateando el nombre");
+      TestSeleniumAbstracto.log.info("Formateando el nombre " + ruta);
       if (StringUtils.isBlank(ruta)) {
          return "";
       }
