@@ -34,44 +34,44 @@ public class ResumenListener implements ITestListener {
    }
 
    @Override
-   public void onStart(ITestContext arg0) {
-      this.escribirTraza("Empiezan tests: " + arg0.getStartDate().toString());
+   public void onStart(ITestContext contexto) {
+      this.escribirTraza("Empiezan tests: " + contexto.getStartDate().toString());
    }
 
    @Override
-   public void onTestFailure(ITestResult arg0) {
-      this.escribirTraza("Test: " + arg0.getMethod().getDescription());
-      this.escribirTraza("Clase: " + arg0.getMethod().getInstance().getClass().getSimpleName());
-      this.escribirTraza("Método: " + arg0.getMethod().getMethodName());
+   public void onTestFailure(ITestResult resultado) {
+      this.escribirTraza("Test: " + resultado.getMethod().getDescription());
+      this.escribirTraza("Clase: " + resultado.getMethod().getInstance().getClass().getSimpleName());
+      this.escribirTraza("Método: " + resultado.getMethod().getMethodName());
    }
 
    @Override
-   public void onTestSkipped(ITestResult arg0) {
-      this.escribirTraza("Test saltado: " + this.nombreCasoYCiclo(arg0));
+   public void onTestSkipped(ITestResult resultado) {
+      this.escribirTraza("Test saltado: " + this.nombreCasoYCiclo(resultado));
    }
 
    @Override
-   public void onTestStart(ITestResult arg0) {
-      this.escribirTraza("Iniciando test: " + this.nombreCasoYCiclo(arg0));
+   public void onTestStart(ITestResult resultado) {
+      this.escribirTraza("Iniciando test: " + this.nombreCasoYCiclo(resultado));
    }
 
    @Override
-   public void onTestSuccess(ITestResult arg0) {
-      double tiempo = ((arg0.getEndMillis() - arg0.getStartMillis())) / 1000;
+   public void onTestSuccess(ITestResult resultado) {
+      double tiempo = ((resultado.getEndMillis() - resultado.getStartMillis())) / 1000D;
       this.escribirTraza(
-            "Test finalizado: " + this.nombreCasoYCiclo(arg0) + " -> Tiempo empleado: " + String.format("%.2f", tiempo) + " segundos");
+            "Test finalizado: " + this.nombreCasoYCiclo(resultado) + " -> Tiempo empleado: " + String.format("%.2f", tiempo) + " segundos");
    }
 
-   protected String nombreCasoYCiclo(ITestResult arg0) {
-      return arg0.getTestClass().getRealClass().getSimpleName() + "." + arg0.getName();
+   protected String nombreCasoYCiclo(ITestResult resultado) {
+      return resultado.getTestClass().getRealClass().getSimpleName() + "." + resultado.getName();
    }
 
    /**
-    * Escribe en consola y en la seccion ReporterOutput del informe html
+    * Escribe en consola y en la seccion ReporterOutput del informe HTML
     */
-   private void escribirTraza(String msg) {
-      log.info(msg);
-      Reporter.log(msg);
+   private void escribirTraza(String mensaje) {
+      log.info(mensaje);
+      Reporter.log(mensaje);
    }
 
 }

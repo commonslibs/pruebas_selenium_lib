@@ -13,6 +13,7 @@ import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExc
 import es.juntadeandalucia.agapa.pruebasSelenium.listeners.InformeListener;
 import es.juntadeandalucia.agapa.pruebasSelenium.listeners.ResumenListener;
 import es.juntadeandalucia.agapa.pruebasSelenium.listeners.VideoListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.AutoSeleccionarCertificadoEnLogin;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
@@ -30,6 +31,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,6 +63,7 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
 
 
 /**
@@ -156,10 +159,9 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
 
    /**
     * Metodo que se debe ejecutar antes de cualquier test.
-    *
-    * @throws PruebaAceptacionExcepcion
     */
-   protected void beforeMethod(String contexto, String nombreTest) throws PruebaAceptacionExcepcion {
+   protected void beforeMethod(ITestContext contexto, Method metodo, String filtroAutoseleccionCertificado)
+         throws PruebaAceptacionExcepcion {
       // Level nivelLog = Level.INFO;
       //
       // Logger logger = Logger.getLogger("");
@@ -173,6 +175,23 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
       // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
 
+      String nombreTest = metodo.getAnnotation(Test.class).description();
+      WebDriverFactory.setLogger(this.extent.createTest(nombreTest));
+      this.configurarVideo(contexto.getName());
+      AutoSeleccionarCertificadoEnLogin[] anotaciones = metodo.getAnnotationsByType(AutoSeleccionarCertificadoEnLogin.class);
+      boolean postConfiguracionCertificado = false;
+      if (anotaciones.length > 0) {
+         postConfiguracionCertificado = this.configurarCertificado(filtroAutoseleccionCertificado, anotaciones[0].value());
+      }
+
+      this.iniciar();
+
+      if (postConfiguracionCertificado) {
+         this.refrescarPoliticasChrome();
+      }
+   }
+
+   private void configurarVideo(String contexto) {
       if (VariablesGlobalesTest.IS_DOCKER) {
          System.setProperty("video.enabled", Boolean.FALSE.toString());
       }
@@ -183,8 +202,6 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          }
          System.setProperty("video.folder", VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + contexto);
       }
-      this.iniciar();
-
    }
 
    private void cerrarNavegador() {
@@ -445,7 +462,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          String directorio = resultado.getTestContext().getName();
          File origen = new File(System.getProperty("user.dir"));
          String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
-         File destino = new File(directorioLargo + anotacionVideo.name() + ".mp4");
+         File destino = new File(
+               directorioLargo + anotacionVideo.name() + "_" + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4");
          File video = null;
          try {
             destino.delete();
