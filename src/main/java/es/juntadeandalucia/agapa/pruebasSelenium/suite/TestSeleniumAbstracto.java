@@ -124,8 +124,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          this.getLogger().addScreenCaptureFromPath(rutaRelativa);
          this.getLogger().fail("Captura de pantalla del test que falló: " + rutaRelativa);
          this.cerrarNavegador();
-         if (VariablesGlobalesTest.IS_REMOTO) {
-            this.guardarVideo(resultado);
+         if (VariablesGlobalesTest.IS_DOCKER && VariablesGlobalesTest.IS_VIDEO_GRABAR) {
+            this.moverVideo(resultado);
          }
       }
       else if (resultado.getStatus() == ITestResult.SKIP) {
@@ -135,10 +135,18 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       else if (resultado.getStatus() == ITestResult.SUCCESS) {
          this.getLogger().log(Status.PASS, MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
          this.cerrarNavegador();
-         if (VariablesGlobalesTest.IS_REMOTO && VariablesGlobalesTest.IS_VIDEO_GRABAR_TODOS) {
-            this.guardarVideo(resultado);
+         if (VariablesGlobalesTest.IS_DOCKER && VariablesGlobalesTest.IS_VIDEO_GRABAR && VariablesGlobalesTest.IS_VIDEO_GRABAR_TODOS) {
+            this.moverVideo(resultado);
          }
       }
+      // RAULM _ CASI CASI
+      // // HTML para el video
+      // String videoPath = "./raul.avi";
+      // String videoHtml = "<span class='badge black-text " + String.valueOf(ExtentColor.BLACK).toLowerCase() + "'>"
+      // + "<br>Video de la prueba:<br>" + "<video width='600' controls>" + "<source src='" + videoPath
+      // + "' type='video/mp4'>" + "Tu navegador no soporta la reproducción de video." + "</video><br>"
+      // + "</span>";
+      // this.getLogger().log(Status.INFO, videoHtml);
    }
 
    @AfterTest
@@ -165,7 +173,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       // Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
       // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
 
-      if (VariablesGlobalesTest.IS_REMOTO) {
+      if (VariablesGlobalesTest.IS_DOCKER) {
          System.setProperty("video.enabled", Boolean.FALSE.toString());
       }
       else {
@@ -430,12 +438,12 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
 
    }
 
-   private void guardarVideo(ITestResult resultado) {
-      // Solo se guarda si IS_REMOTO. Si no IS_REMOTO se guardará con video-recorder-testng.
+   private void moverVideo(ITestResult resultado) {
+      // Solo se guarda si IS_DOCKER. Si no IS_DOCKER se guardará con video-recorder-testng.
       Video anotacionVideo = MethodUtils.getVideoAnnotation(resultado);
-      if (VariablesGlobalesTest.IS_REMOTO && VariablesGlobalesTest.IS_VIDEO_GRABAR && anotacionVideo != null) {
+      if (anotacionVideo != null) {
          String directorio = resultado.getTestContext().getName();
-         File origen = new File(VariablesGlobalesTest.NOMBRE_VIDEO);
+         File origen = new File(System.getProperty("user.dir"));
          String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
          File destino = new File(directorioLargo + anotacionVideo.name() + ".mp4");
          File video = null;
@@ -444,7 +452,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
             Iterator<File> it = FileUtils.iterateFiles(origen, new String[] { "mp4" }, false);
             while (it.hasNext()) {
                video = it.next();
-               FileUtils.moveFile(video, destino, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.COPY_ATTRIBUTES);
+               FileUtils.moveFile(video, destino, StandardCopyOption.ATOMIC_MOVE);
                log.info("Mover video de " + video.getAbsolutePath() + " a " + destino.getAbsolutePath());
             }
          }

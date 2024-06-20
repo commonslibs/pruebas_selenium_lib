@@ -9,21 +9,21 @@ public class VideoListener extends UniversalVideoListener {
 
    @Override
    public void onTestStart(ITestResult result) {
-      if (!VariablesGlobalesTest.IS_REMOTO) {
+      if (!VariablesGlobalesTest.IS_DOCKER) {
          super.onTestStart(result);
       }
    }
 
    @Override
    public void onTestSuccess(ITestResult result) {
-      if (!VariablesGlobalesTest.IS_REMOTO) {
+      if (!VariablesGlobalesTest.IS_DOCKER) {
          super.onTestSuccess(result);
       }
    }
 
    @Override
    public void onTestFailure(ITestResult result) {
-      if (!VariablesGlobalesTest.IS_REMOTO) {
+      if (!VariablesGlobalesTest.IS_DOCKER) {
          this.onTestSuccess(result);
       }
    }

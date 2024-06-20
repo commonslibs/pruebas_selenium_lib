@@ -172,14 +172,14 @@ public class WebDriverFactory {
       options.setExperimentalOption("prefs", prefs);
 
       // Para lanzar en modo incognito
-      if (VariablesGlobalesTest.IS_REMOTO) {
+      if (VariablesGlobalesTest.IS_DOCKER) {
          DesiredCapabilities capabilities = new DesiredCapabilities();
 
          capabilities.setCapability("se:recordVideo", Boolean.TRUE);
 
          capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 
-         return WebDriverManager.chromedriver().capabilities(capabilities).remoteAddress(VariablesGlobalesTest.HTTP_REMOTO).create();
+         return WebDriverManager.chromedriver().capabilities(capabilities).remoteAddress(VariablesGlobalesTest.HTTP_DOCKER).create();
       }
       else {
          WebDriverManager webDriver = WebDriverManager.chromedriver();
@@ -206,7 +206,7 @@ public class WebDriverFactory {
          options.addArguments("-private");
       }
 
-      if (VariablesGlobalesTest.IS_REMOTO) {
+      if (VariablesGlobalesTest.IS_DOCKER) {
          DesiredCapabilities capabilities = new DesiredCapabilities();
 
          capabilities.setCapability(
@@ -237,7 +237,7 @@ public class WebDriverFactory {
          options.addArguments("headless");
       }
 
-      if (VariablesGlobalesTest.IS_REMOTO) {
+      if (VariablesGlobalesTest.IS_DOCKER) {
          DesiredCapabilities capabilities = new DesiredCapabilities();
 
          capabilities.setCapability(EdgeOptions.CAPABILITY, options);
