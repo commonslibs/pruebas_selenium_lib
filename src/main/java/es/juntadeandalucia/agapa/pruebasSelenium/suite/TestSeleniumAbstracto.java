@@ -235,6 +235,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
             System.setProperty("video.save.mode", "ALL");
          }
          System.setProperty("video.folder", VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + contexto);
+         System.setProperty("video.frame.rate", "16");
+         // System.setProperty("ffmpeg.pixelFormat", "libx264");
       }
    }
 
