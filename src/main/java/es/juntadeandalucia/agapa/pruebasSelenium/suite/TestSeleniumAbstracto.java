@@ -1,30 +1,5 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.suite;
 
-import com.automation.remarks.testng.utils.MethodUtils;
-import com.automation.remarks.video.annotations.Video;
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.markuputils.ExtentColor;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.aventstack.extentreports.reporter.JsonFormatter;
-import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
-import es.juntadeandalucia.agapa.pruebasSelenium.listeners.InformeListener;
-import es.juntadeandalucia.agapa.pruebasSelenium.listeners.ResumenListener;
-import es.juntadeandalucia.agapa.pruebasSelenium.listeners.VideoListener;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.AutoSeleccionarCertificadoEnLogin;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WindowsRegistry;
-import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
-import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
-import jakarta.mail.Message;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -41,7 +16,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
-import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -64,6 +39,34 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+
+import com.automation.remarks.testng.utils.MethodUtils;
+import com.automation.remarks.video.annotations.Video;
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.markuputils.ExtentColor;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.JsonFormatter;
+
+import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
+import es.juntadeandalucia.agapa.pruebasSelenium.listeners.InformeListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.listeners.ResumenListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.listeners.VideoListener;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.AutoSeleccionarCertificadoEnLogin;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.Traza;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WindowsRegistry;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory.Navegador;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -98,7 +101,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    protected void beforeTest(String titulo, String nombre, String fichero) throws PruebaAceptacionExcepcion {
-      String ficheroLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + File.separator + fichero + "-Extendido";
+      String ficheroLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + fichero + File.separator
+            + fichero + "-Extendido";
       this.spark = new ExtentSparkReporter(ficheroLargo + ".html");
       JsonFormatter json = new JsonFormatter(ficheroLargo + ".json");
       this.extent = new ExtentReports();
@@ -121,9 +125,12 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    @AfterMethod
    public void getResult(ITestResult resultado) throws Exception {
       if (resultado.getStatus() == ITestResult.FAILURE) {
-         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
-         this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getThrowable() + " - Test falló", ExtentColor.RED));
-         String rutaRelativa = this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
+         this.getLogger().log(Status.FAIL,
+               MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
+         this.getLogger().log(Status.FAIL,
+               MarkupHelper.createLabel(resultado.getThrowable() + " - Test falló", ExtentColor.RED));
+         String rutaRelativa =
+               this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
          this.getLogger().addScreenCaptureFromPath(rutaRelativa);
          this.getLogger().fail("Captura de pantalla del test que falló: " + rutaRelativa);
          this.cerrarNavegador();
@@ -132,23 +139,29 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          }
       }
       else if (resultado.getStatus() == ITestResult.SKIP) {
-         this.getLogger().log(Status.SKIP, MarkupHelper.createLabel(resultado.getName() + " - Test saltado", ExtentColor.ORANGE));
+         this.getLogger().log(Status.SKIP,
+               MarkupHelper.createLabel(resultado.getName() + " - Test saltado", ExtentColor.ORANGE));
          this.cerrarNavegador();
       }
       else if (resultado.getStatus() == ITestResult.SUCCESS) {
-         this.getLogger().log(Status.PASS, MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
+         this.getLogger().log(Status.PASS,
+               MarkupHelper.createLabel(resultado.getName() + " Test CORRECTO", ExtentColor.GREEN));
          this.cerrarNavegador();
-         if (VariablesGlobalesTest.IS_DOCKER && VariablesGlobalesTest.IS_VIDEO_GRABAR && VariablesGlobalesTest.IS_VIDEO_GRABAR_TODOS) {
+         if (VariablesGlobalesTest.IS_DOCKER && VariablesGlobalesTest.IS_VIDEO_GRABAR
+               && VariablesGlobalesTest.IS_VIDEO_GRABAR_TODOS) {
             this.moverVideo(resultado);
          }
       }
+
       // RAULM _ CASI CASI
-      // // HTML para el video
+      // type='video/webm'
+      // NO - Códec: TechSmith Camtasia Screen Capture (tscc)
+      // SI - Códec: Google/On2's VP8 Video (VP80)
+      // SI - Códec: H264 - MPEG-4 AVC (part 10) (avc1)
+      // *** HTML para el video ***
       // String videoPath = "./raul.avi";
-      // String videoHtml = "<span class='badge black-text " + String.valueOf(ExtentColor.BLACK).toLowerCase() + "'>"
-      // + "<br>Video de la prueba:<br>" + "<video width='600' controls>" + "<source src='" + videoPath
-      // + "' type='video/mp4'>" + "Tu navegador no soporta la reproducción de video." + "</video><br>"
-      // + "</span>";
+      // String videoHtml = "<video width='600' controls>" + "<source src='" + videoPath
+      // + "' type='video/webm'>" + "Su navegador no soporta la reproducción de video." + "</video>"
       // this.getLogger().log(Status.INFO, videoHtml);
    }
 
@@ -178,10 +191,12 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       String nombreTest = metodo.getAnnotation(Test.class).description();
       WebDriverFactory.setLogger(this.extent.createTest(nombreTest));
       this.configurarVideo(contexto.getName());
-      AutoSeleccionarCertificadoEnLogin[] anotaciones = metodo.getAnnotationsByType(AutoSeleccionarCertificadoEnLogin.class);
+      AutoSeleccionarCertificadoEnLogin[] anotaciones =
+            metodo.getAnnotationsByType(AutoSeleccionarCertificadoEnLogin.class);
       boolean postConfiguracionCertificado = false;
       if (anotaciones.length > 0) {
-         postConfiguracionCertificado = this.configurarCertificado(filtroAutoseleccionCertificado, anotaciones[0].value());
+         postConfiguracionCertificado =
+               this.configurarCertificado(filtroAutoseleccionCertificado, anotaciones[0].value());
       }
 
       this.iniciar();
@@ -189,6 +204,25 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       if (postConfiguracionCertificado) {
          this.refrescarPoliticasChrome();
       }
+   }
+
+   protected void beforeMethod(String nombreTest) throws PruebaAceptacionExcepcion {
+      // Level nivelLog = Level.INFO;
+      //
+      // Logger logger = Logger.getLogger("");
+      // logger.setLevel(nivelLog);
+      // Arrays.stream(logger.getHandlers()).forEach(handler -> {
+      // // handler.setLevel(nivelLog);
+      // // handler.setFormatter("%(asctime)s :%(levelname)s : %(name)s :%(message)s");
+      // });
+      // Logger.getLogger(HttpCommandExecutor.class.getName()).setLevel(Level.FINE);
+      // Logger.getLogger(DriverCommandExecutor.class.getName()).setLevel(Level.FINE);
+      // Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
+      // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
+
+      WebDriverFactory.setLogger(this.extent.createTest(nombreTest));
+      this.configurarVideo(nombreTest);
+      this.iniciar();
    }
 
    private void configurarVideo(String contexto) {
@@ -285,10 +319,12 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       WebElement borrarCache = shadowElementL5.findElement(By.cssSelector("#clearBrowsingDataConfirm"));
 
       JavascriptExecutor js = (JavascriptExecutor) this.getDriver();
-      js.executeScript("arguments[0].setAttribute('style', arguments[1]);", borrarCache, "background: yellow; border: 3px solid black;");
+      js.executeScript("arguments[0].setAttribute('style', arguments[1]);", borrarCache,
+            "background: yellow; border: 3px solid black;");
       borrarCache.click();
       WebDriverWait wait = new WebDriverWait(this.getDriver(),
-            Duration.ofSeconds(Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
+            Duration.ofSeconds(
+                  Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))),
             Duration.ofMillis(100));
       wait.until(ExpectedConditions.invisibilityOf(borrarCache));
    }
@@ -354,8 +390,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          File json = new File("/etc/opt/chrome/policies/managed/auto_seleccionar_certificado.json");
          FileUtils.touch(json);
          writer = new FileWriter(json);
-         String contenido = "{\"AutoSelectCertificateForUrls\": [\"{\\\"pattern\\\":\\\"" + patron + "\\\",\\\"filter\\\":"
-               + filtro.replace("\"", "\\\"") + "}\"]}";
+         String contenido = "{\"AutoSelectCertificateForUrls\": [\"{\\\"pattern\\\":\\\"" + patron
+               + "\\\",\\\"filter\\\":" + filtro.replace("\"", "\\\"") + "}\"]}";
          TestSeleniumAbstracto.log.info(contenido);
          writer.write(contenido);
       }
@@ -377,8 +413,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    /**
-    * Solo funcionará si se ha logado como administrador. Desde Eclipse probablemente no funcionará porque no es habitual iniciar Eclipse
-    * como administrador.
+    * Solo funcionará si se ha logado como administrador. Desde Eclipse probablemente no funcionará porque no es
+    * habitual iniciar Eclipse como administrador.
     */
    private boolean configurarCertificadoWindowsChrome(String patron, String filtro) throws PruebaAceptacionExcepcion {
       boolean exito = false;
@@ -386,9 +422,11 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       String valueName = "1";
       String value = "{\"pattern\":\"" + patron + "\",\"filter\":" + filtro + "}";
       try {
-         TestSeleniumAbstracto.log.info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
+         TestSeleniumAbstracto.log
+               .info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
          WindowsRegistry.writeStringValue(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName, value);
-         TestSeleniumAbstracto.log.info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
+         TestSeleniumAbstracto.log
+               .info("key=" + WindowsRegistry.readString(WindowsRegistry.HKEY_LOCAL_MACHINE, key, valueName));
          exito = true;
       }
       catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
@@ -461,9 +499,10 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       if (anotacionVideo != null) {
          String directorio = resultado.getTestContext().getName();
          File origen = new File(System.getProperty("user.dir"));
-         String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
-         File destino = new File(
-               directorioLargo + anotacionVideo.name() + "_" + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4");
+         String directorioLargo =
+               VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
+         File destino = new File(directorioLargo + anotacionVideo.name() + "_"
+               + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4");
          File video = null;
          try {
             destino.delete();
@@ -471,15 +510,16 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
             while (it.hasNext()) {
                video = it.next();
                FileUtils.moveFile(video, destino, StandardCopyOption.ATOMIC_MOVE);
-               log.info("Mover video de " + video.getAbsolutePath() + " a " + destino.getAbsolutePath());
+               TestSeleniumAbstracto.log
+                     .info("Mover video de " + video.getAbsolutePath() + " a " + destino.getAbsolutePath());
             }
          }
          catch (IOException e) {
             if (video != null) {
-               log.warn("No se puede mover el video (" + video.getAbsolutePath() + ") a su ubicación definitiva ("
-                     + destino.getAbsolutePath() + ")");
+               TestSeleniumAbstracto.log.warn("No se puede mover el video (" + video.getAbsolutePath()
+                     + ") a su ubicación definitiva (" + destino.getAbsolutePath() + ")");
             }
-            log.error(e.getLocalizedMessage());
+            TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
          }
       }
    }
