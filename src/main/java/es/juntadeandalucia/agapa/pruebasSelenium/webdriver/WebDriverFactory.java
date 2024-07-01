@@ -178,7 +178,7 @@ public class WebDriverFactory {
          capabilities.setCapability("se:recordVideo", Boolean.TRUE);
 
          capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-
+         log.info("Conectando al node grid de Selenium en Docker con la URL=" + VariablesGlobalesTest.HTTP_DOCKER);
          return WebDriverManager.chromedriver().capabilities(capabilities).remoteAddress(VariablesGlobalesTest.HTTP_DOCKER).create();
       }
       else {

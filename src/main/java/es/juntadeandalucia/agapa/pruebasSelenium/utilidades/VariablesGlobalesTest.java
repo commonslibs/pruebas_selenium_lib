@@ -1,13 +1,11 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
+import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
-
-import org.apache.commons.lang3.StringUtils;
-
-import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -36,10 +34,10 @@ public class VariablesGlobalesTest {
    public static final boolean IS_NOMBRES_POR_TEST                =
          Boolean.parseBoolean(System.getProperty("nombresPorTest", Boolean.FALSE.toString()).toLowerCase());
 
-   public static final String  HTTP_DOCKER                        = "http://selenium-hub:4444";
+   public static final String  HTTP_DOCKER                        = System.getProperty("nodeGridUrl", "http://selenium-hub:4444");
 
-   public static final String  DIRECTORIO_TARGET_SUREFIRE_REPORTS = System.getProperty("user.dir") + File.separator
-         + "target" + File.separator + "surefire-reports" + File.separator;
+   public static final String  DIRECTORIO_TARGET_SUREFIRE_REPORTS =
+         System.getProperty("user.dir") + File.separator + "target" + File.separator + "surefire-reports" + File.separator;
 
    public static final String  DIRECTORIO_CAPTURAS                = "capturas" + File.separator;
 
@@ -71,15 +69,13 @@ public class VariablesGlobalesTest {
          }
 
          if (entorno != null && !"".equals(entorno)) {
-            VariablesGlobalesTest.propiedades =
-                  VariablesGlobalesTest.getFilePathToSaveStatic("application-" + entorno + ".properties");
+            VariablesGlobalesTest.propiedades = VariablesGlobalesTest.getFilePathToSaveStatic("application-" + entorno + ".properties");
          }
       }
 
       String nombrePropiedad = propiedad.toString();
       if (!VariablesGlobalesTest.propiedades.containsKey(nombrePropiedad)) {
-         throw new IllegalArgumentException(
-               "Parámetro " + propiedad + " no se ha encontrado en el fichero de configuración");
+         throw new IllegalArgumentException("Parámetro " + propiedad + " no se ha encontrado en el fichero de configuración");
       }
 
       if (StringUtils.isBlank(VariablesGlobalesTest.propiedades.get(nombrePropiedad).toString())) {
@@ -95,16 +91,14 @@ public class VariablesGlobalesTest {
     * @return Valor de las propiedades del property
     * @throws PruebaAceptacionExcepcion
     */
-   public static String getPropiedadOpcional(PropiedadGenerica propiedad, String valorPorDefecto)
-         throws IllegalArgumentException {
+   public static String getPropiedadOpcional(PropiedadGenerica propiedad, String valorPorDefecto) throws IllegalArgumentException {
       String valorPropiedad = null;
       try {
          valorPropiedad = VariablesGlobalesTest.getPropiedad(propiedad);
       }
       catch (IllegalArgumentException e) {
          valorPropiedad = valorPorDefecto;
-         VariablesGlobalesTest.log.info(
-               "Propiedad " + propiedad.toString() + " no existe. Se usa el valor por defecto=" + valorPorDefecto);
+         VariablesGlobalesTest.log.info("Propiedad " + propiedad.toString() + " no existe. Se usa el valor por defecto=" + valorPorDefecto);
       }
       return valorPropiedad;
    }
