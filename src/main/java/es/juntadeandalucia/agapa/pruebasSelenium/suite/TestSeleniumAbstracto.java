@@ -482,13 +482,15 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          File origen = new File(System.getProperty("user.dir"));
          String directorioLargo =
                VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
-         File destino = new File(directorioLargo + anotacionVideo.name() + "_"
-               + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4");
          File video = null;
+         String destinoRuta = "Sin asignar";
          try {
-            destino.delete();
             Iterator<File> it = FileUtils.iterateFiles(origen, new String[] { "mp4" }, false);
             while (it.hasNext()) {
+               File destino = new File(directorioLargo + anotacionVideo.name() + "_"
+                     + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4");
+               destinoRuta = destino.getAbsolutePath();
+               destino.delete();
                video = it.next();
                FileUtils.moveFile(video, destino, StandardCopyOption.ATOMIC_MOVE);
                TestSeleniumAbstracto.log
@@ -498,7 +500,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          catch (IOException e) {
             if (video != null) {
                TestSeleniumAbstracto.log.warn("No se puede mover el video (" + video.getAbsolutePath()
-                     + ") a su ubicación definitiva (" + destino.getAbsolutePath() + ")");
+                     + ") a su ubicación definitiva (" + destinoRuta + ")");
             }
             TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
          }
