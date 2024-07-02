@@ -206,25 +206,6 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       }
    }
 
-   protected void beforeMethod(String nombreTest) throws PruebaAceptacionExcepcion {
-      // Level nivelLog = Level.INFO;
-      //
-      // Logger logger = Logger.getLogger("");
-      // logger.setLevel(nivelLog);
-      // Arrays.stream(logger.getHandlers()).forEach(handler -> {
-      // // handler.setLevel(nivelLog);
-      // // handler.setFormatter("%(asctime)s :%(levelname)s : %(name)s :%(message)s");
-      // });
-      // Logger.getLogger(HttpCommandExecutor.class.getName()).setLevel(Level.FINE);
-      // Logger.getLogger(DriverCommandExecutor.class.getName()).setLevel(Level.FINE);
-      // Logger.getLogger(RemoteWebDriver.class.getName()).setLevel(nivelLog);
-      // Logger.getLogger(SeleniumManager.class.getName()).setLevel(nivelLog);
-
-      WebDriverFactory.setLogger(this.extent.createTest(nombreTest));
-      this.configurarVideo(nombreTest);
-      this.iniciar();
-   }
-
    private void configurarVideo(String contexto) {
       if (VariablesGlobalesTest.IS_DOCKER) {
          System.setProperty("video.enabled", Boolean.FALSE.toString());
@@ -235,8 +216,6 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
             System.setProperty("video.save.mode", "ALL");
          }
          System.setProperty("video.folder", VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + contexto);
-         System.setProperty("video.frame.rate", "16");
-         // System.setProperty("ffmpeg.pixelFormat", "libx264");
       }
    }
 

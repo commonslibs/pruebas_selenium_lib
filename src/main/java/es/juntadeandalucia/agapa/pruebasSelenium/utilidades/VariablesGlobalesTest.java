@@ -33,9 +33,6 @@ public class VariablesGlobalesTest {
    public static final boolean IS_HEADLESS                        =
          Boolean.parseBoolean(System.getProperty("java.awt.headless", Boolean.FALSE.toString()).toLowerCase());
 
-   public static final boolean IS_NOMBRES_POR_TEST                =
-         Boolean.parseBoolean(System.getProperty("nombresPorTest", Boolean.FALSE.toString()).toLowerCase());
-
    public static final String  HTTP_DOCKER                        = "http://selenium-hub:4444";
 
    public static final String  DIRECTORIO_TARGET_SUREFIRE_REPORTS = System.getProperty("user.dir") + File.separator

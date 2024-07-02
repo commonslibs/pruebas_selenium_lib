@@ -23,14 +23,12 @@ import org.testng.IReporter;
 import org.testng.ISuite;
 import org.testng.ISuiteResult;
 import org.testng.ITestContext;
-import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.xml.XmlSuite;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
-import es.juntadeandalucia.agapa.pruebasSelenium.suite.TestSeleniumAbstracto;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,12 +49,7 @@ public class InformeListener implements IReporter {
       this.saveReportTemplate(outputDirectory,
             reportTemplate.replaceFirst("</tbody>", String.format("%s</tbody>", body)));
 
-      if (!VariablesGlobalesTest.IS_NOMBRES_POR_TEST) {
-         this.mergearReports(suites);
-      }
-      else {
-         this.mergearReportsPorTest(suites);
-      }
+      this.mergearReports(suites);
    }
 
    private void mergearReports(List<ISuite> suites) {
@@ -88,56 +81,56 @@ public class InformeListener implements IReporter {
       reportMergeado.flush();
    }
 
-   private void mergearReportsPorTest(List<ISuite> suites) {
-      ExtentSparkReporter sparkMergeado =
-            new ExtentSparkReporter(VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + "PPI.html");
-      ExtentReports reportMergeado = new ExtentReports();
-      reportMergeado.attachReporter(sparkMergeado);
-
-      Collections.sort(suites, new ComparadorISuite());
-      for (ISuite suite : suites) {
-         try {
-            // Agregar al Report PPI por test.
-            for (ITestNGMethod iTest : suite.getAllMethods()) {
-               String nombre = TestSeleniumAbstracto.formatearNombreFichero(iTest.getXmlTest().getName());
-               String directorioOrigenJson =
-                     VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + nombre + File.separator;
-               String ficheroJson = directorioOrigenJson + nombre + "-Extendido.json";
-               // Si existe el Extendido por TEST. Se agrega al report.
-
-               if (TestSeleniumAbstracto.validarFichero(ficheroJson)) {
-                  this.agregarAlReport(reportMergeado, directorioOrigenJson, ficheroJson);
-               }
-               else {
-                  InformeListener.log.error("No existe: " + ficheroJson);
-               }
-            }
-         }
-         catch (Exception e) {
-            InformeListener.log.error(e.getLocalizedMessage());
-         }
-      }
-
-      reportMergeado.flush();
-   }
-
-   private void agregarAlReport(ExtentReports reportMergeado, String directorioOrigenJson, String ficheroJson) {
-      try {
-         InformeListener.log.debug("Agregando al PPI: " + ficheroJson);
-         reportMergeado.createDomainFromJsonArchive(ficheroJson);
-         // Copiar las capturas de pantallas de error
-         File sourceDirectory = new File(directorioOrigenJson + VariablesGlobalesTest.DIRECTORIO_CAPTURAS);
-         if (sourceDirectory.exists()) {
-            File destinationDirectory = new File(
-                  VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + VariablesGlobalesTest.DIRECTORIO_CAPTURAS);
-            FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
-         }
-      }
-      catch (IOException e) {
-         InformeListener.log.error("Error al agregar informacion al PPI final. ", e);
-      }
-
-   }
+   // private void mergearReportsPorTest(List<ISuite> suites) {
+   // ExtentSparkReporter sparkMergeado =
+   // new ExtentSparkReporter(VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + "PPI.html");
+   // ExtentReports reportMergeado = new ExtentReports();
+   // reportMergeado.attachReporter(sparkMergeado);
+   //
+   // Collections.sort(suites, new ComparadorISuite());
+   // for (ISuite suite : suites) {
+   // try {
+   // // Agregar al Report PPI por test.
+   // for (ITestNGMethod iTest : suite.getAllMethods()) {
+   // String nombre = TestSeleniumAbstracto.formatearNombreFichero(iTest.getXmlTest().getName());
+   // String directorioOrigenJson =
+   // VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + nombre + File.separator;
+   // String ficheroJson = directorioOrigenJson + nombre + "-Extendido.json";
+   // // Si existe el Extendido por TEST. Se agrega al report.
+   //
+   // if (TestSeleniumAbstracto.validarFichero(ficheroJson)) {
+   // this.agregarAlReport(reportMergeado, directorioOrigenJson, ficheroJson);
+   // }
+   // else {
+   // InformeListener.log.error("No existe: " + ficheroJson);
+   // }
+   // }
+   // }
+   // catch (Exception e) {
+   // InformeListener.log.error(e.getLocalizedMessage());
+   // }
+   // }
+   //
+   // reportMergeado.flush();
+   // }
+   //
+   // private void agregarAlReport(ExtentReports reportMergeado, String directorioOrigenJson, String ficheroJson) {
+   // try {
+   // InformeListener.log.debug("Agregando al PPI: " + ficheroJson);
+   // reportMergeado.createDomainFromJsonArchive(ficheroJson);
+   // // Copiar las capturas de pantallas de error
+   // File sourceDirectory = new File(directorioOrigenJson + VariablesGlobalesTest.DIRECTORIO_CAPTURAS);
+   // if (sourceDirectory.exists()) {
+   // File destinationDirectory = new File(
+   // VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + VariablesGlobalesTest.DIRECTORIO_CAPTURAS);
+   // FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
+   // }
+   // }
+   // catch (IOException e) {
+   // InformeListener.log.error("Error al agregar informacion al PPI final. ", e);
+   // }
+   //
+   // }
 
    private static class ComparadorISuite implements java.util.Comparator<ISuite> {
       @Override
