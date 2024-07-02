@@ -27,9 +27,9 @@ public class UtilidadesFicheros {
       ClassLoader classLoader = UtilidadesFicheros.class.getClassLoader();
       URL url = classLoader.getResource(ruta);
       if (url != null) {
-         return url.getFile();
+         return new File(url.getFile()).getPath();
       }
-      throw new PruebaAceptacionExcepcion("En el RESOURCE, no se encuentra la ruta:" + ruta);
+      throw new PruebaAceptacionExcepcion("En el RESOURCE, no se encuentra la ruta: " + ruta);
    }
 
    /**
