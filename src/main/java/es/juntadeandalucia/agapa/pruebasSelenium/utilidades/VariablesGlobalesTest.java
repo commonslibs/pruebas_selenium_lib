@@ -34,7 +34,7 @@ public class VariablesGlobalesTest {
    public static final boolean IS_NOMBRES_POR_TEST                =
          Boolean.parseBoolean(System.getProperty("nombresPorTest", Boolean.FALSE.toString()).toLowerCase());
 
-   public static final String  HTTP_DOCKER                        = System.getProperty("nodeGridUrl", "http://selenium-hub:4444");
+   public static final String  HTTP_DOCKER                        = System.getProperty("docker.nodeGridUrl", "http://selenium-hub:4444");
 
    public static final String  DIRECTORIO_TARGET_SUREFIRE_REPORTS =
          System.getProperty("user.dir") + File.separator + "target" + File.separator + "surefire-reports" + File.separator;
