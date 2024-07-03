@@ -124,6 +124,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
 
    @AfterMethod
    public void getResult(ITestResult resultado) throws Exception {
+      String nombreVideo = "";
       if (resultado.getStatus() == ITestResult.FAILURE) {
          this.getLogger().log(Status.FAIL,
                MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
@@ -135,7 +136,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          this.getLogger().fail("Captura de pantalla del test que falló: " + rutaRelativa);
          this.cerrarNavegador();
          if (VariablesGlobalesTest.IS_DOCKER && VariablesGlobalesTest.IS_VIDEO_GRABAR) {
-            this.moverVideo(resultado);
+            nombreVideo = this.moverVideo(resultado);
          }
       }
       else if (resultado.getStatus() == ITestResult.SKIP) {
@@ -149,20 +150,24 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          this.cerrarNavegador();
          if (VariablesGlobalesTest.IS_DOCKER && VariablesGlobalesTest.IS_VIDEO_GRABAR
                && VariablesGlobalesTest.IS_VIDEO_GRABAR_TODOS) {
-            this.moverVideo(resultado);
+            nombreVideo = this.moverVideo(resultado);
          }
       }
 
-      // RAULM _ CASI CASI
-      // type='video/webm'
+      // *** HTML para el video. OJO solo cuando es DOCKER=true ***
       // NO - Códec: TechSmith Camtasia Screen Capture (tscc)
       // SI - Códec: Google/On2's VP8 Video (VP80)
       // SI - Códec: H264 - MPEG-4 AVC (part 10) (avc1)
-      // *** HTML para el video ***
-      // String videoPath = "./raul.avi";
-      // String videoHtml = "<video width='600' controls>" + "<source src='" + videoPath
-      // + "' type='video/webm'>" + "Su navegador no soporta la reproducción de video." + "</video>"
-      // this.getLogger().log(Status.INFO, videoHtml);
+      if (!StringUtils.isBlank(nombreVideo)) {
+         // Si nombreVideo, está rellena se ha grabado con DOCKER, el codec es compatible(H264) y se puede integrar en
+         // el navegador
+         String pathAqui = "./" + nombreVideo;
+         String pathPPI = "./" + resultado.getTestContext().getName() + "/" + nombreVideo;
+         String videoHtml = "<video width='600' controls>" + "<source src='" + pathAqui + "' type='video/mp4'>"
+               + "<source src='" + pathPPI + "' type='video/mp4'>" + "Su navegador no soporta la reproducción de video."
+               + "</video>";
+         this.getLogger().log(Status.INFO, videoHtml);
+      }
    }
 
    @AfterTest
@@ -474,9 +479,10 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
 
    }
 
-   private void moverVideo(ITestResult resultado) {
+   private String moverVideo(ITestResult resultado) {
       // Solo se guarda si IS_DOCKER. Si no IS_DOCKER se guardará con video-recorder-testng.
       Video anotacionVideo = MethodUtils.getVideoAnnotation(resultado);
+      String nombreDestino = "";
       if (anotacionVideo != null) {
          String directorio = resultado.getTestContext().getName();
          File origen = new File(System.getProperty("user.dir"));
@@ -487,8 +493,9 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          try {
             Iterator<File> it = FileUtils.iterateFiles(origen, new String[] { "mp4" }, false);
             while (it.hasNext()) {
-               File destino = new File(directorioLargo + anotacionVideo.name() + "_"
-                     + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4");
+               nombreDestino = anotacionVideo.name() + "_"
+                     + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4";
+               File destino = new File(directorioLargo + nombreDestino);
                destinoRuta = destino.getAbsolutePath();
                destino.delete();
                video = it.next();
@@ -505,6 +512,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
             TestSeleniumAbstracto.log.error(e.getLocalizedMessage());
          }
       }
+      return nombreDestino;
    }
 
 }
