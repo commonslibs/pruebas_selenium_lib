@@ -22,3 +22,5 @@ En el fichero de properties de la aplicación que se vaya a usar deberán existi
 En el fichero properties que se vaya a usar podrán existir otras propiedades adicionales que se estimen necesarias.
 
 El proyecto usa la librería http://automation-remarks.com/video-recorder-java/ para guardar vídeos de las pruebas. Opcionalmente, es posible añadir propiedades adicionales al fichero properties usado, con las propiedades que permite el propio componente para refinar la configuración de los vídeos generados.
+
+Prueba1
