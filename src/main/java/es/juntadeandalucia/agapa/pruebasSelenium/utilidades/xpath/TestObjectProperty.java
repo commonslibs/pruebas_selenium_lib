@@ -1,18 +1,41 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath;
 
+/**
+ * Class TestObjectProperty.
+ *
+ * @author AGAPA
+ */
 public class TestObjectProperty {
+
+   /** name. */
    private String        name;
 
+   /** condition. */
    private ConditionType condition;
 
+   /** value. */
    private String        value;
 
+   /** is active. */
    private boolean       isActive;
 
+   /**
+    * Instancia un nuevo objeto de la clase test object property.
+    */
    public TestObjectProperty() {
       this.isActive = true;
    }
 
+   /**
+    * Instancia un nuevo objeto de la clase test object property.
+    *
+    * @param name
+    *           valor para: name
+    * @param condition
+    *           valor para: condition
+    * @param value
+    *           valor para: value
+    */
    public TestObjectProperty(String name, ConditionType condition, String value) {
       this.name = name;
       this.condition = condition;
@@ -21,7 +44,7 @@ public class TestObjectProperty {
    }
 
    /**
-    * Get name of this property
+    * Get name of this property.
     *
     * @return name of this property
     */
@@ -30,7 +53,7 @@ public class TestObjectProperty {
    }
 
    /**
-    * Set the name of this property
+    * Set the name of this property.
     *
     * @param name
     *           the new name for this property
@@ -40,7 +63,7 @@ public class TestObjectProperty {
    }
 
    /**
-    * Get the condition for this property
+    * Get the condition for this property.
     *
     * @return the condition as {@link ConditionType} of this property
     */
@@ -49,7 +72,7 @@ public class TestObjectProperty {
    }
 
    /**
-    * Set the condition for this property
+    * Set the condition for this property.
     *
     * @param condition
     *           the new condition as {@link ConditionType} for this property
@@ -59,7 +82,7 @@ public class TestObjectProperty {
    }
 
    /**
-    * Get the value of this property
+    * Get the value of this property.
     *
     * @return the value of this property
     */
@@ -68,7 +91,7 @@ public class TestObjectProperty {
    }
 
    /**
-    * Set the value for this property
+    * Set the value for this property.
     *
     * @param value
     *           the new value to set to this property
@@ -78,7 +101,7 @@ public class TestObjectProperty {
    }
 
    /**
-    * Check if this property is active
+    * Check if this property is active.
     *
     * @return true if this property is activate; otherwise false
     */
@@ -87,7 +110,7 @@ public class TestObjectProperty {
    }
 
    /**
-    * Set this property to be active
+    * Set this property to be active.
     *
     * @param isActive
     *           the active flag to set to this property

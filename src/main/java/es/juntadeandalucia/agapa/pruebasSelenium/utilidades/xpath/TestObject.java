@@ -5,23 +5,39 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 
+/**
+ * Class TestObject.
+ *
+ * @author AGAPA
+ */
 public class TestObject {
 
+   /** properties. */
    private List<TestObjectProperty> properties;
 
+   /** object id. */
    private String                   objectId;
 
+   /**
+    * Instancia un nuevo objeto de la clase test object.
+    *
+    * @param objectId
+    *           valor para: object id
+    */
    public TestObject(String objectId) {
       this.properties = new ArrayList<>();
       this.objectId = objectId;
    }
 
+   /**
+    * Instancia un nuevo objeto de la clase test object.
+    */
    public TestObject() {
       this(StringUtils.EMPTY);
    }
 
    /**
-    * Get all properties of the test object
+    * Get all properties of the test object.
     *
     * @return a list contains all properties of the test object
     */
@@ -30,7 +46,7 @@ public class TestObject {
    }
 
    /**
-    * Get all active properties of the test object
+    * Get all active properties of the test object.
     *
     * @return a list contains all active properties of the test object
     */
@@ -45,7 +61,7 @@ public class TestObject {
    }
 
    /**
-    * Set the properties of the test object
+    * Set the properties of the test object.
     *
     * @param properties
     *           a list of properties to set to the test object
@@ -55,7 +71,7 @@ public class TestObject {
    }
 
    /**
-    * Add a new property to the test object
+    * Add a new property to the test object.
     *
     * @param property
     *           the new {@link TestObjectProperty} to add
@@ -67,7 +83,7 @@ public class TestObject {
    }
 
    /**
-    * Add a new property to the test object
+    * Add a new property to the test object.
     *
     * @param name
     *           the name of the new property
@@ -83,7 +99,7 @@ public class TestObject {
    }
 
    /**
-    * Find the value of a property using the property name
+    * Find the value of a property using the property name.
     *
     * @param name
     *           the name of the property to find
@@ -99,7 +115,7 @@ public class TestObject {
    }
 
    /**
-    * Find the value of a property using the property name
+    * Find the value of a property using the property name.
     *
     * @param name
     *           the name of the property to find
@@ -120,7 +136,7 @@ public class TestObject {
    }
 
    /**
-    * Find the property using the property name
+    * Find the property using the property name.
     *
     * @param name
     *           the name of the property to find
@@ -136,7 +152,7 @@ public class TestObject {
    }
 
    /**
-    * Get the id of this test object
+    * Get the id of this test object.
     *
     * @return the id of this test object
     */
@@ -144,6 +160,11 @@ public class TestObject {
       return this.objectId;
    }
 
+   /**
+    * To string.
+    *
+    * @return string
+    */
    @Override
    public String toString() {
       return "TestObject - '" + this.getObjectId() + "'";

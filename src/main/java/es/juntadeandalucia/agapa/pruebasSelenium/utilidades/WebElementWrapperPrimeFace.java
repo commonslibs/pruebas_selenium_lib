@@ -1,30 +1,37 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
-
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 
 /**
- * Clase que contiene las funcionalidades de selenium encapsulada, para usarlo de manera mas sencilla y con metodos
- * específicos para los componentes de RichFace
+ * Clase que contiene las funcionalidades de selenium encapsulada, para usarlo de manera mas sencilla y con metodos específicos para los
+ * componentes de RichFace.
  *
  * @author AGAPA
  */
 @Slf4j
 public class WebElementWrapperPrimeFace extends WebElementWrapper {
 
+   /** milisegundos espera obligatoria. */
    private long    milisegundosEsperaObligatoria        = 0;
 
+   /** esperar milisegundos espera obligatoria. */
    private boolean esperarMilisegundosEsperaObligatoria = false;
 
+   /** variables cargadas. */
    private boolean variablesCargadas                    = false;
 
+   /**
+    * Comprueba el valor del atributo: esperar milisegundos espera obligatoria.
+    *
+    * @return true, si se cumple que el valor del atributo: esperar milisegundos espera obligatoria es cierto.
+    */
    public boolean isEsperarMilisegundosEsperaObligatoria() {
       if (!this.variablesCargadas) {
          this.cargarVariables();
@@ -32,6 +39,11 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       return this.esperarMilisegundosEsperaObligatoria;
    }
 
+   /**
+    * Obtención del atributo: milisegundos espera obligatoria.
+    *
+    * @return atributo: milisegundos espera obligatoria
+    */
    public long getMilisegundosEsperaObligatoria() {
       if (!this.variablesCargadas) {
          this.cargarVariables();
@@ -39,11 +51,13 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       return this.milisegundosEsperaObligatoria;
    }
 
+   /**
+    * Cargar variables.
+    */
    private void cargarVariables() {
       String valorEsperaObligatoria;
       try {
-         valorEsperaObligatoria =
-               VariablesGlobalesTest.getPropiedad(PropiedadesTest.MILISEGUNDOS_ESPERA_OBLIGATORIA).trim();
+         valorEsperaObligatoria = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MILISEGUNDOS_ESPERA_OBLIGATORIA).trim();
       }
       catch (Exception e) {
          WebElementWrapperPrimeFace.log.error("Se establece el valor de MILISEGUNDOS_ESPERA_OBLIGATORIA a cero.", e);
@@ -54,6 +68,14 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       this.variablesCargadas = true;
    }
 
+   /**
+    * Mostrar elemento presente.
+    *
+    * @param testObject
+    *           valor para: test object
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
    public void mostrarElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
       WebElementWrapperPrimeFace.log.debug("mostrarElementoPresente->" + testObject.toString());
 
@@ -85,6 +107,16 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
 
    }
 
+   /**
+    * Selecciona desplegable by label.
+    *
+    * @param idDivSelect
+    *           valor para: id div select
+    * @param labelBuscada
+    *           valor para: label buscada
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
    public void seleccionaDesplegableByLabel(String idDivSelect, String labelBuscada) throws PruebaAceptacionExcepcion {
       WebElementWrapperPrimeFace.log.debug("seleccionaDesplegableByLabel->" + idDivSelect + ", " + labelBuscada);
       By label = By.id(idDivSelect + "_label");
@@ -92,6 +124,18 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       this.seleccionaDesplegableByLabel(labelBuscada, label, filtro);
    }
 
+   /**
+    * Selecciona desplegable by label.
+    *
+    * @param labelBuscada
+    *           valor para: label buscada
+    * @param label
+    *           valor para: label
+    * @param filtro
+    *           valor para: filtro
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
    public void seleccionaDesplegableByLabel(String labelBuscada, By label, By filtro) throws PruebaAceptacionExcepcion {
       WebElementWrapperPrimeFace.log.debug("seleccionaDesplegableByLabel->" + label.toString());
       boolean conseguido = false;
@@ -116,6 +160,15 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       }
    }
 
+   /**
+    * Obtener numero registros tabla.
+    *
+    * @param tabla
+    *           valor para: tabla
+    * @return int
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
    public int obtenerNumeroRegistrosTabla(By tabla) throws PruebaAceptacionExcepcion {
       WebElementWrapperPrimeFace.log.debug("obtenerNumeroRegistrosTabla->" + tabla.toString());
       By spanPaginator = By.cssSelector("span.ui-paginator-current");
@@ -123,16 +176,15 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
    }
 
    /**
-    * Devuelve el número de elementos de la tabla tomándolo de currentPageReportTemplate
+    * Devuelve el número de elementos de la tabla tomándolo de currentPageReportTemplate.
     *
     * @param tabla
     *           valor para: tabla
     * @param spanPaginator
     *           valor para: elemento que muestra el texto de currentPageReportTemplate
     * @param position
-    *           valor para: posición del número de elementos en el currentPageReportTemplate. Ej: Total {totalRecords}
-    *           elementos - Página {currentPage} de {totalPages}. En este caso el totalRecords está en la posición 1
-    *           (empieza por el 0).
+    *           valor para: posición del número de elementos en el currentPageReportTemplate. Ej: Total {totalRecords} elementos - Página
+    *           {currentPage} de {totalPages}. En este caso el totalRecords está en la posición 1 (empieza por el 0).
     * @return int Número de elementos en la tabla
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
@@ -144,7 +196,7 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       String cadena = paginador.getText();
       String[] aux = cadena.split(" ");
       String res = aux[position];
-      return Integer.valueOf(res);
+      return Integer.parseInt(res);
    }
 
    /**
@@ -160,7 +212,7 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
    public void selectOneMenu(String id, String label) throws PruebaAceptacionExcepcion {
       By selectOneMenu = By.id(id + "_label");
       By opcion = By.xpath("//*[@id='" + id + "_panel']/div/ul/li[text()='" + label + "']");
-      WebElement weCombo = this.click(selectOneMenu);
+      this.click(selectOneMenu);
       WebElement weValue = this.click(opcion);
 
       // weCombo.sendKeys(Keys.TAB.toString()); // Hay veces que si no se pulsa TAB, no funciona
@@ -186,8 +238,8 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
    }
 
    /**
-    * SOBREESCRITA - PARA OBLIGAR UNA ESPERA FORZOSA. ES GENERICA A CUALQUIER ACCION Y SE CONFIGURA EN EL .properties
-    * (Por Defecto irá destactivada.)
+    * SOBREESCRITA - PARA OBLIGAR UNA ESPERA FORZOSA. ES GENERICA A CUALQUIER ACCION Y SE CONFIGURA EN EL .properties (Por Defecto irá
+    * destactivada.)
     *
     * @param testObject
     *           valor para: test object

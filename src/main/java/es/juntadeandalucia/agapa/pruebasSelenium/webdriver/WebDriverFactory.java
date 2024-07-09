@@ -26,23 +26,38 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Factoria de Web drivers. Devuelve el driver del navegador especificado mediante obtenerInstancia().
+ *
+ * @author AGAPA
  */
 @Slf4j
 public class WebDriverFactory {
 
+   /** logger. */
    @Getter
    @Setter
    private static ExtentTest          logger;
 
-   // Almacén del WebDriver compartido por todos los servicios y clases de test del proyecto.
+   /** Almacén del WebDriver compartido por todos los servicios y clases de test del proyecto. */
    @Getter
    @Setter
    private static WebDriver           driver;
 
+   /** web element wrapper. */
    protected static WebElementWrapper webElementWrapper;
 
+   /**
+    * Enum Navegador.
+    *
+    * @author AGAPA
+    */
    public enum Navegador {
-      CHROME, FIREFOX, MSEDGE
+
+      /** chrome. */
+      CHROME,
+      /** firefox. */
+      FIREFOX,
+      /** msedge. */
+      MSEDGE
    }
 
    /**
@@ -64,6 +79,11 @@ public class WebDriverFactory {
       return wd;
    }
 
+   /**
+    * Obtención del atributo: web element wrapper.
+    *
+    * @return atributo: web element wrapper
+    */
    public static WebElementWrapper getWebElementWrapper() {
       if (WebDriverFactory.webElementWrapper == null) {
          WebDriverFactory.webElementWrapper = new WebElementWrapper();
@@ -74,6 +94,11 @@ public class WebDriverFactory {
    // FUENTES:
    // https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md
    // https://source.chromium.org/chromium/chromium/src/+/main:chrome/common/pref_names.h
+   /**
+    * Chrome.
+    *
+    * @return web driver
+    */
    // https://peter.sh/experiments/chromium-command-line-switches/
    protected static WebDriver chrome() {
 
@@ -189,6 +214,11 @@ public class WebDriverFactory {
       }
    }
 
+   /**
+    * Firefox.
+    *
+    * @return web driver
+    */
    protected static WebDriver firefox() {
       WebDriverManager webDriver = WebDriverManager.firefoxdriver();
       WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
@@ -220,6 +250,11 @@ public class WebDriverFactory {
       }
    }
 
+   /**
+    * Edge.
+    *
+    * @return web driver
+    */
    protected static WebDriver edge() {
       WebDriverManager webDriver = WebDriverManager.edgedriver();
       WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
@@ -249,6 +284,13 @@ public class WebDriverFactory {
       }
    }
 
+   /**
+    * Asignar proxy.
+    *
+    * @param webDriver
+    *           valor para: web driver
+    * @return web driver manager
+    */
    protected static WebDriverManager asignarProxy(WebDriverManager webDriver) {
       String proxy = null;
       try (FileReader fileReader = new FileReader("proxy.txt"); BufferedReader reader = new BufferedReader(fileReader)) {

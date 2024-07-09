@@ -5,8 +5,19 @@ import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTes
 import org.testng.ITestResult;
 
 
+/**
+ * Listener para gestionar los eventos de video.
+ *
+ * @author AGAPA
+ */
 public class VideoListener extends UniversalVideoListener {
 
+   /**
+    * On test start.
+    *
+    * @param result
+    *           valor para: result
+    */
    @Override
    public void onTestStart(ITestResult result) {
       if (!VariablesGlobalesTest.IS_DOCKER) {
@@ -14,6 +25,12 @@ public class VideoListener extends UniversalVideoListener {
       }
    }
 
+   /**
+    * On test success.
+    *
+    * @param result
+    *           valor para: result
+    */
    @Override
    public void onTestSuccess(ITestResult result) {
       if (!VariablesGlobalesTest.IS_DOCKER) {
@@ -21,6 +38,12 @@ public class VideoListener extends UniversalVideoListener {
       }
    }
 
+   /**
+    * On test failure.
+    *
+    * @param result
+    *           valor para: result
+    */
    @Override
    public void onTestFailure(ITestResult result) {
       if (!VariablesGlobalesTest.IS_DOCKER) {
