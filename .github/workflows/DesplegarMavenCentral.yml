@@ -1,0 +1,59 @@
+# Las tareas que hace son las siguientes: 
+# - Configura Maven y Java
+# - El codigo del tag creado se copia como version de la libreria en el pom.xml
+# - Se crea una release en el proyecto GITHUB
+# - Se publica el JAR en Maven Central
+#
+# ¿Cuando?:
+# - Cada vez que se crea un tag o a demanda lanzando el action
+#
+# DOC:
+# METODO ACTUAL: https://medium.com/@jtbsorensen/publish-your-artifact-to-the-maven-central-repository-using-github-actions-15d3b5d9ce88
+
+name: Desplegar JAR en maven central
+
+# Esta actions se ejecuta a demanda por el usuario o cada vez que se crea un TAG
+on:
+  # De manera manual desde Github-actions
+  workflow_dispatch:
+  # Cuando se crea un tag
+  push:
+    tags:
+      - "*.*.*.*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configuramos Maven y Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+# Esta tarea lo que hace es coger la version del proyecto del tag y aplicarle esa version al
+# fichero pom.xml haciendo que obligatoriamente cada vez que creemos un tag la version
+# en el fichero pom.xml sea igual que la del tag evitando que creemos un tag que sea
+# diferente al codigo de la version en el fichero pom.xml
+      - name: Aplicamos la misma version en el fichero pom.xml con la que se ha creado el tag
+        run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
+# Se crea release en GITHUB 
+# IMPORTANTE: SOLO FUNCIONA SI SE CREA UN TAG. Si se ejecuta el action a demanda, eliminar esta tarea
+#      - name: Creamos release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          name: v${{ steps.get_version.outputs.VERSION }}
+#          generate_release_notes: true
+#          token: ${{ secrets.GITHUB_TOKEN }}
+# Se publica el JAR en Maven Central
+      - name: Publicamos JAR en Maven Central
+        run: mvn --no-transfer-progress --batch-mode -DskipTests -P CENTRAL-GITHUB deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSWORD }}
