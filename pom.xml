@@ -60,7 +60,7 @@
 		<ojdbc7.version>12.1.0.2</ojdbc7.version>
 		<testng.version>7.10.2</testng.version>
 		<bonigarcia-webdrivermanager.version>5.8.0</bonigarcia-webdrivermanager.version>
-		<extentreports.version>5.1.1</extentreports.version>
+		<extentreports.version>5.1.2</extentreports.version>
 		<video-recorder-testng.version>2.0</video-recorder-testng.version>
 	</properties>
 
