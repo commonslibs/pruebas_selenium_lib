@@ -15,7 +15,8 @@ name: Desplegar JAR en maven central
 # Esta actions se ejecuta a demanda por el usuario o cada vez que se crea un TAG
 on:
   # De manera manual desde Github-actions
-  workflow_dispatch:
+  # workflow_dispatch:
+  
   # Cuando se crea un tag
   push:
     tags:
@@ -44,12 +45,12 @@ jobs:
         run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
 # Se crea release en GITHUB 
 # IMPORTANTE: SOLO FUNCIONA SI SE CREA UN TAG. Si se ejecuta el action a demanda, eliminar esta tarea
-#      - name: Creamos release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          name: v${{ steps.get_version.outputs.VERSION }}
-#          generate_release_notes: true
-#          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Creamos release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: v${{ steps.get_version.outputs.VERSION }}
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 # Se publica el JAR en Maven Central
       - name: Publicamos JAR en Maven Central
         run: mvn --no-transfer-progress --batch-mode -DskipTests -P CENTRAL-GITHUB deploy
