@@ -57,7 +57,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<java.version>17</java.version>
-		<ojdbc7.version>12.1.0.2</ojdbc7.version>
+		<ojdbc.version>23.4.0.24.05</ojdbc.version>
 		<testng.version>7.10.2</testng.version>
 		<bonigarcia-webdrivermanager.version>5.8.0</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.1.1</extentreports.version>
@@ -80,9 +80,9 @@
 
 		<!-- Conexión con la BD para establecer condiciones iniciales en las pruebas -->
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>${ojdbc7.version}</version>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc11</artifactId>
+			<version>${ojdbc.version}</version>
 		</dependency>
 
 		<dependency>
