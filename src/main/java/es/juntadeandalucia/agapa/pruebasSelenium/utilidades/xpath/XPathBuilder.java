@@ -7,64 +7,100 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 
 
+/**
+ * Class XPathBuilder.
+ *
+ * @author AGAPA
+ */
 public class XPathBuilder {
 
-   public static enum AggregationType {
-      UNION, INTERSECT
+   /**
+    * Enum AggregationType.
+    *
+    * @author AGAPA
+    */
+   public enum AggregationType {
+
+      /** union. */
+      UNION,
+      /** intersect. */
+      INTERSECT
    }
 
+   /** La constante XPATH_INTERSECT_FORMULA. */
    private static final String      XPATH_INTERSECT_FORMULA                   = "%s[count(. | %s) = count(%s)]";
 
+   /** La constante XPATH_CONDITION_TYPE_NOT_MATCHES. */
    private static final String      XPATH_CONDITION_TYPE_NOT_MATCHES          = "not(matches(%s, '%s'))";
 
+   /** La constante XPATH_CONDITION_TYPE_MATCHES. */
    private static final String      XPATH_CONDITION_TYPE_MATCHES              = "matches(%s, '%s')";
 
+   /** La constante XPATH_CONDITION_TYPE_ENDS_WITH. */
    private static final String      XPATH_CONDITION_TYPE_ENDS_WITH            = "ends-with(%s, %s)";
 
+   /** La constante XPATH_CONDITION_TYPE_STARTS_WITH. */
    private static final String      XPATH_CONDITION_TYPE_STARTS_WITH          = "starts-with(%s, %s)";
 
+   /** La constante XPATH_CONDITION_TYPE_NOT_EQUALS. */
    private static final String      XPATH_CONDITION_TYPE_NOT_EQUALS           = "%s != %s";
 
+   /** La constante XPATH_CONDITION_TYPE_NOT_CONTAINS. */
    private static final String      XPATH_CONDITION_TYPE_NOT_CONTAINS         = "not(contains(%s, %s))";
 
+   /** La constante XPATH_CONDITION_TYPE_EQUALS. */
    private static final String      XPATH_CONDITION_TYPE_EQUALS               = "%s = %s";
 
+   /** La constante XPATH_CONDITION_TYPE_CONTAINS. */
    private static final String      XPATH_CONDITION_TYPE_CONTAINS             = "contains(%s, %s)";
 
+   /** La constante XPATH_TEXT_PROPERTY_EXPRESSION_FOR_WEBUI. */
    private static final String      XPATH_TEXT_PROPERTY_EXPRESSION_FOR_WEBUI  = "text()";
 
+   /** La constante XPATH_TEXT_PROPERTY_EXPRESSION_FOR_MOBILE. */
    protected static final String    XPATH_TEXT_PROPERTY_EXPRESSION_FOR_MOBILE = "@text";
 
+   /** tag. */
    private String                   tag;
 
+   /** xpath. */
    private String                   xpath;
 
+   /** predicates. */
    private List<String>             predicates;
 
+   /** properties. */
    private List<TestObjectProperty> properties;
 
+   /**
+    * Instancia un nuevo objeto de la clase x path builder.
+    *
+    * @param properties
+    *           valor para: properties
+    */
    public XPathBuilder(List<TestObjectProperty> properties) {
       this.properties = properties;
    }
 
    /**
-    * convenient function to avoid changing signature
-    * 
-    * @return
+    * convenient function to avoid changing signature.
+    *
+    * @return string
     */
    public String build() {
       return this.build(AggregationType.INTERSECT);
    }
 
    /**
-    * Union: "or" of all XPath locators, each contains a single condition
-    * 
+    * Union: "or" of all XPath locators, each contains a single condition.
+    *
     * @param aggregationType
-    * @return
+    *           valor para: aggregation type
+    * @return string
     */
    public String build(AggregationType aggregationType) {
 
-      boolean isIntersect = aggregationType.equals(AggregationType.INTERSECT);
+      boolean isIntersect = AggregationType.INTERSECT.equals(aggregationType);
       boolean isUnion = !isIntersect;
 
       boolean hasTagCondition = false;
@@ -122,10 +158,20 @@ public class XPathBuilder {
       return this.combineXpathLocators(xpaths, aggregationType);
    }
 
+   /**
+    * Obtención del atributo: x path text expression.
+    *
+    * @return atributo: x path text expression
+    */
    protected String getXPathTextExpression() {
       return XPATH_TEXT_PROPERTY_EXPRESSION_FOR_WEBUI;
    }
 
+   /**
+    * Builds the xpath based locators.
+    *
+    * @return list
+    */
    public List<Entry<String, String>> buildXpathBasedLocators() {
 
       List<Entry<String, String>> locators = new ArrayList<>();
@@ -135,22 +181,17 @@ public class XPathBuilder {
             String propertyName = p.getName();
             String propertyValue = p.getValue();
             ConditionType conditionType = p.getCondition();
-            Entry<String, String> entry;
-            switch (PropertyType.nameOf(propertyName)) {
-               case TEXT:
+            Entry<String, String> entry = switch (PropertyType.nameOf(propertyName)) {
+               case TEXT -> {
                   String textExpression = this.buildExpression("text()", propertyValue, conditionType);
                   String dotExpression = this.buildExpression(".", propertyValue, conditionType);
                   String predicate = String.format("(%s or %s)", textExpression, dotExpression);
                   String locator = "//*[" + predicate + "]";
-                  entry = new AbstractMap.SimpleEntry<>(propertyName, locator);
-                  break;
-               case XPATH:
-                  entry = new AbstractMap.SimpleEntry<>(propertyName, propertyValue);
-                  break;
-               default:
-                  entry = null;
-                  break;
-            }
+                  yield new AbstractMap.SimpleEntry<>(propertyName, locator);
+               }
+               case XPATH -> new AbstractMap.SimpleEntry<>(propertyName, propertyValue);
+               default -> null;
+            };
             if (entry != null) {
                locators.add(entry);
             }
@@ -160,9 +201,18 @@ public class XPathBuilder {
       return locators;
    }
 
+   /**
+    * Combine xpath locators.
+    *
+    * @param xpathList
+    *           valor para: xpath list
+    * @param aggregationType
+    *           valor para: aggregation type
+    * @return string
+    */
    private String combineXpathLocators(List<String> xpathList, AggregationType aggregationType) {
       String xpathString;
-      if (aggregationType.equals(AggregationType.INTERSECT)) {
+      if (AggregationType.INTERSECT.equals(aggregationType)) {
          StringBuilder xpathStringBuilder = new StringBuilder();
          for (String xpath : xpathList) {
             if (xpathStringBuilder.toString().isEmpty()) {
@@ -181,29 +231,38 @@ public class XPathBuilder {
       return xpathString;
    }
 
+   /**
+    * Builds the expression.
+    *
+    * @param propertyName
+    *           valor para: property name
+    * @param propertyValue
+    *           valor para: property value
+    * @param contidionType
+    *           valor para: contidion type
+    * @return string
+    */
    private String buildExpression(String propertyName, String propertyValue, ConditionType contidionType) {
-      switch (contidionType) {
-         case CONTAINS:
-            return String.format(XPATH_CONDITION_TYPE_CONTAINS, propertyName, this.escapeSingleQuote(propertyValue));
-         case ENDS_WITH:
-            return String.format(XPATH_CONDITION_TYPE_ENDS_WITH, propertyName, this.escapeSingleQuote(propertyValue));
-         case EQUALS:
-            return String.format(XPATH_CONDITION_TYPE_EQUALS, propertyName, this.escapeSingleQuote(propertyValue));
-         case MATCHES_REGEX:
-            return String.format(XPATH_CONDITION_TYPE_MATCHES, propertyName, propertyValue);
-         case NOT_CONTAIN:
-            return String.format(XPATH_CONDITION_TYPE_NOT_CONTAINS, propertyName, this.escapeSingleQuote(propertyValue));
-         case NOT_EQUAL:
-            return String.format(XPATH_CONDITION_TYPE_NOT_EQUALS, propertyName, this.escapeSingleQuote(propertyValue));
-         case NOT_MATCH_REGEX:
-            return String.format(XPATH_CONDITION_TYPE_NOT_MATCHES, propertyName, propertyValue);
-         case STARTS_WITH:
-            return String.format(XPATH_CONDITION_TYPE_STARTS_WITH, propertyName, this.escapeSingleQuote(propertyValue));
-         default:
-            return StringUtils.EMPTY;
-      }
+      return switch (contidionType) {
+         case CONTAINS -> String.format(XPATH_CONDITION_TYPE_CONTAINS, propertyName, this.escapeSingleQuote(propertyValue));
+         case ENDS_WITH -> String.format(XPATH_CONDITION_TYPE_ENDS_WITH, propertyName, this.escapeSingleQuote(propertyValue));
+         case EQUALS -> String.format(XPATH_CONDITION_TYPE_EQUALS, propertyName, this.escapeSingleQuote(propertyValue));
+         case MATCHES_REGEX -> String.format(XPATH_CONDITION_TYPE_MATCHES, propertyName, propertyValue);
+         case NOT_CONTAIN -> String.format(XPATH_CONDITION_TYPE_NOT_CONTAINS, propertyName, this.escapeSingleQuote(propertyValue));
+         case NOT_EQUAL -> String.format(XPATH_CONDITION_TYPE_NOT_EQUALS, propertyName, this.escapeSingleQuote(propertyValue));
+         case NOT_MATCH_REGEX -> String.format(XPATH_CONDITION_TYPE_NOT_MATCHES, propertyName, propertyValue);
+         case STARTS_WITH -> String.format(XPATH_CONDITION_TYPE_STARTS_WITH, propertyName, this.escapeSingleQuote(propertyValue));
+         default -> StringUtils.EMPTY;
+      };
    }
 
+   /**
+    * Escape single quote.
+    *
+    * @param s
+    *           valor para: s
+    * @return string
+    */
    private String escapeSingleQuote(String s) {
       if (!s.contains("'")) {
          return this.qoute(s);
@@ -224,13 +283,40 @@ public class XPathBuilder {
       return xpathBuilder.toString();
    }
 
+   /**
+    * Qoute.
+    *
+    * @param s
+    *           valor para: s
+    * @return string
+    */
    private String qoute(String s) {
       return "'" + s + "'";
    }
 
+   /**
+    * Enum PropertyType.
+    *
+    * @author AGAPA
+    */
    public enum PropertyType {
-      TAG, ATTRIBUTE, TEXT, XPATH;
 
+      /** tag. */
+      TAG,
+      /** attribute. */
+      ATTRIBUTE,
+      /** text. */
+      TEXT,
+      /** xpath. */
+      XPATH;
+
+      /**
+       * Name of.
+       *
+       * @param name
+       *           valor para: name
+       * @return property type
+       */
       public static PropertyType nameOf(String name) {
          try {
             return valueOf(name.toUpperCase());

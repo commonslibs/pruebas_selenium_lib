@@ -9,6 +9,11 @@ import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
 
 
+/**
+ * Class UtilidadesFicheros.
+ *
+ * @author AGAPA
+ */
 @Slf4j
 public class UtilidadesFicheros {
 
@@ -18,11 +23,22 @@ public class UtilidadesFicheros {
     * @param fichero
     *           valor para: fichero
     * @return File o null si no lo encentra.
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
     */
    public static File getFicheroResource(String fichero) throws PruebaAceptacionExcepcion {
       return new File(UtilidadesFicheros.getRutaDelResource(fichero));
    }
 
+   /**
+    * Obtención del atributo: ruta del resource.
+    *
+    * @param ruta
+    *           valor para: ruta
+    * @return atributo: ruta del resource
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
    public static String getRutaDelResource(String ruta) throws PruebaAceptacionExcepcion {
       ClassLoader classLoader = UtilidadesFicheros.class.getClassLoader();
       URL url = classLoader.getResource(ruta);
@@ -42,6 +58,7 @@ public class UtilidadesFicheros {
     *           valor para: fichero
     * @return File o null si no lo encentra.
     * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
     */
    // TODO: Quizás sobre y se pueda usar getRutaDelResource. En ese caso también sobraría RUTA_FICHEROS_DE_PRUEBAS_EN_EL_DOCKER
    public static String getRutaInDockerOrResource(String fichero) throws PruebaAceptacionExcepcion {
@@ -57,6 +74,15 @@ public class UtilidadesFicheros {
       // }
    }
 
+   /**
+    * Cargar fichero resource.
+    *
+    * @param fichero
+    *           valor para: fichero
+    * @return string
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
    public static String cargarFicheroResource(String fichero) throws PruebaAceptacionExcepcion {
       File file = UtilidadesFicheros.getFicheroResource(fichero);
       String data;

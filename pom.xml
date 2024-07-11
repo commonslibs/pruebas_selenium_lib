@@ -4,12 +4,47 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>es.juntadeandalucia.agapa.comun</groupId>
+	<groupId>io.github.commonslibs</groupId>
 	<artifactId>pruebas_selenium_lib</artifactId>
 	<version>0.7.1.6</version>
 
-	<name>Librería para pruebas con Selenium</name>
+	<name>Libreria para pruebas con Selenium</name>
 	<description>Proyecto con las funcionalidades comunes de todos los proyectos que vayan a usar Selenium como framework de pruebas funcionales</description>
+	<url>https://github.com/commonslibs/pruebas_selenium_lib</url>
+
+	<licenses>
+		<license>
+			<name>GPL-v3.0</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Luis Escamilla Martin</name>
+			<email>luis.escamilla@juntadeandalucia.es</email>
+			<organization>AGAPA</organization>
+			<organizationUrl>https://www.juntadeandalucia.es/agenciaagrariaypesquera</organizationUrl>
+		</developer>
+		<developer>
+			<name>Raul Morales de los Santos</name>
+			<email>raul.morales@juntadeandalucia.es</email>
+			<organization>AGAPA</organization>
+			<organizationUrl>https://www.juntadeandalucia.es/agenciaagrariaypesquera</organizationUrl>
+		</developer>
+		<developer>
+			<name>Jose Carlos Serrano Catena</name>
+			<email>josec.serrano@gmail.com</email>
+			<organization>AGAPA</organization>
+			<organizationUrl>https://www.juntadeandalucia.es/agenciaagrariaypesquera</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/commonslibs/pruebas_selenium_lib.git</connection>
+		<developerConnection>scm:git:ssh://github.com/commonslibs/pruebas_selenium_lib.git</developerConnection>
+		<url>https://github.com/commonslibs/pruebas_selenium_lib.git</url>
+	</scm>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -22,7 +57,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<java.version>17</java.version>
-		<ojdbc7.version>12.1.0.2</ojdbc7.version>
+		<ojdbc.version>23.4.0.24.05</ojdbc.version>
 		<testng.version>7.10.2</testng.version>
 		<bonigarcia-webdrivermanager.version>5.8.0</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.1.1</extentreports.version>
@@ -45,9 +80,9 @@
 
 		<!-- Conexión con la BD para establecer condiciones iniciales en las pruebas -->
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>${ojdbc7.version}</version>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc11</artifactId>
+			<version>${ojdbc.version}</version>
 		</dependency>
 
 		<dependency>
@@ -121,6 +156,185 @@
 		</dependency>
 
 	</dependencies>
+
+
+<!-- Definicion de perfiles -->
+	<profiles>
+
+		<profile>
+			<!-- Perfil LOCAL para realizar empaquetados y despliegues de la libreria en local -->
+			<id>LOCAL</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+
+		<profile>
+			<!-- Perfil listo para el despliegue en MAVEN CENTRAL en modo MANUAL con Maven (SIN GITHUB-ACTIONS, 
+			     por ejemplo con maven desde linea de comandos) 
+				 COMANDOS: 
+				 >> mvn clean package -DskipTests CENTRAL-MANUAL : No despliega, solo compila y nos sirve para comprobar que todo es correcto
+				 >> mvn deploy -DskipTests CENTRAL-MANUAL : Despliega a falta de que se le de el OK en https://central.sonatype.com/
+				  Si queremos desplegar sin darle el OK, en el plugin "central-publishing-maven-plugin" a la propiedad
+				  "autoPublish" indicarle el valor "true"
+				 -->
+			<id>CENTRAL-MANUAL</id>
+			<build>
+				<plugins>
+					
+					<!-- OK: Plugin requerido para publicar en MAVEN CENTRAL -->
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.5.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>central</publishingServerId>
+							<tokenAuth>true</tokenAuth>
+							<autoPublish>false</autoPublish>
+						</configuration>
+					</plugin>
+
+					<!-- OK: Genera los sources de la libreria para MAVEN CENTRAL -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>3.3.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- OK: Genera el javadoc de la libreria para MAVEN CENTRAL -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.6.3</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<failOnWarnings>false</failOnWarnings>
+							<failOnError>false</failOnError>
+							<doclint>none</doclint>
+						</configuration>
+					</plugin>
+
+					<!-- OK: Firma los archivos que se subiran a MAVEN CENTRAL -->
+					<!-- OPCION1: Firma manual, sin usar GITHUB-ACTIONS. -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.2.4</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<!-- Perfil listo para el despliegue en MAVEN CENTRAL con GITHUB-ACTIONS -->
+			<id>CENTRAL-GITHUB</id>
+			<build>
+				<plugins>
+
+					<!-- OK: Plugin requerido para publicar en MAVEN CENTRAL -->
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.5.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>central</publishingServerId>
+							<tokenAuth>true</tokenAuth>
+							<autoPublish>true</autoPublish>
+						</configuration>
+					</plugin>
+
+					<!-- Genera los sources de la libreria para MAVEN CENTRAL -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>3.3.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Genera el javadoc de la libreria para MAVEN CENTRAL -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.6.3</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<failOnWarnings>false</failOnWarnings>
+							<failOnError>false</failOnError>
+							<doclint>none</doclint>
+						</configuration>
+					</plugin>
+
+					<!-- Firma los archivos que se subiran a MAVEN CENTRAL -->
+					<!-- OPCION2: Firma automatica con GITHUB-ACTIONS -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.2.4</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+								  <!-- Prevent gpg from using pinentry programs -->
+								  <gpgArguments>
+									<arg>--pinentry-mode</arg>
+									<arg>loopback</arg>
+								  </gpgArguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- FIN: Plugins requerido para publicar en MAVEN CENTRAL -->
+				</plugins>
+			</build>
+		</profile>					
+
+	</profiles>
 
 	<build>
 		<plugins>

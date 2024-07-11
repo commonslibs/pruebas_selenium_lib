@@ -9,28 +9,74 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 
 
+/**
+ * Class WindowsRegistry.
+ *
+ * @author AGAPA
+ */
 public class WindowsRegistry {
+
+   /** La constante HKEY_CURRENT_USER. */
    public static final int                     HKEY_CURRENT_USER  = 0x80000001;
+
+   /** La constante HKEY_LOCAL_MACHINE. */
    public static final int                     HKEY_LOCAL_MACHINE = 0x80000002;
+
+   /** La constante REG_SUCCESS. */
    public static final int                     REG_SUCCESS        = 0;
+
+   /** La constante REG_NOTFOUND. */
    public static final int                     REG_NOTFOUND       = 2;
+
+   /** La constante REG_ACCESSDENIED. */
    public static final int                     REG_ACCESSDENIED   = 5;
 
+   /** La constante KEY_ALL_ACCESS. */
    private static final int                    KEY_ALL_ACCESS     = 0xf003f;
+
+   /** La constante KEY_READ. */
    private static final int                    KEY_READ           = 0x20019;
+
+   /** La constante KEY_WRITE. */
    private static final int                    KEY_WRITE          = 0x20006;
+
+   /** user root. */
    private static Preferences                  userRoot           = Preferences.userRoot();
+
+   /** system root. */
    private static Preferences                  systemRoot         = Preferences.systemRoot();
+
+   /** user class. */
    private static Class<? extends Preferences> userClass          = userRoot.getClass();
+
+   /** reg open key. */
    private static Method                       regOpenKey         = null;
+
+   /** reg close key. */
    private static Method                       regCloseKey        = null;
+
+   /** reg query value ex. */
    private static Method                       regQueryValueEx    = null;
+
+   /** reg enum value. */
    private static Method                       regEnumValue       = null;
+
+   /** reg query info key. */
    private static Method                       regQueryInfoKey    = null;
+
+   /** reg enum key ex. */
    private static Method                       regEnumKeyEx       = null;
+
+   /** reg create key ex. */
    private static Method                       regCreateKeyEx     = null;
+
+   /** reg set value ex. */
    private static Method                       regSetValueEx      = null;
+
+   /** reg delete key. */
    private static Method                       regDeleteKey       = null;
+
+   /** reg delete value. */
    private static Method                       regDeleteValue     = null;
 
    static {
@@ -61,20 +107,28 @@ public class WindowsRegistry {
       }
    }
 
+   /**
+    * Instancia un nuevo objeto de la clase windows registry.
+    */
    private WindowsRegistry() {
    }
 
    /**
-    * Read a value from key and value name
+    * Read a value from key and value name.
     *
     * @param hkey
     *           HKEY_CURRENT_USER/HKEY_LOCAL_MACHINE
     * @param key
+    *           valor para: key
     * @param valueName
+    *           valor para: value name
     * @return the value
     * @throws IllegalArgumentException
+    *            la illegal argument exception
     * @throws IllegalAccessException
+    *            la illegal access exception
     * @throws InvocationTargetException
+    *            la invocation target exception
     */
    public static String readString(long hkey, String key, String valueName)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
@@ -90,15 +144,19 @@ public class WindowsRegistry {
    }
 
    /**
-    * Read value(s) and value name(s) form given key
+    * Read value(s) and value name(s) form given key.
     *
     * @param hkey
     *           HKEY_CURRENT_USER/HKEY_LOCAL_MACHINE
     * @param key
+    *           valor para: key
     * @return the value name(s) plus the value(s)
     * @throws IllegalArgumentException
+    *            la illegal argument exception
     * @throws IllegalAccessException
+    *            la illegal access exception
     * @throws InvocationTargetException
+    *            la invocation target exception
     */
    public static Map<String, String> readStringValues(long hkey, String key)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
@@ -114,15 +172,19 @@ public class WindowsRegistry {
    }
 
    /**
-    * Read the value name(s) from a given key
+    * Read the value name(s) from a given key.
     *
     * @param hkey
     *           HKEY_CURRENT_USER/HKEY_LOCAL_MACHINE
     * @param key
+    *           valor para: key
     * @return the value name(s)
     * @throws IllegalArgumentException
+    *            la illegal argument exception
     * @throws IllegalAccessException
+    *            la illegal access exception
     * @throws InvocationTargetException
+    *            la invocation target exception
     */
    public static List<String> readStringSubKeys(long hkey, String key)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
@@ -138,14 +200,18 @@ public class WindowsRegistry {
    }
 
    /**
-    * Create a key
+    * Create a key.
     *
     * @param hkey
     *           HKEY_CURRENT_USER/HKEY_LOCAL_MACHINE
     * @param key
+    *           valor para: key
     * @throws IllegalArgumentException
+    *            la illegal argument exception
     * @throws IllegalAccessException
+    *            la illegal access exception
     * @throws InvocationTargetException
+    *            la invocation target exception
     */
    public static void createKey(long hkey, String key) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       long[] ret;
@@ -166,15 +232,22 @@ public class WindowsRegistry {
    }
 
    /**
-    * Write a value in a given key/value name
+    * Write a value in a given key/value name.
     *
     * @param hkey
+    *           valor para: hkey
     * @param key
+    *           valor para: key
     * @param valueName
+    *           valor para: value name
     * @param value
+    *           valor para: value
     * @throws IllegalArgumentException
+    *            la illegal argument exception
     * @throws IllegalAccessException
+    *            la illegal access exception
     * @throws InvocationTargetException
+    *            la invocation target exception
     */
    public static void writeStringValue(long hkey, String key, String valueName, String value)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
@@ -190,13 +263,18 @@ public class WindowsRegistry {
    }
 
    /**
-    * Delete a given key
+    * Delete a given key.
     *
     * @param hkey
+    *           valor para: hkey
     * @param key
+    *           valor para: key
     * @throws IllegalArgumentException
+    *            la illegal argument exception
     * @throws IllegalAccessException
+    *            la illegal access exception
     * @throws InvocationTargetException
+    *            la invocation target exception
     */
    public static void deleteKey(long hkey, String key) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       int rc = -1;
@@ -212,14 +290,20 @@ public class WindowsRegistry {
    }
 
    /**
-    * delete a value from a given key/value name
+    * delete a value from a given key/value name.
     *
     * @param hkey
+    *           valor para: hkey
     * @param key
+    *           valor para: key
     * @param value
+    *           valor para: value
     * @throws IllegalArgumentException
+    *            la illegal argument exception
     * @throws IllegalAccessException
+    *            la illegal access exception
     * @throws InvocationTargetException
+    *            la invocation target exception
     */
    public static void deleteValue(long hkey, String key, String value)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
@@ -237,6 +321,25 @@ public class WindowsRegistry {
 
    // =====================
 
+   /**
+    * Delete value.
+    *
+    * @param root
+    *           valor para: root
+    * @param hkey
+    *           valor para: hkey
+    * @param key
+    *           valor para: key
+    * @param value
+    *           valor para: value
+    * @return long
+    * @throws IllegalArgumentException
+    *            la illegal argument exception
+    * @throws IllegalAccessException
+    *            la illegal access exception
+    * @throws InvocationTargetException
+    *            la invocation target exception
+    */
    private static Long deleteValue(Preferences root, long hkey, String key, String value)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       long[] handles = (long[]) regOpenKey.invoke(root, Long.valueOf(hkey), toCstr(key), Integer.valueOf(KEY_ALL_ACCESS));
@@ -248,11 +351,47 @@ public class WindowsRegistry {
       return rc;
    }
 
+   /**
+    * Delete key.
+    *
+    * @param root
+    *           valor para: root
+    * @param hkey
+    *           valor para: hkey
+    * @param key
+    *           valor para: key
+    * @return int
+    * @throws IllegalArgumentException
+    *            la illegal argument exception
+    * @throws IllegalAccessException
+    *            la illegal access exception
+    * @throws InvocationTargetException
+    *            la invocation target exception
+    */
    private static int deleteKey(Preferences root, long hkey, String key)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       return ((Integer) regDeleteKey.invoke(root, Long.valueOf(hkey), toCstr(key))); // can REG_NOTFOUND, REG_ACCESSDENIED, REG_SUCCESS
    }
 
+   /**
+    * Read string.
+    *
+    * @param root
+    *           valor para: root
+    * @param hkey
+    *           valor para: hkey
+    * @param key
+    *           valor para: key
+    * @param value
+    *           valor para: value
+    * @return string
+    * @throws IllegalArgumentException
+    *            la illegal argument exception
+    * @throws IllegalAccessException
+    *            la illegal access exception
+    * @throws InvocationTargetException
+    *            la invocation target exception
+    */
    private static String readString(Preferences root, long hkey, String key, String value)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       long[] handles = (long[]) regOpenKey.invoke(root, Long.valueOf(hkey), toCstr(key), Integer.valueOf(KEY_READ));
@@ -264,6 +403,23 @@ public class WindowsRegistry {
       return (valb != null ? new String(valb).trim() : null);
    }
 
+   /**
+    * Read string values.
+    *
+    * @param root
+    *           valor para: root
+    * @param hkey
+    *           valor para: hkey
+    * @param key
+    *           valor para: key
+    * @return map
+    * @throws IllegalArgumentException
+    *            la illegal argument exception
+    * @throws IllegalAccessException
+    *            la illegal access exception
+    * @throws InvocationTargetException
+    *            la invocation target exception
+    */
    private static Map<String, String> readStringValues(Preferences root, long hkey, String key)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       HashMap<String, String> results = new HashMap<>();
@@ -284,6 +440,23 @@ public class WindowsRegistry {
       return results;
    }
 
+   /**
+    * Read string sub keys.
+    *
+    * @param root
+    *           valor para: root
+    * @param hkey
+    *           valor para: hkey
+    * @param key
+    *           valor para: key
+    * @return list
+    * @throws IllegalArgumentException
+    *            la illegal argument exception
+    * @throws IllegalAccessException
+    *            la illegal access exception
+    * @throws InvocationTargetException
+    *            la invocation target exception
+    */
    private static List<String> readStringSubKeys(Preferences root, long hkey, String key)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       List<String> results = new ArrayList<>();
@@ -304,11 +477,48 @@ public class WindowsRegistry {
       return results;
    }
 
+   /**
+    * Creates the key.
+    *
+    * @param root
+    *           valor para: root
+    * @param hkey
+    *           valor para: hkey
+    * @param key
+    *           valor para: key
+    * @return long[]
+    * @throws IllegalArgumentException
+    *            la illegal argument exception
+    * @throws IllegalAccessException
+    *            la illegal access exception
+    * @throws InvocationTargetException
+    *            la invocation target exception
+    */
    private static long[] createKey(Preferences root, long hkey, String key)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       return (long[]) regCreateKeyEx.invoke(root, Long.valueOf(hkey), toCstr(key));
    }
 
+   /**
+    * Write string value.
+    *
+    * @param root
+    *           valor para: root
+    * @param hkey
+    *           valor para: hkey
+    * @param key
+    *           valor para: key
+    * @param valueName
+    *           valor para: value name
+    * @param value
+    *           valor para: value
+    * @throws IllegalArgumentException
+    *            la illegal argument exception
+    * @throws IllegalAccessException
+    *            la illegal access exception
+    * @throws InvocationTargetException
+    *            la invocation target exception
+    */
    private static void writeStringValue(Preferences root, long hkey, String key, String valueName, String value)
          throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
       long[] handles = (long[]) regOpenKey.invoke(root, Long.valueOf(hkey), toCstr(key), Integer.valueOf(KEY_WRITE));
@@ -322,6 +532,13 @@ public class WindowsRegistry {
       regCloseKey.invoke(root, Long.valueOf(handles[0]));
    }
 
+   /**
+    * To cstr.
+    *
+    * @param str
+    *           valor para: str
+    * @return byte[]
+    */
    // utility
    private static byte[] toCstr(String str) {
       byte[] result = new byte[str.length() + 1];

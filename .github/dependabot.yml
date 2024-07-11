@@ -1,0 +1,26 @@
+# Fichero de configuracion del boot Dependaboot de Github
+# Para mas informacion y documentacion del proyecto revisar el siguiente enlace:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  # Gestor de paquetes del proyecto
+  - package-ecosystem: "maven"
+    # Location of package manifests
+    directory: "/"
+    schedule:
+      # Intervalo para la busqueda de nuevas versiones de librerias
+      interval: "daily" 
+      # En caso de que se indicara que la frecuencia es semanal, se indica el dia de la semana que hace
+      # el analisis de librerias vulnerables
+      # day: "sunday"
+    # Usuario asignado (Pendiente de analizar esta propiedad)   
+    assignees:
+    - "Jose Carlos Serrano Catena"
+    # Permite que dependabot pueda tener hasta un maximo de 10 pull request abiertas 
+    open-pull-requests-limit: 10
+    # Ignorar determinadas actualizaciones de librerias (Actualmente no ignoramos ninguna actualizacion)
+    #ignore:
+      # Ignora cualquier actualizacion (MAJOR X.*.*) de la libreria spring-boot-starter-parent Ejemplo: 3.*, 4.*, 5.* ...
+      #- dependency-name: "org.springframework.boot:spring-boot-starter-parent"
+      #  update-types: ["version-update:semver-major"]

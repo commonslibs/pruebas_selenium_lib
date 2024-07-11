@@ -19,10 +19,21 @@ import org.testng.Assert;
 public class BaseDeDatos {
 
    /**
-    * Open and return a conexion to database
+    * Open and return a conexion to database.
     *
+    * @param bd
+    *           valor para: bd
+    * @param host
+    *           valor para: host
+    * @param puerto
+    *           valor para: puerto
+    * @param usuario
+    *           valor para: usuario
+    * @param contrasena
+    *           valor para: contrasena
     * @return an instance of java.sql.Connection
     * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
     */
    public static Connection conectar(String bd, String host, String puerto, String usuario, String contrasena)
          throws PruebaAceptacionExcepcion {
@@ -42,12 +53,15 @@ public class BaseDeDatos {
    }
 
    /**
-    * execute a SQL query on database
+    * execute a SQL query on database.
     *
+    * @param conexion
+    *           valor para: conexion
     * @param queryString
     *           SQL query string
     * @return a reference to returned data collection, an instance of java.sql.ResultSet
     * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
     */
    public static ResultSet executeQuery(Connection conexion, String queryString) throws PruebaAceptacionExcepcion {
       Assert.assertNotNull(conexion);
@@ -69,6 +83,14 @@ public class BaseDeDatos {
       return rs;
    }
 
+   /**
+    * Desconectar.
+    *
+    * @param conexion
+    *           valor para: conexion
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
    public static void desconectar(Connection conexion) throws PruebaAceptacionExcepcion {
       try {
          if (conexion != null && !conexion.isClosed()) {
@@ -84,10 +106,13 @@ public class BaseDeDatos {
    /**
     * Execute non-query (usually INSERT/UPDATE/DELETE/COUNT/SUM...) on database
     *
+    * @param conexion
+    *           valor para: conexion
     * @param queryString
     *           a SQL statement
     * @return single value result of SQL statement
     * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
     */
    public static boolean execute(Connection conexion, String queryString) throws PruebaAceptacionExcepcion {
       Assert.assertNotNull(conexion);
@@ -109,6 +134,17 @@ public class BaseDeDatos {
       return result;
    }
 
+   /**
+    * Execute update.
+    *
+    * @param conexion
+    *           valor para: conexion
+    * @param queryString
+    *           valor para: query string
+    * @return result set
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
    public static ResultSet executeUpdate(Connection conexion, String queryString) throws PruebaAceptacionExcepcion {
       Assert.assertNotNull(conexion);
 
