@@ -41,15 +41,15 @@ jobs:
         run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
 # Se crea release en GITHUB. Primero se obtiene la version y luego se crea la release con la version obtenida 
 # IMPORTANTE: SOLO FUNCIONA SI SE CREA UN TAG. Si se ejecuta el action a demanda, eliminar esta tarea
-      - name: Obtenemos la version de la release a partir del nombre del TAG
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT      
-      - name: Creamos release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: v${{ steps.get_version.outputs.VERSION }}
-          generate_release_notes: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Obtenemos la version de la release a partir del nombre del TAG
+#        id: get_version
+#        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT      
+#      - name: Creamos release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          name: v${{ steps.get_version.outputs.VERSION }}
+#          generate_release_notes: true
+#          token: ${{ secrets.GITHUB_TOKEN }}
 # Se publica el JAR en Maven Central
       - name: Publicamos JAR en Maven Central
         run: mvn --no-transfer-progress --batch-mode -DskipTests -P CENTRAL-GITHUB deploy
