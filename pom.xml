@@ -6,7 +6,7 @@
 
 	<groupId>io.github.commonslibs</groupId>
 	<artifactId>pruebas_selenium_lib</artifactId>
-	<version>0.7.1.6</version>
+	<version>0.7.1.8</version>
 
 	<name>Libreria para pruebas con Selenium</name>
 	<description>Proyecto con las funcionalidades comunes de todos los proyectos que vayan a usar Selenium como framework de pruebas funcionales</description>
@@ -59,8 +59,8 @@
 		<java.version>17</java.version>
 		<ojdbc.version>23.4.0.24.05</ojdbc.version>
 		<testng.version>7.10.2</testng.version>
-		<bonigarcia-webdrivermanager.version>5.8.0</bonigarcia-webdrivermanager.version>
-		<extentreports.version>5.1.1</extentreports.version>
+		<bonigarcia-webdrivermanager.version>5.9.1</bonigarcia-webdrivermanager.version>
+		<extentreports.version>5.1.2</extentreports.version>
 		<video-recorder-testng.version>2.0</video-recorder-testng.version>
 	</properties>
 
@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc11</artifactId>
-			<version>${ojdbc.version}</version>
+			<version>${ojdbc.version}</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 
 		<dependency>
@@ -290,7 +290,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.6.3</version>
+						<version>3.7.0</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>

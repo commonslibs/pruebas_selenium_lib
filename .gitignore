@@ -18,9 +18,6 @@ desktop.ini
 .factorypath
 test-output/
 .vscode
-/selenium-con-certificado/build-con-proxy.bat
-/build-con-proxy.bat
-/xvfb.log
 /drivers
 /.settings
 /target

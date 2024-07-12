@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -14,6 +15,7 @@ import java.util.prefs.Preferences;
  *
  * @author AGAPA
  */
+@Slf4j
 public class WindowsRegistry {
 
    /** La constante HKEY_CURRENT_USER. */
@@ -103,7 +105,7 @@ public class WindowsRegistry {
          regDeleteKey.setAccessible(true);
       }
       catch (Exception e) {
-         e.printStackTrace();
+         log.error(e.getLocalizedMessage());
       }
    }
 
