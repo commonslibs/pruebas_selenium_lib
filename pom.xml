@@ -70,12 +70,14 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.34</version>
 		</dependency>
 
 		<!-- WebDrivers de selenium -->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
+			<version>4.22.0</version>
 		</dependency>
 
 		<!-- Conexión con la BD para establecer condiciones iniciales en las pruebas -->
@@ -132,10 +134,12 @@
 		<dependency>
 		    <groupId>jakarta.mail</groupId>
 		    <artifactId>jakarta.mail-api</artifactId>
+			<version>2.1.3</version>
 		</dependency>
 		<dependency>
     		<groupId>org.eclipse.angus</groupId>
     		<artifactId>jakarta.mail</artifactId>
+			<version>2.0.3</version>
 		</dependency>
 
 		<dependency>
@@ -215,7 +219,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.6.3</version>
+						<version>3.7.0</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
