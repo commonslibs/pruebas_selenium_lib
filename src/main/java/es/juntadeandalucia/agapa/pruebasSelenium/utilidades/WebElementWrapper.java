@@ -301,17 +301,19 @@ public class WebElementWrapper {
    protected void asignaTexto(WebElement elemento, String texto) {
       this.trace("asignaTexto->" + elemento.toString() + ". texto=" + texto);
       try {
-         if (texto.length() > 1) {
-            elemento.sendKeys(texto.substring(0, 1));
-         }
+         // if (texto.length() > 1) {
+         // elemento.sendKeys(texto.substring(0, 1));
+         // }
          JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
-         js.executeScript("arguments[0].value = arguments[1];", elemento, texto);
+         js.executeScript("arguments[0].value = arguments[1];", elemento, texto.substring(0, texto.length() - 1));
+         elemento.sendKeys(texto.substring(texto.length() - 1, texto.length()));
          // for (int x = 0; x < texto.length(); x++) {
          // elemento.sendKeys(texto.substring(x, x + 1));
          // }
       }
       catch (Exception e) {
-         String mensaje = "No se puede escribir " + texto + " en " + elemento.toString() + ". Motivo: " + this.mensajeDeError(e);
+         String mensaje =
+               "No se puede escribir " + texto + " en " + elemento.toString() + ". Motivo: " + this.mensajeDeError(e);
          this.warning(mensaje);
       }
    }

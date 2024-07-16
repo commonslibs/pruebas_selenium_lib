@@ -1,5 +1,0 @@
-raul
-zzz
-
-git remote set-url --add --push origin https://github.com/commonslibs/pruebas_selenium_lib.git
-git remote set-url --add --push origin http://www.agapa.junta-andalucia.es/gitlab/UTILIDADES/COMUN/pruebas_selenium_lib/sfw.git
