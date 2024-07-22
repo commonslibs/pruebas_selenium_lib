@@ -17,9 +17,9 @@ jobs:
         run: echo "# Nuevos cambios han llegado a la librería" > ${{ github.workspace }}-CHANGELOG.txt
       - name: Release
         uses: softprops/action-gh-release@v2          
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{env.version_name}}
-          name: Release - ${{env.version_name}}
-          generate_release_notes: true
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: v${{env.version_name}}
+#          name: Release - ${{env.version_name}}
+#          generate_release_notes: true
