@@ -20,4 +20,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          tag_name: v${{env.version_name}}
+          name: Release - ${{env.version_name}}
           generate_release_notes: true
