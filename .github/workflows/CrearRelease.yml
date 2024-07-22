@@ -7,20 +7,18 @@ on:
   # De manera manual desde Github-actions
   workflow_dispatch:      
 
-permissions:
-  contents: write
-
 jobs:
-  release:
-    name: Crear Release
+  create_release:
     runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Crear Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            build/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-        run: |
-          gh release create "$tag" \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
-              --generate-notes
