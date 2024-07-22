@@ -1,0 +1,23 @@
+name: Crear Release
+
+on:
+#  push:
+#    tags:
+#      - '*.*.*.*'
+  # De manera manual desde Github-actions
+  workflow_dispatch:      
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generando Changelog en la release
+        run: echo "# Nuevos cambios han llegado a la librería" > ${{ github.workspace }}-CHANGELOG.txt
+      - name: Release
+        uses: softprops/action-gh-release@v2          
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          generate_release_notes: true
