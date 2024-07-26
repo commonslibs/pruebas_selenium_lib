@@ -1145,6 +1145,10 @@ public class WebElementWrapper {
     */
    // FIXME: Hacerlo genérico
    public int obtenerFilaConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
+      return this.obtenerFilaConTextoEnTabla(testObject, texto, "rich-table-row");
+   }
+
+   public int obtenerFilaConTextoEnTabla(By testObject, String texto, String cssrow) throws PruebaAceptacionExcepcion {
       this.debug("obtenerFilaConTextoEnTabla->" + testObject.toString() + ". Texto=" + texto);
       int fila = -1;
       boolean conseguido = false;
@@ -1156,7 +1160,8 @@ public class WebElementWrapper {
             // Localizar el body de la tabla
             table = this.esperaCompleta(testObject);
             // Se obtienen todas las filas de la tabla
-            List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
+            // List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
+            List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class,  '" + cssrow + "')]"));
             // Se recorren todas las filas de la tabla
             for (int x = 0; !conseguido && x < rows.size(); x++) {
                // Se recorre columna por columna buscando el texto esperado

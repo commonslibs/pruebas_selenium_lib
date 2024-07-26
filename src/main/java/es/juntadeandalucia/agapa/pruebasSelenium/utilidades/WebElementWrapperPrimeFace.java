@@ -268,4 +268,9 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       }
    }
 
+   @Override
+   public int obtenerFilaConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
+      return this.obtenerFilaConTextoEnTabla(testObject, texto, "table__row");
+   }
+
 }
