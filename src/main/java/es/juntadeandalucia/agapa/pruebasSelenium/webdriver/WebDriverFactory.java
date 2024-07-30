@@ -144,8 +144,7 @@ public class WebDriverFactory {
       // Se deshabiitan el sonido. Aconsejado en entorno docker
       options.addArguments("--mute-audio");
 
-      // Desactiva la traducción de Chrome, tanto la opción manual como el mensaje emergente cuando se detecta una
-      // página con un idioma
+      // Desactiva la traducción de Chrome, tanto la opción manual como el mensaje emergente cuando se detecta una página con un idioma
       // diferente.
       options.addArguments("--disable-features=Translate");
 
@@ -161,6 +160,9 @@ public class WebDriverFactory {
 
       // Desactivar la sincronización con una cuenta de Google
       options.addArguments("--disable-sync");
+
+      // Desactiva la selección de buscador
+      options.addArguments("--disable-search-engine-choice-screen");
 
       // Para lanzar en modo incognito
       if (VariablesGlobalesTest.IS_MODO_INCOGNITO) {
