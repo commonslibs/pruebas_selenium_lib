@@ -154,9 +154,12 @@ public class WebDriverFactory {
       // No actualice los 'componentes' del navegador enumerados en chrome://components/
       options.addArguments("--disable-component-update");
 
-      // Desactiva la comunicación del servidor de autocompletar. Esta función no se desactiva mediante otras banderas
-      // "principales".
+      // Desactiva la comunicación del servidor de autocompletar. Esta función no se desactiva mediante otras banderas "principales".
       options.addArguments("--disable-features=AutofillServerCommunication");
+
+      // Desactiva el mensaje "You can open bookmarks, reading mode, and more from the Chrome menu".
+      // https://github.com/seleniumbase/SeleniumBase/issues/2836#issuecomment-2271935782
+      options.addArguments("--disable-features=SidePanelPinning");
 
       // Desactivar la sincronización con una cuenta de Google
       options.addArguments("--disable-sync");
