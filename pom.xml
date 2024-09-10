@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>4.23.0</version>
+			<version>4.24.0</version>
 		</dependency>
 
 		<!-- Conexión con la BD para establecer condiciones iniciales en las pruebas -->
@@ -219,7 +219,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.7.0</version>
+						<version>3.10.0</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -240,7 +240,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.2.4</version>
+						<version>3.2.5</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
