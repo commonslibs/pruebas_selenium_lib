@@ -41,15 +41,15 @@ jobs:
         run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
 # Se crea release en GITHUB.
 # IMPORTANTE: SOLO FUNCIONA SI SE CREA UN TAG. Si se ejecuta el action a demanda, eliminar esta tarea
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Crear Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            build/**/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#      - name: Crear Release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          files: |
+#            build/**/*
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 # Se publica el JAR en Maven Central
       - name: Publicamos JAR en Maven Central
         run: mvn --no-transfer-progress --batch-mode -DskipTests -P CENTRAL-GITHUB deploy
