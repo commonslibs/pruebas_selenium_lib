@@ -57,7 +57,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<java.version>17</java.version>
-		<ojdbc.version>23.4.0.24.05</ojdbc.version>
+		<ojdbc.version>23.5.0.24.07</ojdbc.version>
 		<testng.version>7.10.2</testng.version>
 		<bonigarcia-webdrivermanager.version>5.9.2</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.1.2</extentreports.version>
