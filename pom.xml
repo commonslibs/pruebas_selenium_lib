@@ -6,7 +6,7 @@
 
 	<groupId>io.github.commonslibs</groupId>
 	<artifactId>pruebas_selenium_lib</artifactId>
-	<version>0.8.0.0</version>
+	<version>0.8.0.1</version>
 
 	<name>Libreria para pruebas con Selenium</name>
 	<description>Proyecto con las funcionalidades comunes de todos los proyectos que vayan a usar Selenium como framework de pruebas funcionales</description>
@@ -49,7 +49,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.1</version>
+		<version>3.3.4</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -57,9 +57,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<java.version>17</java.version>
-		<ojdbc.version>23.4.0.24.05</ojdbc.version>
+		<ojdbc.version>23.5.0.24.07</ojdbc.version>
 		<testng.version>7.10.2</testng.version>
-		<bonigarcia-webdrivermanager.version>5.9.1</bonigarcia-webdrivermanager.version>
+		<bonigarcia-webdrivermanager.version>5.9.2</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.1.2</extentreports.version>
 		<video-recorder-testng.version>2.0</video-recorder-testng.version>
 	</properties>
@@ -76,6 +76,7 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
+			<version>4.25.0</version>
 		</dependency>
 
 		<!-- Conexión con la BD para establecer condiciones iniciales en las pruebas -->
@@ -186,7 +187,7 @@
 					<plugin>
 						<groupId>org.sonatype.central</groupId>
 						<artifactId>central-publishing-maven-plugin</artifactId>
-						<version>0.5.0</version>
+						<version>0.6.0</version>
 						<extensions>true</extensions>
 						<configuration>
 							<publishingServerId>central</publishingServerId>
@@ -215,7 +216,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.6.3</version>
+						<version>3.10.0</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -290,7 +291,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.7.0</version>
+						<version>3.10.0</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
