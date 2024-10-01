@@ -144,8 +144,7 @@ public class WebDriverFactory {
       // Se deshabiitan el sonido. Aconsejado en entorno docker
       options.addArguments("--mute-audio");
 
-      // Desactiva la traducción de Chrome, tanto la opción manual como el mensaje emergente cuando se detecta una
-      // página con un idioma
+      // Desactiva la traducción de Chrome, tanto la opción manual como el mensaje emergente cuando se detecta una página con un idioma
       // diferente.
       options.addArguments("--disable-features=Translate");
 
@@ -155,12 +154,18 @@ public class WebDriverFactory {
       // No actualice los 'componentes' del navegador enumerados en chrome://components/
       options.addArguments("--disable-component-update");
 
-      // Desactiva la comunicación del servidor de autocompletar. Esta función no se desactiva mediante otras banderas
-      // "principales".
+      // Desactiva la comunicación del servidor de autocompletar. Esta función no se desactiva mediante otras banderas "principales".
       options.addArguments("--disable-features=AutofillServerCommunication");
+
+      // Desactiva el mensaje "You can open bookmarks, reading mode, and more from the Chrome menu".
+      // https://github.com/seleniumbase/SeleniumBase/issues/2836#issuecomment-2271935782
+      options.addArguments("--disable-features=SidePanelPinning");
 
       // Desactivar la sincronización con una cuenta de Google
       options.addArguments("--disable-sync");
+
+      // Desactiva la selección de buscador
+      options.addArguments("--disable-search-engine-choice-screen");
 
       // Para lanzar en modo incognito
       if (VariablesGlobalesTest.IS_MODO_INCOGNITO) {

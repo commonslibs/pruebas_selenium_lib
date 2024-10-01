@@ -355,7 +355,9 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          }
       }
 
-      this.borrarCache();
+      if (VariablesGlobalesTest.BORRAR_CACHE) {
+         this.borrarCache();
+      }
    }
 
    /**

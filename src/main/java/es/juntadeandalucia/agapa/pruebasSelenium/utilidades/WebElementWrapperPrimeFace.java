@@ -1,17 +1,18 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
-import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
-import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
+import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
- * Clase que contiene las funcionalidades de selenium encapsulada, para usarlo de manera mas sencilla y con metodos específicos para los
- * componentes de RichFace.
+ * Clase que contiene las funcionalidades de selenium encapsulada, para usarlo de manera mas sencilla y con metodos
+ * específicos para los componentes de RichFace.
  *
  * @author AGAPA
  */
@@ -57,7 +58,8 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
    private void cargarVariables() {
       String valorEsperaObligatoria;
       try {
-         valorEsperaObligatoria = VariablesGlobalesTest.getPropiedad(PropiedadesTest.MILISEGUNDOS_ESPERA_OBLIGATORIA).trim();
+         valorEsperaObligatoria =
+               VariablesGlobalesTest.getPropiedad(PropiedadesTest.MILISEGUNDOS_ESPERA_OBLIGATORIA).trim();
       }
       catch (Exception e) {
          WebElementWrapperPrimeFace.log.error("Se establece el valor de MILISEGUNDOS_ESPERA_OBLIGATORIA a cero.", e);
@@ -183,8 +185,9 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
     * @param spanPaginator
     *           valor para: elemento que muestra el texto de currentPageReportTemplate
     * @param position
-    *           valor para: posición del número de elementos en el currentPageReportTemplate. Ej: Total {totalRecords} elementos - Página
-    *           {currentPage} de {totalPages}. En este caso el totalRecords está en la posición 1 (empieza por el 0).
+    *           valor para: posición del número de elementos en el currentPageReportTemplate. Ej: Total {totalRecords}
+    *           elementos - Página {currentPage} de {totalPages}. En este caso el totalRecords está en la posición 1
+    *           (empieza por el 0).
     * @return int Número de elementos en la tabla
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
@@ -238,8 +241,8 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
    }
 
    /**
-    * SOBREESCRITA - PARA OBLIGAR UNA ESPERA FORZOSA. ES GENERICA A CUALQUIER ACCION Y SE CONFIGURA EN EL .properties (Por Defecto irá
-    * destactivada.)
+    * SOBREESCRITA - PARA OBLIGAR UNA ESPERA FORZOSA. ES GENERICA A CUALQUIER ACCION Y SE CONFIGURA EN EL .properties
+    * (Por Defecto irá destactivada.)
     *
     * @param testObject
     *           valor para: test object
@@ -266,6 +269,37 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
          WebElementWrapperPrimeFace.log.error("Error en la esperaObligada", e);
          Thread.currentThread().interrupt();
       }
+   }
+
+   /**
+    * Obtener fila con texto en tabla pasando el parametro tabla.
+    *
+    * @param testObject
+    *           valor para: test object
+    * @param texto
+    *           valor para: texto
+    * @return int
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   @Override
+   public int obtenerFilaConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
+      return this.obtenerFilaConTextoEnTabla(testObject, texto, "table__row");
+   }
+
+   /**
+    * Cuenta el número de filas que contiene el texto pasado por parametro
+    *
+    * @param testObject
+    *           valor para: test object
+    * @param texto
+    *           valor para: texto
+    * @return int
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   public int contarFilasConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
+      return this.contarFilasConTextoEnTabla(testObject, texto, "table__row");
    }
 
 }

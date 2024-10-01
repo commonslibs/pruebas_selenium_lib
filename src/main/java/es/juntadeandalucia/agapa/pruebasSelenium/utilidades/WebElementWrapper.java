@@ -1,21 +1,12 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
-import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.markuputils.ExtentColor;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
-import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath.ConditionType;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath.TestObject;
-import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath.XPathBuilder;
-import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
 import java.util.List;
 import java.util.function.Predicate;
-import lombok.extern.slf4j.Slf4j;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -26,6 +17,18 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.markuputils.ExtentColor;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
+
+import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath.ConditionType;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath.TestObject;
+import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.xpath.XPathBuilder;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -128,8 +131,8 @@ public class WebElementWrapper {
    }
 
    /**
-    * Acción de seleccionar un elemento con etiqueta @param labelValue de un combo (select desplegable) identificado por el @param
-    * testObject.
+    * Acción de seleccionar un elemento con etiqueta @param labelValue de un combo (select desplegable) identificado por
+    * el @param testObject.
     *
     * @param testObject
     *           valor para: test object
@@ -301,23 +304,26 @@ public class WebElementWrapper {
    protected void asignaTexto(WebElement elemento, String texto) {
       this.trace("asignaTexto->" + elemento.toString() + ". texto=" + texto);
       try {
-         if (texto.length() > 1) {
-            elemento.sendKeys(texto.substring(0, 1));
-         }
+         // if (texto.length() > 1) {
+         // elemento.sendKeys(texto.substring(0, 1));
+         // }
          JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getDriver();
-         js.executeScript("arguments[0].value = arguments[1];", elemento, texto);
+         js.executeScript("arguments[0].value = arguments[1];", elemento, texto.substring(0, texto.length() - 1));
+         elemento.sendKeys(texto.substring(texto.length() - 1, texto.length()));
          // for (int x = 0; x < texto.length(); x++) {
          // elemento.sendKeys(texto.substring(x, x + 1));
          // }
       }
       catch (Exception e) {
-         String mensaje = "No se puede escribir " + texto + " en " + elemento.toString() + ". Motivo: " + this.mensajeDeError(e);
+         String mensaje =
+               "No se puede escribir " + texto + " en " + elemento.toString() + ". Motivo: " + this.mensajeDeError(e);
          this.warning(mensaje);
       }
    }
 
    /**
-    * Escribe un texto tecleando caracter por caracter en el campo sugerencia, y pulsa el caracter de "down arrow" y a continuacion "enter".
+    * Escribe un texto tecleando caracter por caracter en el campo sugerencia, y pulsa el caracter de "down arrow" y a
+    * continuacion "enter".
     *
     * @param testObject
     *           valor para: test object
@@ -439,15 +445,16 @@ public class WebElementWrapper {
       }
       catch (PruebaAceptacionExcepcion e) {
          String mensaje = "Error en " + testObject.toString()
-               + " al hacer seleccionar el valor del combo por index con retraso. Motivo del error: " + this.mensajeDeError(e);
+               + " al hacer seleccionar el valor del combo por index con retraso. Motivo del error: "
+               + this.mensajeDeError(e);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
 
    /**
-    * Selecciona un valor en un combo cuyo texto se pasa por parámetro. Si el combo está deshabilitado no se hará ningún cambio, solo se
-    * comprobará que el texto coincida con el parámetro pasado.
+    * Selecciona un valor en un combo cuyo texto se pasa por parámetro. Si el combo está deshabilitado no se hará ningún
+    * cambio, solo se comprobará que el texto coincida con el parámetro pasado.
     *
     * @param testObject
     *           valor para: test object
@@ -516,7 +523,8 @@ public class WebElementWrapper {
       }
       catch (PruebaAceptacionExcepcion e) {
          String mensaje = "Error en " + testObject.toString()
-               + " al hacer seleccionar el valor del combo por etiqueta con retraso. Motivo del error: " + this.mensajeDeError(e);
+               + " al hacer seleccionar el valor del combo por etiqueta con retraso. Motivo del error: "
+               + this.mensajeDeError(e);
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -691,7 +699,8 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por value del option";
+         String mensaje =
+               "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por value del option";
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
             this.error(excepcion);
@@ -730,7 +739,8 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por value del option";
+         String mensaje =
+               "Error en " + testObject.toString() + " al hacer seleccionar el valor del combo por value del option";
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
             this.error(excepcion);
@@ -770,8 +780,8 @@ public class WebElementWrapper {
          }
       }
       if (!conseguido) {
-         String mensaje = "Error en " + testObject.toString() + " al verificar el texto del elemento " + testObject.toString()
-               + ". Texto esperado: " + texto;
+         String mensaje = "Error en " + testObject.toString() + " al verificar el texto del elemento "
+               + testObject.toString() + ". Texto esperado: " + texto;
          if (excepcion != null) {
             mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
             this.error(excepcion);
@@ -916,8 +926,10 @@ public class WebElementWrapper {
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
-   public void verifyElementAttributeValue(By testObject, String atributo, String value) throws PruebaAceptacionExcepcion {
-      this.debug("verifyElementAttributeValue->" + testObject.toString() + ". Atributo=" + atributo + ". Value=" + value);
+   public void verifyElementAttributeValue(By testObject, String atributo, String value)
+         throws PruebaAceptacionExcepcion {
+      this.debug(
+            "verifyElementAttributeValue->" + testObject.toString() + ". Atributo=" + atributo + ". Value=" + value);
       boolean conseguido = false;
       String valorAtributo = "";
       Exception excepcion = null;
@@ -943,7 +955,8 @@ public class WebElementWrapper {
          throw new PruebaAceptacionExcepcion(mensaje);
       }
       else if (!value.equals(valorAtributo)) {
-         String mensaje = "El valor " + value + " del atributo " + atributo + " no es el esperado (" + valorAtributo + ")";
+         String mensaje =
+               "El valor " + value + " del atributo " + atributo + " no es el esperado (" + valorAtributo + ")";
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
@@ -982,7 +995,8 @@ public class WebElementWrapper {
       boolean conseguido = false;
       try {
          this.esperaCorta();
-         WebElement textDemo = WebDriverFactory.getDriver().findElement(By.xpath("//*[contains(text(),'" + texto + "')]"));
+         WebElement textDemo =
+               WebDriverFactory.getDriver().findElement(By.xpath("//*[contains(text(),'" + texto + "')]"));
          if (textDemo.isDisplayed()) {
             this.resaltaObjeto(textDemo, WebElementWrapper.COLOR_AZUL);
             conseguido = true;
@@ -1130,8 +1144,8 @@ public class WebElementWrapper {
    }
 
    /**
-    * Obtiene la fila de una tabla que contiene el @param texto en alguna de sus columnas. Las filas están numeradas de 0 en adelante. Si no
-    * encuentra el texto en ninguna fila, devuelve -1.
+    * Obtiene la fila de una tabla que contiene el @param texto en alguna de sus columnas. Las filas están numeradas de
+    * 0 en adelante. Si no encuentra el texto en ninguna fila, devuelve -1.
     *
     * @param testObject
     *           valor para: Locator del elemento tabla
@@ -1143,8 +1157,25 @@ public class WebElementWrapper {
     */
    // FIXME: Hacerlo genérico
    public int obtenerFilaConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
+      return this.obtenerFilaConTextoEnTabla(testObject, texto, "rich-table-row");
+   }
+
+   /**
+    * Obtener fila con texto en tabla recibiendo el parametro tabla.
+    *
+    * @param testObject
+    *           valor para: test object
+    * @param texto
+    *           valor para: texto
+    * @param cssrow
+    *           valor para: cssrow
+    * @return int
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   public int obtenerFilaConTextoEnTabla(By testObject, String texto, String cssrow) throws PruebaAceptacionExcepcion {
       this.debug("obtenerFilaConTextoEnTabla->" + testObject.toString() + ". Texto=" + texto);
-      int fila = -1;
+      int fila = 0;
       boolean conseguido = false;
       WebElement table = null;
       Exception excepcion = null;
@@ -1154,7 +1185,8 @@ public class WebElementWrapper {
             // Localizar el body de la tabla
             table = this.esperaCompleta(testObject);
             // Se obtienen todas las filas de la tabla
-            List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
+            // List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
+            List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class,  '" + cssrow + "')]"));
             // Se recorren todas las filas de la tabla
             for (int x = 0; !conseguido && x < rows.size(); x++) {
                // Se recorre columna por columna buscando el texto esperado
@@ -1184,11 +1216,75 @@ public class WebElementWrapper {
          throw new PruebaAceptacionExcepcion(mensaje);
       }
       else if (fila == -1) {
-         String mensaje = "No se encuentra la fila de la tabla con idBodyTabla: " + table.getAttribute("id") + " y texto buscado: " + texto;
+         String mensaje = "No se encuentra la fila de la tabla con idBodyTabla: " + table.getAttribute("id")
+               + " y texto buscado: " + texto;
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
       return fila;
+   }
+
+   /**
+    * Cuenta el número de filas que contiene el texto pasado por parametro
+    *
+    * @param testObject
+    *           valor para: test object
+    * @param texto
+    *           valor para: texto
+    * @param cssrow
+    *           valor para: cssrow
+    * @return int
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   public int contarFilasConTextoEnTabla(By testObject, String texto, String cssrow) throws PruebaAceptacionExcepcion {
+      this.debug("obtenerFilaConTextoEnTabla->" + testObject.toString() + ". Texto=" + texto);
+      int numfilas = 0;
+      WebElement table = null;
+      Exception excepcion = null;
+
+      for (int i = 1; i <= WebElementWrapper.NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            // Localizar el body de la tabla
+            table = this.esperaCompleta(testObject);
+            // Se obtienen todas las filas de la tabla
+            List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class,  '" + cssrow + "')]"));
+            // Se recorren todas las filas de la tabla
+            for (int x = 0; x < rows.size(); x++) {
+               // Se recorre columna por columna buscando el texto esperado
+               List<WebElement> cols = rows.get(x).findElements(By.tagName("td"));
+               for (WebElement col : cols) {
+                  if (col.getText().trim().equalsIgnoreCase(texto)) {
+                     numfilas += 1;
+                     this.resaltaObjeto(col, WebElementWrapper.COLOR_AZUL);
+                     break; // Sale del bucle de columnas y pasa a la siguiente fila
+                  }
+               }
+            }
+            break; // Sale del bucle de intentos si ha completado la iteración sin excepciones
+         }
+         catch (Exception e) {
+            this.warning(this.mensajeDeError(e));
+            excepcion = e;
+         }
+      }
+
+      if (table == null) {
+         String mensaje = "Error al obtener el id del cuerpo de la tabla";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+      else if (numfilas == 0) {
+         String mensaje = "No se encuentra ninguna fila de la tabla con idBodyTabla: " + table.getAttribute("id")
+               + " y texto buscado: " + texto;
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+      return numfilas;
    }
 
    /**
@@ -1270,7 +1366,8 @@ public class WebElementWrapper {
     */
    public void scrollTopPagina() { // FIXME: Borrar si no se utiliza
       this.debug("scrollTopPagina");
-      ((JavascriptExecutor) WebDriverFactory.getDriver()).executeScript("window.scrollTo(0, -document.body.scrollHeight)");
+      ((JavascriptExecutor) WebDriverFactory.getDriver())
+            .executeScript("window.scrollTo(0, -document.body.scrollHeight)");
    }
 
    /**
@@ -1286,7 +1383,8 @@ public class WebElementWrapper {
       this.trace("esperarHastaQueElementoNoPresente->" + testObject.toString());
       boolean conseguido = false;
       try {
-         conseguido = this.esperaConCondicionLarga(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
+         conseguido = this.esperaConCondicionLarga(
+               ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(testObject)));
       }
       catch (WebDriverException e) {
          String mensaje = this.mensajeDeError(e);
@@ -1331,7 +1429,8 @@ public class WebElementWrapper {
     * @throws WebDriverException
     *            la web driver exception
     */
-   protected WebElement esperaElementoConCondicionMedia(ExpectedCondition<WebElement> condicion) throws WebDriverException {
+   protected WebElement esperaElementoConCondicionMedia(ExpectedCondition<WebElement> condicion)
+         throws WebDriverException {
       return this.esperaElementoConCondicion(condicion, PropiedadesTest.TIEMPO_RETRASO_MEDIO);
    }
 
@@ -1344,7 +1443,8 @@ public class WebElementWrapper {
     * @throws WebDriverException
     *            la web driver exception
     */
-   protected WebElement esperaElementoConCondicionCorta(ExpectedCondition<WebElement> condicion) throws WebDriverException {
+   protected WebElement esperaElementoConCondicionCorta(ExpectedCondition<WebElement> condicion)
+         throws WebDriverException {
       return this.esperaElementoConCondicion(condicion, PropiedadesTest.TIEMPO_RETRASO_CORTO);
    }
 
@@ -1359,7 +1459,8 @@ public class WebElementWrapper {
     * @throws WebDriverException
     *            la web driver exception
     */
-   protected boolean esperaConCondicion(ExpectedCondition<Boolean> condicion, PropiedadesTest tiempo) throws WebDriverException {
+   protected boolean esperaConCondicion(ExpectedCondition<Boolean> condicion, PropiedadesTest tiempo)
+         throws WebDriverException {
       this.trace("esperaConCondicion->condición=" + condicion.toString() + ", tiempo=" + tiempo);
       boolean conseguido = false;
       WebDriverWait wait = new WebDriverWait(WebDriverFactory.getDriver(),
@@ -1544,7 +1645,8 @@ public class WebElementWrapper {
                   this.warning("Error al parar el procesamiento del hilo de ejecución");
                }
                tiempo += 100;
-               if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)) * 1000) {
+               if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))
+                     * 1000) {
                   String mensaje = by.toString() + " no desaparece";
                   this.trace(mensaje);
                   throw new PruebaAceptacionExcepcion(mensaje);
@@ -1893,7 +1995,8 @@ public class WebElementWrapper {
     *
     * @param objetosBuscados
     *           valor para: objetos buscados
-    * @return el numero de botones visibles en el listado de una pagina que sea un listado, que verifican las condiciones indicadas.
+    * @return el numero de botones visibles en el listado de una pagina que sea un listado, que verifican las
+    *         condiciones indicadas.
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
@@ -1914,7 +2017,8 @@ public class WebElementWrapper {
       catch (Exception e) {
          this.error(e);
          this.error(this.mensajeDeError(e));
-         throw new PruebaAceptacionExcepcion("No ha sido posible obtener el número de elementos que cumplan " + objetosBuscados.toString());
+         throw new PruebaAceptacionExcepcion(
+               "No ha sido posible obtener el número de elementos que cumplan " + objetosBuscados.toString());
       }
    }
 
@@ -1977,7 +2081,8 @@ public class WebElementWrapper {
    }
 
    /**
-    * Se hace click sobre el icono iesimo de subida de un fichero dentro del listado de documentos presentes en la pagina mostrada.
+    * Se hace click sobre el icono iesimo de subida de un fichero dentro del listado de documentos presentes en la
+    * pagina mostrada.
     *
     * @param rutaFichero
     *           ruta hacia el fichero que va a ser subido a la aplicacion.
@@ -2001,7 +2106,8 @@ public class WebElementWrapper {
    }
 
    /**
-    * Se hace click sobre el icono iesimo de subida de un fichero dentro del listado de documentos presentes en la pagina mostrada.
+    * Se hace click sobre el icono iesimo de subida de un fichero dentro del listado de documentos presentes en la
+    * pagina mostrada.
     *
     * @param rutaFichero
     *           ruta hacia el fichero que va a ser subido a la aplicacion.
@@ -2038,7 +2144,8 @@ public class WebElementWrapper {
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
-   public WebElement clickMasAutofirma(By boton, By etiquetaFirmaCorrecta, By etiquetaFirmaErronea) throws PruebaAceptacionExcepcion {
+   public WebElement clickMasAutofirma(By boton, By etiquetaFirmaCorrecta, By etiquetaFirmaErronea)
+         throws PruebaAceptacionExcepcion {
       this.debug("clickMasAutofirma->" + etiquetaFirmaCorrecta.toString());
       this.obtenerIdElementoProcesando();
       boolean conseguido = false;
@@ -2142,7 +2249,8 @@ public class WebElementWrapper {
     * @return string
     */
    protected String descripcionProceso(ProcessHandle proceso) {
-      return proceso.info().command().map(Object::toString).orElse("") + proceso.info().commandLine().map(Object::toString).orElse("");
+      return proceso.info().command().map(Object::toString).orElse("")
+            + proceso.info().commandLine().map(Object::toString).orElse("");
    }
 
    /**
@@ -2186,11 +2294,12 @@ public class WebElementWrapper {
    }
 
    /**
-    * Pulsa sobre el unico boton que debe existir en la pagina de detalle/formulario en la parte de las acciones a realizar que aparecen en
-    * la parte inferior de la pagina que contenga en su titulo el parametro {@code titulo} y en su class el parametro {@code clase}. Ademas
-    * ese elemento debe ser un 'tag = input' y de 'type = button' o 'type = submit'. NOTA - esto es para pulsar sobre los botones de accion
-    * que aparecen en la parte inferior de la pagina de detalle/formulario, y tener en un lugar centralizado lo que se debe hacer con lo que
-    * si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
+    * Pulsa sobre el unico boton que debe existir en la pagina de detalle/formulario en la parte de las acciones a
+    * realizar que aparecen en la parte inferior de la pagina que contenga en su titulo el parametro {@code titulo} y en
+    * su class el parametro {@code clase}. Ademas ese elemento debe ser un 'tag = input' y de 'type = button' o 'type =
+    * submit'. NOTA - esto es para pulsar sobre los botones de accion que aparecen en la parte inferior de la pagina de
+    * detalle/formulario, y tener en un lugar centralizado lo que se debe hacer con lo que si cambia algo, se cambia el
+    * codigo de este metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
     *
     * @param titulo
     *           a considerar para el title.
@@ -2215,11 +2324,12 @@ public class WebElementWrapper {
    }
 
    /**
-    * Pulsa sobre el unico boton que debe existir en la pagina de detalle/formulario en la parte de las acciones a realizar que aparecen en
-    * la parte inferior de la pagina que contenga en su titulo el parametro {@code titulo}, en su class el parametro {@code clase}, y en su
-    * type el parametro {@code tipo}. Ademas ese elemento debe ser un 'tag = input'. NOTA - esto es para pulsar sobre los botones de accion
-    * que aparecen en la parte inferior de la pagina de detalle/formulario, y tener en un lugar centralizado lo que se debe hacer con lo que
-    * si cambia algo, se cambia el codigo de este metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
+    * Pulsa sobre el unico boton que debe existir en la pagina de detalle/formulario en la parte de las acciones a
+    * realizar que aparecen en la parte inferior de la pagina que contenga en su titulo el parametro {@code titulo}, en
+    * su class el parametro {@code clase}, y en su type el parametro {@code tipo}. Ademas ese elemento debe ser un 'tag
+    * = input'. NOTA - esto es para pulsar sobre los botones de accion que aparecen en la parte inferior de la pagina de
+    * detalle/formulario, y tener en un lugar centralizado lo que se debe hacer con lo que si cambia algo, se cambia el
+    * codigo de este metodo de forma unificada, aunque dejen de tener sentido los nombres de los parametros.
     *
     * @param titulo
     *           a considerar para el title.

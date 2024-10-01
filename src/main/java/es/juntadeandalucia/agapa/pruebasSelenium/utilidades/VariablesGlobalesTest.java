@@ -35,6 +35,10 @@ public class VariablesGlobalesTest {
    public static final boolean IS_HEADLESS                        =
          Boolean.parseBoolean(System.getProperty("java.awt.headless", Boolean.FALSE.toString()).toLowerCase());
 
+   /** La constante BORRAR_CACHE. */
+   public static final boolean BORRAR_CACHE                       =
+         Boolean.parseBoolean(System.getProperty("borrar.cache", Boolean.FALSE.toString()).toLowerCase());
+
    /** La constante HTTP_DOCKER. */
    public static final String  HTTP_DOCKER                        = System.getProperty("docker.nodeGridUrl", "http://selenium-hub:4444");
 

@@ -1,0 +1,24 @@
+name: Crear Release
+
+on:
+#  push:
+#    tags:
+#      - '*.*.*.*'
+  # De manera manual desde Github-actions
+  workflow_dispatch:      
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Crear Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            build/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
