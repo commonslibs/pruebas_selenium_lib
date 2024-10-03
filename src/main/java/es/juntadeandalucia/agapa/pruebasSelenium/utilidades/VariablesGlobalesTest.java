@@ -100,6 +100,7 @@ public class VariablesGlobalesTest {
             Traza.error(mensaje);
             throw new IllegalArgumentException(mensaje);
          }
+         Traza.info("Perfil definido=" + entorno);
 
          if (entorno != null && !"".equals(entorno)) {
             VariablesGlobalesTest.propiedades = VariablesGlobalesTest.getFilePathToSaveStatic("application-" + entorno + ".properties");
