@@ -163,6 +163,35 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
    }
 
    /**
+    * Comprueba si existe o no una opcion label en el desplegable, devolviendo TRUE de haberla podido seleccionar y
+    * encontrado el texto y FALSE en caso contrario
+    *
+    * @param idDivSelect
+    *           valor para: id div select
+    * @param labelBuscada
+    *           valor para: label buscada
+    * @return boolean
+    */
+   public Boolean checkTextoInDesplegableByLabel(String idDivSelect, String labelBuscada) {
+      try {
+         WebElementWrapperPrimeFace.log.debug("checkTextoInDesplegableByLabel->" + idDivSelect + ", " + labelBuscada);
+         By label = By.id(idDivSelect + "_label");
+         By filtro = By.id(idDivSelect + "_filter");
+         // Intentamos seleccionar la opcion que queremos checkear del desplegable, no deberia de seleccionar nada.
+         this.seleccionaDesplegableByLabel(labelBuscada, label, filtro);
+         // Comprobamos si el labelBuscada está en el desplegable, porque se ha podido seleccionar
+         this.verifyElementAttributeValue(label, "innerText", labelBuscada);
+         WebElementWrapperPrimeFace.log.debug("Elemento {} está presente en el desplegable.", labelBuscada);
+         return Boolean.TRUE;
+      }
+      catch (PruebaAceptacionExcepcion e) {
+         // No se ha encontrado el elemento en el desplegable, porque no se ha seleccionado nada
+         WebElementWrapperPrimeFace.log.debug("Elemento {} no está presente en el desplegable.", labelBuscada);
+         return Boolean.FALSE;
+      }
+   }
+
+   /**
     * Obtener numero registros tabla.
     *
     * @param tabla
