@@ -1760,7 +1760,7 @@ public class WebElementWrapper {
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
-   protected WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
+   public WebElement esperarHastaQueElementoVisible(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoVisible->" + testObject.toString());
       WebElement elemento = null;
       boolean conseguido = false;
@@ -1810,7 +1810,7 @@ public class WebElementWrapper {
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
-   protected WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
+   public WebElement esperarHastaQueElementoPresente(By testObject) throws PruebaAceptacionExcepcion {
       this.trace("esperarHastaQueElementoPresente->" + testObject.toString());
       WebElement elemento = null;
       boolean conseguido = false;
