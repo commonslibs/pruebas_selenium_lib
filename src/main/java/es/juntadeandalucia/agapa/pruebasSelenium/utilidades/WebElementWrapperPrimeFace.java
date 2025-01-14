@@ -300,35 +300,4 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       }
    }
 
-   /**
-    * Obtener fila con texto en tabla pasando el parametro tabla.
-    *
-    * @param testObject
-    *           valor para: test object
-    * @param texto
-    *           valor para: texto
-    * @return int
-    * @throws PruebaAceptacionExcepcion
-    *            la prueba aceptacion excepcion
-    */
-   @Override
-   public int obtenerFilaConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
-      return this.obtenerFilaConTextoEnTabla(testObject, texto, "table__row");
-   }
-
-   /**
-    * Cuenta el número de filas que contiene el texto pasado por parametro
-    *
-    * @param testObject
-    *           valor para: test object
-    * @param texto
-    *           valor para: texto
-    * @return int
-    * @throws PruebaAceptacionExcepcion
-    *            la prueba aceptacion excepcion
-    */
-   public int contarFilasConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
-      return this.contarFilasConTextoEnTabla(testObject, texto, "table__row");
-   }
-
 }

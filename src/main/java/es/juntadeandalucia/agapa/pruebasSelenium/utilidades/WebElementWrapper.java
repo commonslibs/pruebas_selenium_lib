@@ -1175,32 +1175,14 @@ public class WebElementWrapper {
     * encuentra el texto en ninguna fila, devuelve -1.
     *
     * @param testObject
-    *           valor para: Locator del elemento tabla
-    * @param texto
-    *           valor para: texto
-    * @return int
-    * @throws PruebaAceptacionExcepcion
-    *            la prueba aceptacion excepcion
-    */
-   // FIXME: Hacerlo genérico
-   public int obtenerFilaConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
-      return this.obtenerFilaConTextoEnTabla(testObject, texto, "rich-table-row");
-   }
-
-   /**
-    * Obtener fila con texto en tabla recibiendo el parametro tabla.
-    *
-    * @param testObject
     *           valor para: test object
     * @param texto
     *           valor para: texto
-    * @param cssrow
-    *           valor para: cssrow
     * @return int
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
-   public int obtenerFilaConTextoEnTabla(By testObject, String texto, String cssrow) throws PruebaAceptacionExcepcion {
+   public int obtenerFilaConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
       this.debug("obtenerFilaConTextoEnTabla->" + testObject.toString() + ". Texto=" + texto);
       int fila = 0;
       boolean conseguido = false;
@@ -1212,8 +1194,7 @@ public class WebElementWrapper {
             // Localizar el body de la tabla
             table = this.esperaCompleta(testObject);
             // Se obtienen todas las filas de la tabla
-            // List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class, 'rich-table-row')]"));
-            List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class,  '" + cssrow + "')]"));
+            List<WebElement> rows = table.findElements(By.tagName("tr"));
             // Se recorren todas las filas de la tabla
             for (int x = 0; !conseguido && x < rows.size(); x++) {
                // Se recorre columna por columna buscando el texto esperado
@@ -1257,13 +1238,11 @@ public class WebElementWrapper {
     *           valor para: test object
     * @param texto
     *           valor para: texto
-    * @param cssrow
-    *           valor para: cssrow
     * @return int
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
-   public int contarFilasConTextoEnTabla(By testObject, String texto, String cssrow) throws PruebaAceptacionExcepcion {
+   public int contarFilasConTextoEnTabla(By testObject, String texto) throws PruebaAceptacionExcepcion {
       this.debug("obtenerFilaConTextoEnTabla->" + testObject.toString() + ". Texto=" + texto);
       int numfilas = 0;
       WebElement table = null;
@@ -1274,7 +1253,7 @@ public class WebElementWrapper {
             // Localizar el body de la tabla
             table = this.esperaCompleta(testObject);
             // Se obtienen todas las filas de la tabla
-            List<WebElement> rows = table.findElements(By.xpath("//tr[contains(@class,  '" + cssrow + "')]"));
+            List<WebElement> rows = table.findElements(By.tagName("tr"));
             // Se recorren todas las filas de la tabla
             for (WebElement row : rows) {
                // Se recorre columna por columna buscando el texto esperado
