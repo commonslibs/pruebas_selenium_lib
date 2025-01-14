@@ -1194,11 +1194,11 @@ public class WebElementWrapper {
             // Localizar el body de la tabla
             table = this.esperaCompleta(testObject);
             // Se obtienen todas las filas de la tabla
-            List<WebElement> rows = table.findElements(By.tagName("tr"));
+            List<WebElement> rows = table.findElements(By.xpath("./tr"));
             // Se recorren todas las filas de la tabla
             for (int x = 0; !conseguido && x < rows.size(); x++) {
                // Se recorre columna por columna buscando el texto esperado
-               List<WebElement> cols = rows.get(x).findElements(By.tagName("td"));
+               List<WebElement> cols = rows.get(x).findElements(By.xpath("./td"));
                for (WebElement col : cols) {
                   if (col.getText().trim().equalsIgnoreCase(texto)) {
                      fila = x;
@@ -1253,11 +1253,11 @@ public class WebElementWrapper {
             // Localizar el body de la tabla
             table = this.esperaCompleta(testObject);
             // Se obtienen todas las filas de la tabla
-            List<WebElement> rows = table.findElements(By.tagName("tr"));
+            List<WebElement> rows = table.findElements(By.xpath("./tr"));
             // Se recorren todas las filas de la tabla
             for (WebElement row : rows) {
                // Se recorre columna por columna buscando el texto esperado
-               List<WebElement> cols = row.findElements(By.tagName("td"));
+               List<WebElement> cols = row.findElements(By.xpath("./td"));
                for (WebElement col : cols) {
                   if (col.getText().trim().equalsIgnoreCase(texto)) {
                      numfilas += 1;
@@ -1290,6 +1290,82 @@ public class WebElementWrapper {
          throw new PruebaAceptacionExcepcion(mensaje);
       }
       return numfilas;
+   }
+
+   /**
+    * Obtiene la columna de la fila @param numeroFilaCabecera de la cabecera de una tabla que contiene el @param texto. Las filas están
+    * numeradas de 0 en adelante. Si no encuentra el texto en ninguna fila, devuelve -1.
+    *
+    * @param testObject
+    *           valor para: test object
+    * @param texto
+    *           valor para: texto
+    * @return int
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   public int obtenerColumnaConTextoEnTabla(By testObject, int numeroFilaCabecera, String texto) throws PruebaAceptacionExcepcion {
+      this.debug("obtenerColumnaConTextoEnTabla->" + testObject.toString() + ". Texto=" + texto);
+      int columna = 0;
+      boolean conseguido = false;
+      WebElement table = null;
+      Exception excepcion = null;
+
+      for (int i = 1; !conseguido && i <= WebElementWrapper.NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            // Localizar el body de la tabla
+            table = this.esperaCompleta(testObject);
+            List<WebElement> cabeceras = table.findElements(By.tagName("thead"));
+            if (cabeceras.size() > 0) {
+               // Se obtienen todas las filas de la cabecera de la tabla
+               List<WebElement> filasDeLaCabecera = cabeceras.get(0).findElements(By.xpath("./tr"));
+               if (numeroFilaCabecera >= filasDeLaCabecera.size() - 1) {
+                  // Se recorre columna por columna buscando el texto esperado
+                  List<WebElement> cols = filasDeLaCabecera.get(numeroFilaCabecera).findElements(By.xpath("./th"));
+                  for (int x = 0; !conseguido && x < cols.size(); x++) {
+                     if (cols.get(x).getText().trim().equalsIgnoreCase(texto)) {
+                        columna = x;
+                        conseguido = true;
+                        this.resaltaObjeto(cols.get(x), WebElementWrapper.COLOR_AZUL);
+                        break;
+                     }
+                  }
+               }
+               else {
+                  String mensaje = "No se encuentra la fila " + numeroFilaCabecera + " de la cabecera de la tabla con id: "
+                        + table.getAttribute("id") + " y texto buscado: " + texto;
+                  this.error(mensaje);
+                  throw new PruebaAceptacionExcepcion(mensaje);
+               }
+            }
+            else {
+               String mensaje =
+                     "No se encuentran filas en la cabecera de la tabla con id: " + table.getAttribute("id") + " y texto buscado: " + texto;
+               this.error(mensaje);
+               throw new PruebaAceptacionExcepcion(mensaje);
+            }
+         }
+         catch (Exception e) {
+            this.warning(this.mensajeDeError(e));
+            excepcion = e;
+         }
+      }
+      if (table == null) {
+         String mensaje = "Error al obtener el id del cuerpo de la tabla";
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+      else if (columna == -1) {
+         String mensaje = "No se encuentra columna la fila " + numeroFilaCabecera + " de la cabecera de la tabla con id: "
+               + table.getAttribute("id") + " y texto buscado: " + texto;
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
+      }
+      return columna;
    }
 
    /**
