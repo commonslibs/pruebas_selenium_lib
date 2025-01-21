@@ -32,26 +32,20 @@ public class Certificado {
       if (Navegador.FIREFOX == navegador) {
          // TODO - Implementar la selección de certificado con firefox
       }
-      else if (Navegador.CHROME == navegador) {
-         seleccionarCertificadoChrome(posicionCertificado);
-      }
-      else {
-         throw new PruebaAceptacionExcepcion(
-               "No hay implementado un robot para seleccionar el certificado digital en el navegador " + navegador.name());
-      }
+      seleccionarCertificadoChromeEdge(posicionCertificado);
    }
 
    /**
-    * Seleccionar certificado chrome.
+    * Seleccionar certificado en Chrome o Edge.
     *
     * @param posicionCertificado
     *           valor para: posicion certificado
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
-   public static void seleccionarCertificadoChrome(int posicionCertificado) throws PruebaAceptacionExcepcion {
+   public static void seleccionarCertificadoChromeEdge(int posicionCertificado) throws PruebaAceptacionExcepcion {
       Runnable runnable = () -> {
-         log.info("Iniciando selección de certificado digital (chrome)...");
+         log.info("Iniciando selección de certificado digital (chrome/edge)...");
          Robot robot = null;
          try {
             robot = new Robot();
@@ -63,13 +57,12 @@ public class Certificado {
                robot.delay(500);
             }
 
-            robot.delay(500);
             robot.keyPress(KeyEvent.VK_ENTER);
             robot.keyRelease(KeyEvent.VK_ENTER);
 
          }
          catch (AWTException e) {
-            log.error("Error al seleccionar el certificado digital con robots (chrome)", e);
+            log.error("Error al seleccionar el certificado digital con robots (chrome/edge)", e);
          }
 
       };
