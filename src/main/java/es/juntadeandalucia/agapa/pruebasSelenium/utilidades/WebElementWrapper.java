@@ -2282,7 +2282,7 @@ public class WebElementWrapper {
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
-   protected void esperarProcesoAutofirma() throws PruebaAceptacionExcepcion {
+   public void esperarProcesoAutofirma() throws PruebaAceptacionExcepcion {
       WebElementWrapper.log.debug("Esperando al proceso de Autofirma");
       boolean conseguido = false;
       for (int i = 1; !conseguido && i <= WebElementWrapper.NUMERO_MAXIMO_INTENTOS * 2; i++) {
