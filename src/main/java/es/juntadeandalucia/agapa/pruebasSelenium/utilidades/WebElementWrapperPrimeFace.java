@@ -2,6 +2,7 @@ package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
@@ -123,7 +124,8 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       WebElementWrapperPrimeFace.log.debug("seleccionaDesplegableByLabel->" + idDivSelect + ", " + labelBuscada);
       By label = By.id(idDivSelect + "_label");
       By filtro = By.id(idDivSelect + "_filter");
-      this.seleccionaDesplegableByLabel(labelBuscada, label, filtro);
+      By panel = By.id(idDivSelect + "_panel");
+      this.seleccionaDesplegableByLabel(labelBuscada, label, filtro, panel);
    }
 
    /**
@@ -138,7 +140,8 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
     * @throws PruebaAceptacionExcepcion
     *            la prueba aceptacion excepcion
     */
-   public void seleccionaDesplegableByLabel(String labelBuscada, By label, By filtro) throws PruebaAceptacionExcepcion {
+   public void seleccionaDesplegableByLabel(String labelBuscada, By label, By filtro, By panel)
+         throws PruebaAceptacionExcepcion {
       WebElementWrapperPrimeFace.log.debug("seleccionaDesplegableByLabel->" + label.toString());
       boolean conseguido = false;
       WebElement elementoLabel = null;
@@ -146,8 +149,29 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
          try {
             elementoLabel = this.esperaCompleta(label);
             this.resaltaObjeto(elementoLabel, WebElementWrapper.COLOR_AMARILLO);
-            this.esperarHastaQueElementoClickable(elementoLabel).click();
+
+            int intentos = 3;
+            boolean panelDisplay = false;
+            do {
+               intentos--;
+               try {
+                  this.esperarHastaQueElementoClickable(elementoLabel).click();
+
+                  this.esperaIncondicionalMilisegundos(100);
+
+                  WebElement element = this.esperarHastaQueElementoVisible(panel);
+                  String style = element.getAttribute("style");
+                  panelDisplay = (style != null && style.contains("display: block"));
+               }
+               catch (Exception e) {
+                  // Continuamos
+                  this.trace("No se encuentra el panel desplegable " + panel.toString());
+               }
+
+            } while (!(panelDisplay || intentos <= 0));
+
             this.esperarHastaQueElementoVisible(filtro).click();
+            this.esperaIncondicionalMilisegundos(100);
             this.escribeTexto(filtro, labelBuscada);
             conseguido = true;
          }
@@ -177,8 +201,9 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
          WebElementWrapperPrimeFace.log.debug("checkTextoInDesplegableByLabel->" + idDivSelect + ", " + labelBuscada);
          By label = By.id(idDivSelect + "_label");
          By filtro = By.id(idDivSelect + "_filter");
+         By panel = By.id(idDivSelect + "_panel");
          // Intentamos seleccionar la opcion que queremos checkear del desplegable, no deberia de seleccionar nada.
-         this.seleccionaDesplegableByLabel(labelBuscada, label, filtro);
+         this.seleccionaDesplegableByLabel(labelBuscada, label, filtro, panel);
          // Comprobamos si el labelBuscada está en el desplegable, porque se ha podido seleccionar
          this.verifyElementAttributeValue(label, "innerText", labelBuscada);
          WebElementWrapperPrimeFace.log.debug("Elemento {} está presente en el desplegable.", labelBuscada);
@@ -297,6 +322,63 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
       catch (InterruptedException e) {
          WebElementWrapperPrimeFace.log.error("Error en la esperaObligada", e);
          Thread.currentThread().interrupt();
+      }
+   }
+
+   /**
+    * Escribe texto.
+    *
+    * @param testObject
+    *           valor para: test object
+    * @param texto
+    *           valor para: texto
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   @Override
+   public void escribeTexto(By testObject, String texto) throws PruebaAceptacionExcepcion {
+      this.debug("escribeTexto->" + testObject.toString() + ". Texto=" + texto);
+      boolean conseguido = false;
+      Exception excepcion = null;
+      for (int i = 1; !conseguido && i <= WebElementWrapper.NUMERO_MAXIMO_INTENTOS; i++) {
+         try {
+            WebElement elemento = this.click(testObject);
+            String valor = elemento.getAttribute("value");
+            if (valor != null && valor.length() > 0) {
+               // Para borrar campos que tienen mucho texto y así sea mas rápido
+               elemento.clear();
+               elemento = this.esperaCompleta(testObject);
+            }
+            valor = elemento.getAttribute("value");
+            if (valor != null && valor.length() > 0) {
+               // Para borrar campos numéricos formateados con deciamles
+               while (elemento.getAttribute("value").length() > 0) {
+                  // Necesario porque así se soluciona donde aparece el cursor al hacer click (izq o der)
+                  elemento.sendKeys(Keys.DELETE.toString());
+                  elemento.sendKeys(Keys.BACK_SPACE.toString());
+               }
+               elemento = this.esperaCompleta(testObject);
+            }
+            this.asignaTexto(elemento, texto);
+            this.esperaIncondicionalMilisegundos(150); // Mini espera, a veces el sendKeys de la siguiente linea se pisa
+                                                       // con el asigna texto anterior y cuando se escribe una fecha da
+                                                       // error de formato
+            elemento.sendKeys(Keys.TAB.toString()); // Hay veces que si no se pulsa TAB, no funciona
+            conseguido = true;
+         }
+         catch (Exception e) {
+            this.warning(this.mensajeDeError(e));
+            excepcion = e;
+         }
+      }
+      if (!conseguido) {
+         String mensaje = "Error al escribir texto en " + testObject.toString();
+         if (excepcion != null) {
+            mensaje += ". Motivo del error: " + this.mensajeDeError(excepcion);
+            this.error(excepcion);
+         }
+         this.error(mensaje);
+         throw new PruebaAceptacionExcepcion(mensaje);
       }
    }
 

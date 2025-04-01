@@ -274,10 +274,7 @@ public class WebElementWrapper {
                elemento = this.esperaCompleta(testObject);
             }
             this.asignaTexto(elemento, texto);
-            this.esperaIncondicionalMilisegundos(150); // Mini espera, a veces el sendKeys de la siguiente linea se pisa
-                                                       // con el asigna texto anterior y cuando se escribe una fecha da
-                                                       // error de formato
-            elemento.sendKeys(Keys.TAB.toString()); // Hay veces que si no se pulsa TAB, no funciona
+            elemento.sendKeys(Keys.TAB.toString());
             conseguido = true;
          }
          catch (Exception e) {
