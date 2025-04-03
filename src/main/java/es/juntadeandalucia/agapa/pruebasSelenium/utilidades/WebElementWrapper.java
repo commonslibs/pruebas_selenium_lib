@@ -1725,6 +1725,21 @@ public class WebElementWrapper {
     *            la prueba aceptacion excepcion
     */
    public void esperarDesaparezcaElemento(By by) throws PruebaAceptacionExcepcion {
+      this.esperarDesaparezcaElemento(by,
+            Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO)));
+   }
+
+   /**
+    * Se realiza una espera hasta que desaparezca el elemento identificado por @param elemento.
+    *
+    * @param by
+    *           valor para: by
+    * @param segundosMaximo
+    *           valor para: segundos que como maximo esperará el metodo a que se oculte el elemento
+    * @throws PruebaAceptacionExcepcion
+    *            la prueba aceptacion excepcion
+    */
+   public void esperarDesaparezcaElemento(By by, int segundosMaximo) throws PruebaAceptacionExcepcion {
       this.trace("esperarDesaparezcaElemento " + by.toString());
       List<WebElement> elementos = WebDriverFactory.getDriver().findElements(by);
       try {
@@ -1742,8 +1757,7 @@ public class WebElementWrapper {
                   this.warning("Error al parar el procesamiento del hilo de ejecución");
                }
                tiempo += 100;
-               if (tiempo > Integer.parseInt(VariablesGlobalesTest.getPropiedad(PropiedadesTest.TIEMPO_RETRASO_MEDIO))
-                     * 1000) {
+               if (tiempo > segundosMaximo * 1000) {
                   String mensaje = by.toString() + " no desaparece";
                   this.trace(mensaje);
                   throw new PruebaAceptacionExcepcion(mensaje);
