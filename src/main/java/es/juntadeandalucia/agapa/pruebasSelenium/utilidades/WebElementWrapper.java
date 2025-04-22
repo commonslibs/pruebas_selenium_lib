@@ -1031,7 +1031,7 @@ public class WebElementWrapper {
     *           valor para: texto
     * @return true, si es correcto
     */
-   protected boolean encuentraTextoEnPagina(String texto) {
+   public boolean encuentraTextoEnPagina(String texto) {
       boolean conseguido = false;
       try {
          this.esperaCorta();
