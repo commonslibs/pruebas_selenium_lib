@@ -1,14 +1,15 @@
 package es.juntadeandalucia.agapa.pruebasSelenium.utilidades;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
+import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactoryPrimeFace;
+import org.openqa.selenium.*;
 
 import es.juntadeandalucia.agapa.pruebasSelenium.excepciones.PruebaAceptacionExcepcion;
 import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.VariablesGlobalesTest.PropiedadesTest;
 import es.juntadeandalucia.agapa.pruebasSelenium.webdriver.WebDriverFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 
 /**
@@ -380,6 +381,27 @@ public class WebElementWrapperPrimeFace extends WebElementWrapper {
          this.error(mensaje);
          throw new PruebaAceptacionExcepcion(mensaje);
       }
+   }
+
+   public void esperarFinDeProcesamiento(By byBoton, int seconds) {
+
+      try {
+         WebElement boton = WebDriverFactoryPrimeFace.getDriver().findElement(byBoton);
+         this.esperaIncondicional(1);
+         WebDriverWait wait = new WebDriverWait(WebDriverFactoryPrimeFace.getDriver(), Duration.ofSeconds(seconds));
+         // Esperar hasta que el botón deje de tener la clase 'ui-state-loading'
+         wait.until((WebDriver d) -> {
+            String clase = boton.getAttribute("class");
+            return !clase.contains("ui-state-loading");
+         });
+      }
+      catch (Exception e) {
+         this.warning(this.mensajeDeError(e));
+      }
+   }
+
+   public void esperarFinDeProcesamiento(By byBoton) {
+      this.esperarFinDeProcesamiento(byBoton, 60);
    }
 
 }
