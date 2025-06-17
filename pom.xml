@@ -6,7 +6,7 @@
 
 	<groupId>io.github.commonslibs</groupId>
 	<artifactId>pruebas_selenium_lib</artifactId>
-	<version>0.8.1.6</version>
+	<version>0.8.1.7</version>
 
 	<name>Libreria para pruebas con Selenium</name>
 	<description>Proyecto con las funcionalidades comunes de todos los proyectos que vayan a usar Selenium como framework de pruebas funcionales</description>
