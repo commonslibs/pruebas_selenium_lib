@@ -59,7 +59,7 @@
 		<java.version>17</java.version>
 		<ojdbc.version>23.9.0.25.07</ojdbc.version>
 		<testng.version>7.11.0</testng.version>
-		<bonigarcia-webdrivermanager.version>6.2.0</bonigarcia-webdrivermanager.version>
+		<bonigarcia-webdrivermanager.version>6.3.1</bonigarcia-webdrivermanager.version>
 		<extentreports.version>5.1.2</extentreports.version>
 		<video-recorder-testng.version>2.0</video-recorder-testng.version>
 	</properties>
