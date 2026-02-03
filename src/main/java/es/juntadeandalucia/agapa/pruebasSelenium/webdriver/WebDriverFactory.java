@@ -179,6 +179,8 @@ public class WebDriverFactory {
       else {
          // Deshabilitamos el mensaje delnavegador: "Un Software automatizado de pruebas está controlando Chrome."
          options.setExperimentalOption("excludeSwitches", Collections.singletonList("--enable-automation"));
+         options.setExperimentalOption("useAutomationExtension", false);
+
       }
 
       // Para no mostrar el dialogo de "donde guardar archivos". Bandera especial para el modo incognito a partir de
