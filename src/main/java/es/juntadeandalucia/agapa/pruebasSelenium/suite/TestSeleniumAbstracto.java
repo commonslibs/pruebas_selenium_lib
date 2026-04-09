@@ -102,6 +102,16 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    private ExtentSparkReporter spark;
 
    /**
+    * Directorio de informes del test actual (codigoTest, e.g. CP018.04).
+    */
+   private String directorioTest;
+
+   /**
+    * Mapa estático suiteName → directorioTest, para que InformeListener lo consulte al mergear.
+    */
+   private static final java.util.Map<String, String> DIRECTORIO_POR_SUITE = new java.util.concurrent.ConcurrentHashMap<>();
+
+   /**
     * Obtención del atributo: driver.
     *
     * @return atributo: driver
@@ -117,6 +127,30 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
     */
    protected ExtentTest getLogger() {
       return WebDriverFactory.getLogger();
+   }
+
+   /**
+    * set para DirectorioTest,
+    * No se puede asignar por registrarDirectorioSuite debido a que es static
+    *
+    * @param directorioTest: directorio de test
+    */
+   public void setDirectorioTest(String directorioTest) {
+      this.directorioTest = directorioTest;
+   }
+
+   /**
+    * Registra la correspondencia suiteName → directorioTest para que InformeListener la use al mergear.
+    */
+   public static void registrarDirectorioSuite(String nombreSuite, String directorioTest) {
+      DIRECTORIO_POR_SUITE.put(nombreSuite, directorioTest);
+   }
+
+   /**
+    * Devuelve el directorioTest registrado para ese suite, o el propio nombreSuite si no se registró (comportamiento original).
+    */
+   public static String obtenerDirectorioSuite(String nombreSuite) {
+      return DIRECTORIO_POR_SUITE.getOrDefault(nombreSuite, nombreSuite);
    }
 
    /**
@@ -179,7 +213,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       if (resultado.getStatus() == ITestResult.FAILURE) {
          this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getName() + " - Test falló", ExtentColor.RED));
          this.getLogger().log(Status.FAIL, MarkupHelper.createLabel(resultado.getThrowable() + " - Test falló", ExtentColor.RED));
-         String rutaRelativa = this.getScreenShot(this.getDriver(), resultado.getTestContext().getName(), resultado.getName());
+         String dirCaptura = StringUtils.isNotBlank(this.directorioTest) ? this.directorioTest : resultado.getTestContext().getName();
+         String rutaRelativa = this.getScreenShot(this.getDriver(), dirCaptura, resultado.getName());
          this.getLogger().addScreenCaptureFromPath(rutaRelativa);
          this.getLogger().fail("Captura de pantalla del test que falló: " + rutaRelativa);
          this.cerrarNavegador();
@@ -207,7 +242,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          // Si nombreVideo, está rellena se ha grabado con DOCKER, el codec es compatible(H264) y se puede integrar en
          // el navegador
          String pathAqui = "./" + nombreVideo;
-         String pathPPI = "./" + resultado.getTestContext().getName() + "/" + nombreVideo;
+         String dirVideo = StringUtils.isNotBlank(this.directorioTest) ? this.directorioTest : resultado.getTestContext().getName();
+         String pathPPI = "./" + dirVideo + "/" + nombreVideo;
          String videoHtml = "<video width='600' controls>" + "<source src='" + pathAqui + "' type='video/mp4'>" + "<source src='" + pathPPI
                + "' type='video/mp4'>" + "Su navegador no soporta la reproducción de video." + "</video>";
          this.getLogger().log(Status.INFO, videoHtml);
@@ -629,7 +665,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
       Video anotacionVideo = MethodUtils.getVideoAnnotation(resultado);
       String nombreDestino = "";
       if (anotacionVideo != null) {
-         String directorio = resultado.getTestContext().getName();
+         String directorio = StringUtils.isNotBlank(this.directorioTest) ? this.directorioTest : resultado.getTestContext().getName();
          File origen = new File(System.getProperty("user.dir"));
          String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
          File video = null;
@@ -637,7 +673,8 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
          try {
             Iterator<File> it = FileUtils.iterateFiles(origen, new String[] { "mp4" }, false);
             while (it.hasNext()) {
-               nombreDestino = anotacionVideo.name() + "_" + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4";
+               String prefijoVideo = StringUtils.isNotBlank(this.directorioTest) ? this.directorioTest : anotacionVideo.name();
+               nombreDestino = prefijoVideo + "_" + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4";
                File destino = new File(directorioLargo + nombreDestino);
                destinoRuta = destino.getAbsolutePath();
                destino.delete();

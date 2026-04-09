@@ -78,8 +78,11 @@ public class InformeListener implements IReporter {
       Collections.sort(suites, new ComparadorISuite());
       for (ISuite suite : suites) {
          try {
-            String directorioOrigenJson = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + suite.getName() + File.separator;
-            String ficheroJson = directorioOrigenJson + File.separator + suite.getName() + "-Extendido.json";
+            String suiteName = suite.getName();
+            // Consulta el directorioTest registrado (ej. CP018.04); si no hay registro usa suiteName (comportamiento original)
+            String directorioTest = es.juntadeandalucia.agapa.pruebasSelenium.suite.TestSeleniumAbstracto.obtenerDirectorioSuite(suiteName);
+            String directorioOrigenJson = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorioTest + File.separator;
+            String ficheroJson = directorioOrigenJson + directorioTest + "-Extendido.json";
             reportMergeado.createDomainFromJsonArchive(ficheroJson);
 
             // Copiar las capturas de pantallas de error
