@@ -7,9 +7,11 @@ import es.juntadeandalucia.agapa.pruebasSelenium.utilidades.WebElementWrapper;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.stream.Collectors;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +46,21 @@ public class WebDriverFactory {
 
    /** web element wrapper. */
    protected static WebElementWrapper webElementWrapper;
+
+   /**
+    * Activa Selenium Manager (bundled en selenium-java >= 4.6) en lugar de WebDriverManager (bonigarcia)
+    * para la gestión automática del driver del navegador.
+    *
+    * <p>El equipo GMA decidió no usar WebDriverManager porque requiere contactar con
+    * {@code https://googlechromelabs.github.io} para descargar el chromedriver, endpoint no accesible
+    * desde determinadas redes corporativas. Selenium Manager resuelve el driver de forma local
+    * (caché en {@code ~/.cache/selenium}) sin necesidad de red externa.
+    *
+    * <p>Por compatibilidad con otros proyectos que sí usan WebDriverManager, el comportamiento
+    * por defecto es {@code false}. Los proyectos que quieran Selenium Manager deben activarlo
+    * invocando {@link WebDriverFactoryPrimeFace#activar()} desde un bloque {@code static}.
+    */
+   protected static boolean usarSeleniumManager = false;
 
    /**
     * Enum Navegador.
@@ -211,9 +228,27 @@ public class WebDriverFactory {
 
          capabilities.setCapability(ChromeOptions.CAPABILITY, options);
          log.info("Conectando al node grid de Selenium en Docker con la URL=" + VariablesGlobalesTest.HTTP_DOCKER);
+         if (usarSeleniumManager) {
+            // El equipo GMA no usa WebDriverManager (bonigarcia) por restricciones de red corporativa.
+            // Se conecta al Selenium Grid directamente con RemoteWebDriver estándar de Selenium.
+            try {
+               return new RemoteWebDriver(new URL(VariablesGlobalesTest.HTTP_DOCKER), capabilities);
+            }
+            catch (Exception e) {
+               throw new RuntimeException("Error al conectar con Selenium Grid en " + VariablesGlobalesTest.HTTP_DOCKER, e);
+            }
+         }
+         // Comportamiento original con WebDriverManager para proyectos que sí lo usan.
          return WebDriverManager.chromedriver().capabilities(capabilities).remoteAddress(VariablesGlobalesTest.HTTP_DOCKER).create();
       }
       else {
+         if (usarSeleniumManager) {
+            // El equipo GMA no usa WebDriverManager (bonigarcia) por restricciones de red corporativa.
+            // Selenium Manager (bundled en selenium-java >= 4.6) gestiona el chromedriver localmente,
+            // usando la caché de ~/.cache/selenium sin necesidad de conexión a internet.
+            return new ChromeDriver(options);
+         }
+         // Comportamiento original con WebDriverManager para proyectos que sí lo usan.
          WebDriverManager webDriver = WebDriverManager.chromedriver();
          WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
          webDriverConProxy.setup();
@@ -227,10 +262,6 @@ public class WebDriverFactory {
     * @return web driver
     */
    protected static WebDriver firefox() {
-      WebDriverManager webDriver = WebDriverManager.firefoxdriver();
-      WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
-      webDriverConProxy.setup();
-
       FirefoxOptions options = new FirefoxOptions();
 
       // Parámetro para no abrir el modo gráfico del navegador.
@@ -250,9 +281,29 @@ public class WebDriverFactory {
                // FirefoxOptions.CAPABILITY, "moz:firefoxOptions"
                FirefoxOptions.FIREFOX_OPTIONS, options);
 
+         if (usarSeleniumManager) {
+            // El equipo GMA no usa WebDriverManager (bonigarcia) por restricciones de red corporativa.
+            // Se conecta al Selenium Grid directamente con RemoteWebDriver estándar de Selenium.
+            try {
+               return new RemoteWebDriver(new URL(VariablesGlobalesTest.HTTP_DOCKER), capabilities);
+            }
+            catch (Exception e) {
+               throw new RuntimeException("Error al conectar con Selenium Grid en " + VariablesGlobalesTest.HTTP_DOCKER, e);
+            }
+         }
+         // Comportamiento original con WebDriverManager para proyectos que sí lo usan.
          return WebDriverManager.firefoxdriver().capabilities(capabilities).create();
       }
       else {
+         if (usarSeleniumManager) {
+            // El equipo GMA no usa WebDriverManager (bonigarcia) por restricciones de red corporativa.
+            // Selenium Manager (bundled en selenium-java >= 4.6) gestiona el geckodriver localmente.
+            return new FirefoxDriver(options);
+         }
+         // Comportamiento original con WebDriverManager para proyectos que sí lo usan.
+         WebDriverManager webDriver = WebDriverManager.firefoxdriver();
+         WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
+         webDriverConProxy.setup();
          return new FirefoxDriver(options);
       }
    }
@@ -263,10 +314,6 @@ public class WebDriverFactory {
     * @return web driver
     */
    protected static WebDriver edge() {
-      WebDriverManager webDriver = WebDriverManager.edgedriver();
-      WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
-      webDriverConProxy.setup();
-
       EdgeOptions options = new EdgeOptions();
 
       // Para lanzar en modo incognito
@@ -284,9 +331,29 @@ public class WebDriverFactory {
 
          capabilities.setCapability(EdgeOptions.CAPABILITY, options);
 
+         if (usarSeleniumManager) {
+            // El equipo GMA no usa WebDriverManager (bonigarcia) por restricciones de red corporativa.
+            // Se conecta al Selenium Grid directamente con RemoteWebDriver estándar de Selenium.
+            try {
+               return new RemoteWebDriver(new URL(VariablesGlobalesTest.HTTP_DOCKER), capabilities);
+            }
+            catch (Exception e) {
+               throw new RuntimeException("Error al conectar con Selenium Grid en " + VariablesGlobalesTest.HTTP_DOCKER, e);
+            }
+         }
+         // Comportamiento original con WebDriverManager para proyectos que sí lo usan.
          return WebDriverManager.edgedriver().capabilities(capabilities).create();
       }
       else {
+         if (usarSeleniumManager) {
+            // El equipo GMA no usa WebDriverManager (bonigarcia) por restricciones de red corporativa.
+            // Selenium Manager (bundled en selenium-java >= 4.6) gestiona el msedgedriver localmente.
+            return new EdgeDriver(options);
+         }
+         // Comportamiento original con WebDriverManager para proyectos que sí lo usan.
+         WebDriverManager webDriver = WebDriverManager.edgedriver();
+         WebDriverManager webDriverConProxy = WebDriverFactory.asignarProxy(webDriver);
+         webDriverConProxy.setup();
          return new EdgeDriver(options);
       }
    }
