@@ -11,7 +11,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.stream.Collectors;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +23,7 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 
 /**
@@ -48,19 +48,17 @@ public class WebDriverFactory {
    protected static WebElementWrapper webElementWrapper;
 
    /**
-    * Activa Selenium Manager (bundled en selenium-java >= 4.6) en lugar de WebDriverManager (bonigarcia)
-    * para la gestión automática del driver del navegador.
-    *
-    * <p>El equipo GMA decidió no usar WebDriverManager porque requiere contactar con
-    * {@code https://googlechromelabs.github.io} para descargar el chromedriver, endpoint no accesible
-    * desde determinadas redes corporativas. Selenium Manager resuelve el driver de forma local
+    * Activa Selenium Manager (bundled en selenium-java >= 4.6) en lugar de WebDriverManager (bonigarcia) para la gestión automática del
+    * driver del navegador.
+    * <p>
+    * El equipo GMA decidió no usar WebDriverManager porque requiere contactar con {@code https://googlechromelabs.github.io} para descargar
+    * el chromedriver, endpoint no accesible desde determinadas redes corporativas. Selenium Manager resuelve el driver de forma local
     * (caché en {@code ~/.cache/selenium}) sin necesidad de red externa.
-    *
-    * <p>Por compatibilidad con otros proyectos que sí usan WebDriverManager, el comportamiento
-    * por defecto es {@code false}. Los proyectos que quieran Selenium Manager deben activarlo
-    * invocando {@link WebDriverFactoryPrimeFace#activar()} desde un bloque {@code static}.
+    * <p>
+    * Por compatibilidad con otros proyectos que sí usan WebDriverManager, el comportamiento por defecto es {@code false}. Los proyectos que
+    * quieran Selenium Manager deben activarlo invocando {@link WebDriverFactoryPrimeFace#activar()} desde un bloque {@code static}.
     */
-   protected static boolean usarSeleniumManager = false;
+   protected static boolean           usarSeleniumManager = true;
 
    /**
     * Enum Navegador.
