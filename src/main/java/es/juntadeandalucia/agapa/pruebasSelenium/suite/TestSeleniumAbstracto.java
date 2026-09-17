@@ -96,15 +96,15 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    /** extent. */
-   protected ExtentReports     extent;
+   protected ExtentReports                            extent;
 
    /** spark. */
-   private ExtentSparkReporter spark;
+   private ExtentSparkReporter                        spark;
 
    /**
     * Directorio de informes del test actual (codigoTest, e.g. CP018.04).
     */
-   private String directorioTest;
+   private String                                     directorioTest;
 
    /**
     * Mapa estático suiteName → directorioTest, para que InformeListener lo consulte al mergear.
@@ -130,10 +130,10 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
    }
 
    /**
-    * set para DirectorioTest,
-    * No se puede asignar por registrarDirectorioSuite debido a que es static
+    * set para DirectorioTest, No se puede asignar por registrarDirectorioSuite debido a que es static
     *
-    * @param directorioTest: directorio de test
+    * @param directorioTest:
+    *           directorio de test
     */
    public void setDirectorioTest(String directorioTest) {
       this.directorioTest = directorioTest;
@@ -189,7 +189,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
     *            Signals that an I/O exception has occurred.
     */
    private String getScreenShot(WebDriver driver, String directorio, String screenshotName) throws IOException {
-      String dateName = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date());
+      String dateName = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
       TakesScreenshot ts = (TakesScreenshot) driver;
       File origen = ts.getScreenshotAs(OutputType.FILE);
       String directorioLargo = VariablesGlobalesTest.DIRECTORIO_TARGET_SUREFIRE_REPORTS + directorio + File.separator;
@@ -674,7 +674,7 @@ public abstract class TestSeleniumAbstracto extends AbstractTestNGSpringContextT
             Iterator<File> it = FileUtils.iterateFiles(origen, new String[] { "mp4" }, false);
             while (it.hasNext()) {
                String prefijoVideo = StringUtils.isNotBlank(this.directorioTest) ? this.directorioTest : anotacionVideo.name();
-               nombreDestino = prefijoVideo + "_" + new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date()) + ".mp4";
+               nombreDestino = prefijoVideo + "_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + ".mp4";
                File destino = new File(directorioLargo + nombreDestino);
                destinoRuta = destino.getAbsolutePath();
                destino.delete();
